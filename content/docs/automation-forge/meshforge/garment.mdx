@@ -240,6 +240,21 @@ sculpt — so an unattended chain still runs.
 Makes a skeletal asset using Unreal's own weight transfer.
 
 <Shot
+  src="/shots/meshforge/skinning-step.png"
+  width={667}
+  height={379}
+  alt="The Wardrobe skinning step, numbered 2 and marked 'not run yet', with Run this step and Remove buttons. A Wardrobe group sets Target Character to SKM_MH_Demo_Player_Naked_BodyMesh, shown with a thumbnail, and Bone Profile to GBP_Vest. A collapsed Inpainting group follows. Under Advanced sits a 'Sculpt in pose' button. An Input group sets Input Source to 'Step above, latest run (the Mesh stage's selected take…)', above a collapsed Pipeline group."
+  caption="Two things decide the result: the body whose weights are copied, and the bone profile that limits which of its bones the garment is allowed to follow. Everything else is retry behaviour."
+/>
+
+<Callout type="info">
+  **The Target Character appears on both steps, and it must be the same one.**
+  The fit step wraps the garment around that body; this step copies weights
+  from it. Fitting to one body and skinning to another produces a garment that
+  fits and then moves wrong — and nothing checks it for you.
+</Callout>
+
+<Shot
   src="/shots/meshforge/neonvanguard-on-character.png"
   width={1918}
   height={1002}
@@ -271,6 +286,13 @@ The configured settings, then the normal test disabled, then that plus triple
 radius. A rung that would leave a garment piece with nothing to inpaint from
 is **skipped rather than run**.
 
+Those rungs live under **Inpainting**, collapsed by default — the step is
+meant to be run with its defaults, and opened only when it has failed.
+
+**Sculpt in pose…**, under *Advanced*, opens the newest skinned garment in
+Unreal's Skeletal Mesh Editor with the target character and its face beside
+it: for posed sculpting or pose correctives, after the weights exist.
+
 ### Bone profiles
 
 A data asset choosing which body bones a garment follows.
@@ -290,6 +312,18 @@ if any garment vertex still carries an excluded bone.
 Thirteen ship: Head, Shirt/jacket, T-shirt, Vest, Arms only, Hands and feet,
 Pants, Pants and feet, Shorts, Full bodysuit, Full bodysuit and head,
 Backpack, Belt.
+
+They are ordinary assets named `GBP_*`, picked in the step's **Bone Profile**
+slot — `GBP_Vest` in the capture above. Make your own the same way:
+Content Browser ▸ right-click ▸ Automation Forge ▸ MeshForge ▸ **Garment Bone
+Profile**.
+
+<Callout type="warn">
+  **Chest armour is a vest, not a shirt.** The profile decides which bones the
+  garment may follow, so a rigid chest plate given a shirt profile will follow
+  the arms and deform at the shoulder — which looks like a skinning failure
+  and is actually a profile choice.
+</Callout>
 
 ## Sculpt mesh — for any static mesh
 
