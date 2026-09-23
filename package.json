@@ -5,8 +5,8 @@
   "description": "docs.kovati.dev — the Kovati wiki: Automation Forge, the tools, and the company",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "verify": "cross-env NEXT_DIST_DIR=.next-verify next build",
+    "build": "next build && node tools/flatten-segments.mjs",
+    "verify": "cross-env NEXT_DIST_DIR=.next-verify next build && node tools/flatten-segments.mjs .next-verify",
     "check:links": "node tools/check-links.mjs",
     "start": "next start",
     "sync:manifest": "node tools/sync-manifest.mjs",

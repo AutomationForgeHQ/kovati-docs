@@ -84,28 +84,28 @@ to write *from*, never a source to copy.
 
 ## Known issues, to settle before deploying
 
-### RSC segment prefetch 404s
+### ~~RSC segment prefetch 404s~~ — fixed 2026-09-23
 
-Next 16 prefetches route segments. On a static export the client requests a
-**flat** filename and the export writes a **nested** path:
+Next 16 prefetches route segments, and on a static export the two halves
+disagreed about where those files live:
 
 ```
 requested   /docs/company/manifesto/__next.docs.$oc$slug.__PAGE__.txt?_rsc=…
-on disk     out/docs/company/manifesto/__next.docs/$oc$slug/__PAGE__.txt
+written     out/docs/company/manifesto/__next.docs/$oc$slug/__PAGE__.txt
 ```
 
-Every one 404s. **Navigation still works** — Next falls back to a full
-navigation, verified by clicking through the served export — so the cost is a
-lost prefetch optimisation and console noise on hover, not a broken site.
+Every prefetch 404'd. Navigation always worked — Next falls back to a full
+page load — so the cost was a lost optimisation plus a console full of red on
+every page, **which makes a real error impossible to notice.** That is the
+part worth having fixed.
 
-There is no `experimental` flag in Next 16.3.6 to turn segment prefetching
-off. Untested possibilities, in order of preference: whether Firebase Hosting's
-`cleanUrls` changes the resolution, whether dropping `trailingSlash: true`
-makes the two agree, and a hosting rewrite mapping the flat name onto the
-nested path (fragile, and last).
+There is no flag in Next 16.3.6 to turn segment prefetching off, and a host
+rewrite cannot express the mapping because it is per-route. So
+`tools/flatten-segments.mjs` runs after every build and writes a flat copy
+beside each nested one. It only ever *adds* files. Verified: six navigations
+forward and back with **zero console errors**, where there were 36 before.
 
-**Check this on the real host before announcing the site**, since the
-behaviour may differ from `npx serve`.
+**Delete the script and its `build` hook when Next writes both forms itself.**
 
 ### The search index is ~3 MB
 
