@@ -48,6 +48,22 @@ tab shows as "*&lt;id&gt;* (provider settings, no pipeline)".
 The pipeline list therefore offers no TRELLIS mesh entry; an agent names it
 through the definition's `ProviderId`.
 
+<Shot
+  src="/shots/meshforge/trellis-atmoscrubber.png"
+  width={1200}
+  height={1000}
+  alt="A Mesh Definition for a spacecraft atmospheric scrubber. The left viewer is empty and reads 'Generated, but not imported. Run the Import stage to bring it into the project.' The right half shows the Stages tab. The Mesh stage is marked 'not run' and headed 'Trellis (provider settings, no pipeline)', with the scrubber prompt beneath it, an option to start from an existing mesh, and a notice: 'No main image chosen. Pick one in the Images tab — right-click a picture and choose Main image.' Post-processing reads 'None — the mesh is imported as generated.'"
+  caption="Two TRELLIS facts, visible: the Mesh stage names it 'provider settings, no pipeline', because it has no pipeline class; and it refuses to run without a main image, since it reconstructs from exactly one picture. The viewer reads 'Generated, but not imported' — generating and importing are separate stages, and a result can sit between them."
+/>
+
+<Callout type="warn">
+  **This route is early, and this definition is the evidence.** Its last run
+  ended with *"Gave up after 900 seconds. The job may still be running."* —
+  the mesh runner's lease timing out rather than the model failing. Treat
+  TRELLIS as experimental: it is genuinely free and genuinely reproducible,
+  and it will also make you wait and sometimes give up.
+</Callout>
+
 ### The quality ladder is gated by VRAM
 
 | Quality | Resolution | Measured |
@@ -116,6 +132,22 @@ the standard model.
 ## Tripo — hosted
 
 Five pipelines, on API v3:
+
+<Shot
+  src="/shots/meshforge/concept-pipeline-pistol.png"
+  width={1200}
+  height={1000}
+  alt="A Mesh Definition for a sci-fi rifle. The left half shows the imported mesh, with a take picker reading 'Meshy — meshy-7' and a status bar reading 1,926,026 triangles, 1,007,796 vertices, 1 material, 190 by 18 by 84 cm, Nanite. The right half shows the Concept image stage using the 'Image — Tripo API v3' pipeline. Its prompt field carries guidance: describe the object, not the picture — 'a dented steel ammunition crate with rope handles' is a prop, while 'a photo of a crate on white, studio lighting' is a photograph of one, and the second puts the studio in the mesh. Below are the vendor's own settings — model gemini-3.1-flash, template, takes — plus Framing toggles and a note that it costs about 20 Tripo credits, with the actual charge recorded from the task."
+  caption="A vendor's settings under the vendor's own names, and the credit cost stated above the button that spends them. One definition can use one provider to draw the reference and another to build the mesh — this one drew with Tripo and generated with Meshy."
+/>
+
+<Callout type="info">
+  The prompt guidance in that field is worth stealing for your own prompts:
+  **describe the object, not the picture.** *"A dented steel ammunition crate
+  with rope handles"* is a prop; *"a photo of a crate on white, studio
+  lighting"* is a photograph of one — and the second **puts the studio in the
+  mesh.**
+</Callout>
 
 - **Photoreal (H3)** — geometry quality, smart low poly, face limit, quad
   (returns FBX), generate parts.

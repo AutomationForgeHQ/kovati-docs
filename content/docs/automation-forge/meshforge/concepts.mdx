@@ -74,6 +74,14 @@ Under the output root (default `/Game/_Generated/Mesh`):
   </Folder>
 </Files>
 
+<Shot
+  src="/shots/meshforge/content-browser.png"
+  width={1942}
+  height={1054}
+  alt="The Colony project's Content Browser at Content/_Generated/Mesh/Definitions, showing 89 items. Most tiles are folders named after a definition with a _Generated suffix — MSD_AirMask_Generated, MSD_CryoSuit_Generated, MSD_Garment_Jacket_Generated and so on — alongside a Colony subfolder. The tree on the left shows _Generated split into Face, Mesh, Motion, Performance, Pipelines and Speech, with Mesh expanded into Definitions, Images, Imported, Meshes, References and Tests."
+  caption="Every definition gets its own output folder beside it, named after it. That is what makes a take deletable and a definition movable — and what stops a generated mesh from ever being mistaken for an authored one at a glance."
+/>
+
 Every generated picture becomes a `UTexture2D` **with its original pixels
 kept** in the texture source, so a reference image is re-usable rather than a
 compressed approximation of itself.

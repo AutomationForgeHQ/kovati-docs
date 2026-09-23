@@ -37,6 +37,21 @@ Plus a garment type (13 kinds, which decide which limbs may be wrapped), fit
 style, clearance, shape preservation, projection strength, relaxation and
 collision passes, and a yaw correction.
 
+<Shot
+  src="/shots/meshforge/garment-fit-jacket.png"
+  width={1200}
+  height={1000}
+  alt="A Mesh Definition for a jacket. The left viewer shows the wrapped jacket, 13,219 triangles and 7,817 vertices at 82 by 32 by 59 cm. On the right, the Post-processing stage is marked stale and its first step, 'Garment fit — wrap around a character', is expanded. It offers an 'Open Garment Studio' button, a Target Character slot holding a skeletal mesh with a thumbnail of the body, an empty Additional Meshes array, a ticked 'Find Meta Human Face' option, and a Garment Type dropdown set to Jacket."
+  caption="The fit step's own settings. 'Find Meta Human Face' is ticked by default because a MetaHuman body and its face are separate meshes, and a collar fitted to a headless body is fitted wrong. Additional Meshes is where a modular character's hands and feet go."
+/>
+
+<Callout type="info">
+  **Garment Type is not cosmetic.** It decides which limbs may be wrapped, so
+  a jacket and a bodysuit solve differently against the same body. Setting it
+  wrong produces a fit that looks nearly right and clips at the one joint the
+  solver was told to leave alone.
+</Callout>
+
 *Additional Meshes* covers a modular character's hands and feet.
 
 Each fit writes its body, landmarks, request, Blender log and a diagnostics
