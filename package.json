@@ -2,15 +2,16 @@
   "name": "kovati-docs",
   "version": "0.1.0",
   "private": true,
-  "description": "docs.kovati.dev — the Kovati wiki: Automation Forge, the tools, and the company",
+  "description": "docs.kovati.dev \u2014 the Kovati wiki: Automation Forge, the tools, and the company",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node tools/flatten-segments.mjs",
-    "verify": "cross-env NEXT_DIST_DIR=.next-verify next build && node tools/flatten-segments.mjs .next-verify",
+    "build": "node tools/gen-changelogs.mjs && next build && node tools/flatten-segments.mjs",
+    "verify": "node tools/gen-changelogs.mjs && cross-env NEXT_DIST_DIR=.next-verify next build && node tools/flatten-segments.mjs .next-verify",
     "check:links": "node tools/check-links.mjs",
     "start": "next start",
-    "sync:manifest": "node tools/sync-manifest.mjs",
-    "postinstall": "fumadocs-mdx"
+    "sync:manifest": "node tools/sync-manifest.mjs && node tools/gen-changelogs.mjs",
+    "postinstall": "fumadocs-mdx",
+    "gen:changelogs": "node tools/gen-changelogs.mjs"
   },
   "dependencies": {
     "fumadocs-core": "16.15.13",

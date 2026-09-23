@@ -1,3 +1,9 @@
 {
-  "pages": ["index", "automation-forge", "tools", "company"]
+  "pages": [
+    "index",
+    "automation-forge",
+    "tools",
+    "company",
+    "releases"
+  ]
 }

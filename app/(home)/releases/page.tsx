@@ -11,17 +11,26 @@ import {
 import { NoteBody } from '@/lib/notes'
 
 /**
- * Every published version of every plugin, newest first.
+ * What shipped recently, newest first.
  *
  * Assembled from the manifest, never written. That is the whole point: the
  * release log on the marketing site is hand-kept prose and has to be
  * remembered; this one cannot be wrong about what shipped, because it is the
  * same file CI generates from the tags and the published releases.
  *
+ * **This page is a window, not the history.** It used to render every version
+ * of every plugin with its full notes, which was already long at a hundred
+ * releases and would be unusable at a thousand. The history lives one page per
+ * plugin under `/docs/releases`, where it is searchable and where a reader
+ * looking for one plugin is not scrolling past thirty-six others.
+ *
  * A `paid` plugin publishes to a private repository. Its existence, its
  * version and its notes are public facts and belong here; its download link
  * would 404 for everyone but us, so it is not offered — the account app is.
  */
+
+/** How many releases this page shows before sending you to the changelogs. */
+const RECENT = 25
 
 export const metadata = {
   title: 'Releases',
@@ -31,7 +40,9 @@ export const metadata = {
 
 export default function Releases() {
   const feed = releaseFeed()
-  const byMonth = groupByMonth(feed)
+  const shown = feed.slice(0, RECENT)
+  const older = feed.length - shown.length
+  const byMonth = groupByMonth(shown)
 
   return (
     <main className="mx-auto w-full max-w-4xl px-6 py-16">
@@ -40,8 +51,8 @@ export default function Releases() {
           Releases
         </h1>
         <p className="mt-4 text-fd-muted-foreground">
-          {feed.length} published versions across {manifest.plugins.length}{' '}
-          plugins. Read from{' '}
+          The {shown.length} most recent of {feed.length} published versions
+          across {manifest.plugins.length} plugins. Read from{' '}
           <a
             href="https://github.com/AutomationForgeHQ/automation-forge/blob/main/manifest.json"
             className="underline decoration-dotted underline-offset-4 hover:text-fd-primary"
@@ -96,9 +107,12 @@ export default function Releases() {
                   className="rounded-lg border border-fd-border bg-fd-card p-4"
                 >
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <span className="font-mono text-sm font-semibold">
+                    <Link
+                      href={`/docs/releases/${e.pluginId.toLowerCase()}`}
+                      className="font-mono text-sm font-semibold underline decoration-dotted underline-offset-4 hover:text-fd-primary"
+                    >
                       {e.pluginId}
-                    </span>
+                    </Link>
                     <span className="font-mono text-sm text-fd-primary">
                       {e.version}
                     </span>
@@ -153,6 +167,19 @@ export default function Releases() {
           </section>
         ))}
       </div>
+
+      <p className="mt-12 rounded-lg border border-fd-border bg-fd-card p-4 text-sm text-fd-muted-foreground">
+        {older > 0 ? `${older} older releases are not on this page. ` : ''}
+        Every version of every plugin has its whole history on{' '}
+        <Link
+          href="/docs/releases"
+          className="underline decoration-dotted underline-offset-4 hover:text-fd-primary"
+        >
+          its own changelog page
+        </Link>
+        , grouped by minor series and searchable — which is the right place to
+        ask when a particular thing changed.
+      </p>
     </main>
   )
 }

@@ -160,12 +160,47 @@ forward and back with **zero console errors**, where there were 36 before.
 
 **Delete the script and its `build` hook when Next writes both forms itself.**
 
-### The search index is ~3 MB
+### ~~The search index is ~3 MB~~ — split 2026-09-23
 
-Uncompressed; it gzips far smaller, and it is fetched on first *open* rather
-than on page load. Worth watching as the wiki grows. If it becomes noticeable,
-the answer is a hosted index (Orama Cloud or Algolia), not a server — the site
+There are now two, because one of them has no ceiling.
+
+| Index | Holds | Size today |
+|---|---|---|
+| `/api/search` | Everything a person reads | 3.4 MB |
+| `/api/search-changelogs` | Release notes only | 1.5 MB |
+
+The changelogs were the problem. 121 releases cost about 1.5 MB of index; at
+the rate this family ships that is roughly 14 KB a release, so a thousand
+releases would have put the single index past 15 MB — and every reader looking
+up how garment fit works would have downloaded four years of patch notes to do
+it. The dialog has a **Docs / Changelogs** switch and only fetches the second
+one if somebody presses it.
+
+The split is by URL prefix (`/docs/releases/*`) rather than a frontmatter flag,
+because those pages are generated and a generator that must remember to set a
+flag will one day forget. See `lib/search-index.ts`.
+
+Both are uncompressed figures; they gzip far smaller, and neither is fetched
+until the dialog opens. If the prose index becomes noticeable on its own, the
+answer is a hosted index (Orama Cloud or Algolia), not a server — the site
 should stay static.
+
+<!-- A route note worth keeping: the second index cannot live at
+     /api/search/changelogs. On a static export /api/search is a file, so it
+     cannot also be a directory, and the export fails with EPERM on copyfile.
+     Hence the sibling path. -->
+
+### Release notes live per plugin
+
+`tools/gen-changelogs.mjs` writes one page per plugin under
+`content/docs/releases/` from the manifest, grouped by minor series, and runs
+as part of `build`, `verify` and `sync:manifest`. The pages are generated, so
+hand edits are lost — which is the point: they carry hundreds of version
+numbers, and this wiki's rule is that no page types one.
+
+`/releases` is now a **window** on the last 25, not the history. It was
+rendering every version of every plugin with full notes, which was already long
+and would have been unusable at a thousand.
 
 **Search cannot be tested against `next dev` over `127.0.0.1`.** The dev
 server blocks cross-origin access to `/_next/` resources, the dialog's chunk is
