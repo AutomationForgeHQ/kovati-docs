@@ -76,6 +76,24 @@ A solver emitting ARKit-52 natively needs no mapping for an ARKit-shaped head.
   the solve.
 </Callout>
 
+## A vocabulary decides which tools apply
+
+The clearest everyday consequence is not about characters at all. Two clips of
+the same character, in the same bank, can offer different actions — because
+one was solved from audio into the board vocabulary and the other from video
+into another.
+
+<Callout type="info">
+  **Correct in Sequencer needs `MetaHumanBoard`**, because the sequence it
+  builds *is* the MetaHuman face board. A clip solved from video is greyed out
+  with that reason in its tooltip. See
+  [correction](/docs/automation-forge/faceforge/correction#it-needs-the-board-vocabulary).
+
+  This is the vocabulary type earning its keep in the interface rather than
+  only in the data: a mismatch that would otherwise produce an empty or
+  nonsensical sequence is a disabled button with a sentence attached.
+</Callout>
+
 ## A practical consequence
 
 Because the solve is vocabulary-tagged and character-agnostic, **the same

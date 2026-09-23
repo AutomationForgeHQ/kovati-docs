@@ -1,0 +1,200 @@
+---
+title: The dialogue pipeline
+description: How SpeechForge, PerformanceForge and FaceForge are one pipeline with three plugins in it.
+icon: Workflow
+---
+
+Voice, performance capture and facial animation look like three products. In
+use they are **one pipeline**, and the thing that makes them one is a single
+string: the line id.
+
+<YouTube
+  id="inOefpBHXcA"
+  title="SpeechForge, PerformanceForge and FaceForge: one dialogue pipeline"
+  caption="The whole route — cast, write, generate, record, solve, localise — in one editor session."
+/>
+
+## The scene this page is written from
+
+Every capture below is one real scene in one project, not a mock-up. It is
+small enough to hold in your head and awkward enough to be honest:
+
+| | |
+|---|---|
+| **Lines** | 7 |
+| **Speakers** | 4 — three NPCs and the player |
+| **Character standards** | 2 — MetaHuman, and a Character Creator 5 astronaut |
+| **Recorded performances** | 2, with video |
+| **Languages** | English, plus a German sibling |
+| **Source** | A Narrative Pro dialogue, harvested |
+
+Those numbers are what the arithmetic on the screenshots refers to. When the
+Perform page says *"covers 5 of 7 line(s)"*, five and seven are these.
+
+## The five pages are the five steps
+
+The [Speech Library](/docs/automation-forge/speechforge/concepts#the-speech-library)
+is one window with a page per step, and the steps run left to right.
+
+<Steps>
+
+<Step>
+### Ingest — where the words come from
+
+A bank does not have to own its script. This one reads a Narrative Pro
+dialogue, and keeps its own record of when it last read it.
+
+<Shot
+  src="/shots/speechforge/ingest-page.png"
+  width={1760}
+  height={420}
+  alt="The Ingest page of the Speech Library for SB_GeneratorBriefing. A Dialogue source panel reads: 'Reads from DLG_GeneratorBriefing via NarrativePro. Lines already generated keep their audio when the source is read again.' Below it, in amber: 'The source has changed since this bank last read it - DLG_GeneratorBriefing was written 2026.09.08-21.51.50, after this bank last read it. Re-harvest to pull the edits in; any line whose words moved will then say so.' A Source picker names DLG_GeneratorBriefing, above three buttons: Harvest Characters, Harvest from Dialogue, and Re-harvest from Dialogue."
+  caption="Drift, caught and dated. The bank knows when it last read its source and when the source was last written, so 'somebody edited the script' is a sentence the page can say rather than something you find out when a line sounds wrong."
+/>
+
+<Callout type="info">
+  Read the second sentence of that warning: **"any line whose words moved will
+  then say so."** Re-harvesting does not silently re-generate. It marks the
+  lines whose text actually changed and leaves the rest alone — which is why
+  *"Lines already generated keep their audio when the source is read again"* is
+  safe to promise.
+</Callout>
+</Step>
+
+<Step>
+### Cast — who is speaking
+
+Speakers and voice profiles, side by side with the vendor's own voice library.
+
+<Shot
+  src="/shots/speechforge/cast-page.png"
+  width={1760}
+  height={790}
+  alt="The Cast page. On the left, 'The cast' lists four speakers — Dorian Smith, Emil Doric, Ivo Renk and Player — each marked 'in scene', with columns for Voice, Lines and Links: the three NPCs have 2, 2 and 2 lines and 1 link each; Player has 1 line and a dash. On the right, 'Voice profiles - reusable, provider-agnostic' lists Callum, Lily, Roger and Will, each labelled (ElevenLabs, 1 speaker) with Assign and Open buttons. Below, 'Browse provider voices' offers an ElevenLabs picker and a Fetch Voices button. A line at the foot reads 'No casting notes on the sheet yet - Open to add some.'"
+  caption="Four speakers, four profiles, and the arithmetic that tells you the casting is complete: every speaker has a voice and every profile is used by exactly one. The Links column is the speaker's binding out to the dialogue system — the player has none, because the player is not an NPC."
+/>
+
+See [casting](/docs/automation-forge/speechforge/casting).
+</Step>
+
+<Step>
+### Write — the lines
+
+Text, direction, speaker and a per-line voice override, in a table.
+
+<Shot
+  src="/shots/speechforge/write-page.png"
+  width={1760}
+  height={580}
+  alt="The Write page listing seven lines with columns Line, Speaker, Text, Direction and Voice. Line ids run GEN_Doric_Report, GEN_Renk_Relays, GEN_Astro_Offer, GEN_Doric_Rule, GEN_Renk_Beacon, GEN_Astro_Copy and DLG_GeneratorBriefing_Pla... Speakers are Astronaut, Renk, Doric and Player. The text is a scene about a generator failing: 'Power dipped again last night. Third time this week.' through to 'I'll leave you now, it's been a pleasure!' Every Direction cell is empty. The Voice column names Roger, Callum, Will and Lily."
+  caption="The line id in the first column is the only thing on this page that other systems read. Note that ids and speakers do not have to agree — GEN_Astro_Offer is spoken by Doric — because an id is a handle, not a description."
+/>
+
+<Callout type="warn">
+  **That mismatch is a warning, not a feature.** The ids here were generated
+  before the casting settled, and they stuck — because
+  [renaming an id orphans its audio](/docs/automation-forge/speechforge/concepts#a-line-id-is-the-naming-scheme).
+  Decide the scheme before you generate at volume, or live with ids that read
+  like a previous draft of the scene.
+</Callout>
+</Step>
+
+<Step>
+### Produce — what it costs, then what it made
+
+<Shot
+  src="/shots/speechforge/produce-page.png"
+  width={1760}
+  height={620}
+  alt="The Produce page, the same seven lines with columns Line, Speaker, Text, Voice, Status, Origin and Length. Every Status cell reads Generated. The Origin column reads Generated for five lines and 'Recorded (revo…' for GEN_Doric_Rule and the player's line. Lengths run from 2.80s to 7.20s. Buttons at the foot: Generate Selected (greyed), Generate All, Re-generate Selected (greyed)."
+  caption="Status and Origin are separate columns because they are separate questions. Every line here is Generated — that is how far it got. Two of them came from a recorded performance — that is where the audio came from. A single 'state' column could not say both."
+/>
+
+Selecting lines prices them, and the estimate refuses to invent a number it
+cannot know:
+
+<Shot
+  src="/shots/speechforge/produce-estimate.png"
+  width={1760}
+  height={620}
+  alt="The same Produce page with the first two lines selected and highlighted in blue. A line at the foot reads: '2 selected, all current - nothing to spend  +  re-voicing 2 not yet priced - billed per second of what you record', beside the now-enabled Generate Selected, Generate All and Re-generate Selected buttons."
+  caption="Two claims in one sentence, and the second is the interesting one. Synthesis is priced per character, so it can be quoted before the run; voice conversion is billed per second of audio you have not recorded yet, so it cannot be. The estimate says which half it can price."
+/>
+</Step>
+
+<Step>
+### Perform — where the three plugins meet
+
+This is the page that makes them one pipeline.
+
+<Shot
+  src="/shots/speechforge/perform-page.png"
+  width={1760}
+  height={1260}
+  alt="The Perform page. A 'To the game' panel offers 'Apply Voice and Faces to Dialogue' and 'Apply Voice to Dialogue', explaining that the bank remembers which dialogue it was harvested from. A 'Faces' panel lists two face banks serving this bank: FB_GeneratorBriefing on skeleton Face_Archetype_Skeleton covering 5 of 7 lines, and FB_GeneratorBriefing_Astronaut_Skeleton on Astronaut_Skeleton covering 2 of 7, each with an Open in Face Bank Panel button, above Create/Update Face Bank and a greyed Auto-assign Unassigned. A table lists all seven lines with columns Line, Speaker, Rig, Face, Sessions and Length; the Rig column names the two skeletons, the Face column reads 'Baked - FB_GeneratorBriefing…' for every line, and the Sessions column names PS_20260908_235921 against the two recorded lines and a dash against the rest. A Performance panel sets Session to 'Voice + Face' and 'Convert to cast voice', lists PS_20260908_235921 covering 2 lines with an Open in Capture Panel button, and offers Plan Session and Record Selected."
+  caption="One scene, two character standards, two face banks, one recording session — and a row per line saying which of each it belongs to. Nothing on this page is typed in: the rig comes from the speaker sheet, the face bank from its claim on this speech bank, and the session from the takes on disk."
+/>
+
+<Callout type="info">
+  **Two face banks for one scene is the normal case, not an edge case.** A face
+  bank is one character standard — one skeleton, one mapping, one montage slot
+  — so a scene with a MetaHuman and a Character Creator character in it has
+  two, and 5 + 2 = 7 is the page checking its own arithmetic in front of you.
+
+  The buttons on this page arrive by
+  [reflection](/docs/automation-forge/speechforge/concepts#sibling-plugins-add-buttons-without-editing-this).
+  SpeechForge does not link FaceForge, PerformanceForge or Narrative Pro, and
+  a project without one of them simply sees fewer buttons.
+</Callout>
+</Step>
+
+</Steps>
+
+A sixth page, **Localize**, is a sibling of the whole scene rather than a step
+in it — see [localisation](/docs/automation-forge/speechforge/localisation).
+
+## What each plugin actually owns
+
+The division is sharper than the panels suggest, because the panels
+deliberately hide the seams.
+
+| Plugin | Owns | Never knows about |
+|---|---|---|
+| **[SpeechForge](/docs/automation-forge/speechforge)** | Speakers, lines, takes, voice resolution, the Library window | Faces, video, dialogue trees |
+| **[PerformanceForge](/docs/automation-forge/performanceforge)** | Capture, sessions, take folders, the ledger | Solving, conversion, montages |
+| **[FaceForge](/docs/automation-forge/faceforge)** | Solving audio to curves, vocabularies, baking, correction | Where the audio came from |
+
+Each reaches the others **by name through the toolset registry**, never by
+linking. That is why the finisher after a recorded take — convert the voice,
+apply it to the line, solve the video into a face layer, merge, bake — works
+with any subset of them installed, and reports a missing step with a reason
+rather than failing to load.
+
+## The line id is the whole joint
+
+Four different things key off the same string, which is why it must be decided
+before volume and never renamed afterwards:
+
+- **The face clip id is the speech line id.** That is how the Perform page
+  knows which face belongs to which line.
+- **The localised line keeps it.** `SB_GeneratorBriefing_DE` has the same
+  seven ids, in German.
+- **The staleness hash and the dialogue node lookup both use it.**
+- **A take folder is named after it** — `PF_Player_DLG_GeneratorBriefing_Player_IllLeaveYouNow_20260909_000321`
+  is a slate, a line id and a timestamp.
+
+<Callout type="warn">
+  A localised sibling shares every line id **on purpose**, which means matching
+  on ids alone would offer an English mouth for German words. Anything asking
+  "which faces serve these lines" therefore matches on **language first, ids
+  second.**
+</Callout>
+
+## Where to go next
+
+<Cards>
+  <Card title="SpeechForge" href="/docs/automation-forge/speechforge" description="Cast, write, generate, and the timing data that comes back with the audio." />
+  <Card title="PerformanceForge" href="/docs/automation-forge/performanceforge" description="The capture stage, the teleprompter, and the take ledger. Paid." />
+  <Card title="FaceForge" href="/docs/automation-forge/faceforge" description="Audio to curves, curves to a character, and a correction that survives a re-solve." />
+  <Card title="Localisation" href="/docs/automation-forge/speechforge/localisation" description="A bank per language, faces cloned beside it, and dubbing rather than re-synthesis." />
+</Cards>

@@ -12,6 +12,18 @@ imported into the project **with character-level timing data attached**.
 One pipeline end to end: resolve the voice, price it, synthesise, import,
 cache.
 
+<YouTube
+  id="inOefpBHXcA"
+  title="SpeechForge, PerformanceForge and FaceForge: one dialogue pipeline"
+  caption="SpeechForge in context — the video covers all three plugins, because in use they are one route."
+/>
+
+<Callout type="info">
+  For the route end to end — cast, write, generate, record, solve, localise —
+  see [the dialogue pipeline](/docs/automation-forge/dialogue-pipeline). This
+  page is about SpeechForge's own half of it.
+</Callout>
+
 <SetMembers set="speechforge" />
 
 ## What it deliberately does not know
@@ -109,6 +121,16 @@ Not one status, but two independent ones:
 That separation makes **"stale and already recorded"** expressible — and that
 is the one report with real money attached, because it is the list of lines
 somebody paid an actor for and then changed the script under.
+
+They are two columns in the panel for the same reason:
+
+<Shot
+  src="/shots/speechforge/produce-page.png"
+  width={1760}
+  height={620}
+  alt="The Produce page of the Speech Library listing seven lines with separate Status and Origin columns. Every Status cell reads Generated. The Origin column reads Generated for five lines and 'Recorded (revo…' for GEN_Doric_Rule and the player's line. Lengths run 2.80s to 7.20s."
+  caption="Every line here has Status 'Generated' — that is how far down the pipeline it got. Two have Origin 'Recorded' — that is where the audio came from. One column could not have said both, and the pipeline needs the second to know what it may overwrite."
+/>
 
 **Generated audio is never discarded when a line graduates to `Recorded`**,
 and a forced regeneration explicitly refuses to touch anything that is not

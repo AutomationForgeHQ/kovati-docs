@@ -19,6 +19,55 @@ Localisation is a sibling bank per language — `SB_Scene_DE` beside
   provider and the localised-bank behaviour are the paid part.
 </Callout>
 
+## The Localize page
+
+<Shot
+  src="/shots/speechforge/localize-page.png"
+  width={1760}
+  height={960}
+  alt="The Localize page of the Speech Library for SB_GeneratorBriefing. A Translator panel sets Service to DeepL and reports 'Key present. Translation is billed per character when sent.' A Languages panel explains: tick the languages to create; each becomes a sibling bank joined to this one by line id, with this bank's face banks cloned beside it; a language that already exists is updated, new and rewritten lines translate, current ones cost nothing. A scrollable tick list shows ar, bg, cs, da, de, el, en-GB, en-US, es — the row for 'de' annotated 'exists: SB_GeneratorBriefing_DE'. Below: an 'Other code' field, a 'Re-translate everything' checkbox and a greyed 'Create / Update Localized Banks' button. A 'Localized banks' panel lists one row: DE, SB_GeneratorBriefing_DE, '7 current, 0 stale, 0 missing | 7 with audio', 'faces: FB_GeneratorBriefing_Astronaut_Skeleton_DE, FB_GeneratorBriefing_DE', and an Open button."
+  caption="One tick per language, and the page states the whole contract above the list: a sibling bank joined by line id, the face banks cloned beside it, and re-running costing nothing for lines that have not changed."
+/>
+
+Three facts in that capture are worth reading off it directly.
+
+**A language you already have is annotated rather than hidden.** `de` shows
+*"exists: SB_GeneratorBriefing_DE"*, so ticking it again is an update, not a
+duplicate — and the panel says what updating means: *"new and rewritten lines
+translate, current ones cost nothing."*
+
+**The faces come too.** The localised row names **two** cloned face banks,
+because this scene has two character standards. Cloning is structural — same
+solver, skeleton, mapping, vocabulary and slot, with output under a
+per-language folder so a German bake can never overwrite an English one.
+
+**The count is four numbers, not one.** *7 current, 0 stale, 0 missing — 7
+with audio* answers four separate questions: translated and up to date,
+translated but the English moved underneath it, never translated at all, and
+has a voice. A single percentage would collapse all four into a number you
+could not act on.
+
+## A translated bank is the same seven lines
+
+<Shot
+  src="/shots/speechforge/localized-bank-de.png"
+  width={2300}
+  height={620}
+  alt="The Produce page showing bank SB_GeneratorBriefing_DE. The same seven line ids as the English bank — GEN_Doric_Report, GEN_Renk_Relays, GEN_Astro_Offer, GEN_Doric_Rule, GEN_Renk_Beacon, GEN_Astro_Copy, DLG_GeneratorBriefing_Play… — now carrying German text such as 'Gestern Abend ist der Strom wieder ausgefallen' and 'Verstanden. Zehn Minuten. Halte den Kaffee warm.' The Voice column still names Roger, Callum, Will and Lily. Status reads Generated for every line, with '(words unverified)' added on two. Origin reads Generated for five and 'Recorded (dubbed, r…' for the two that were performances. Lengths differ from the English: 5.12s, 9.52s, 6.64s, 5.57s, 4.80s, 4.24s, 6.73s. The buttons at the foot are Generate Selected, Generate All, Dub from Source and Re-generate Selected."
+  caption="Same ids, same cast, different words — and a button the English bank does not have. Note the lengths: German runs longer than English on almost every line, which is a fact your subtitle and cinematic timing has to survive."
+/>
+
+<Callout type="info">
+  **The Produce page grows a button on a localised bank: *Dub from Source*.**
+  It is there because a sibling bank has something a source bank does not — an
+  original recording to carry across — and the two lines whose origin reads
+  *"Recorded (dubbed, revoiced)"* took that route rather than being spoken
+  afresh by a synthesiser.
+
+  *Generate All* on this bank splits the two automatically, per line, according
+  to what the English source actually was.
+</Callout>
+
 ## A translated line keeps its id
 
 <Callout type="warn">

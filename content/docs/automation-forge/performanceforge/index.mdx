@@ -15,7 +15,52 @@ alone, or voice and video — and files every take with a manifest.
   [distribution](/docs/automation-forge/distribution#a-toolset-beside-a-paid-plugin-is-still-open).
 </Callout>
 
+<YouTube
+  id="inOefpBHXcA"
+  title="SpeechForge, PerformanceForge and FaceForge: one dialogue pipeline"
+  caption="PerformanceForge in context — the video covers all three plugins, because a recorded take is one route through the same pipeline."
+/>
+
+<Callout type="info">
+  PerformanceForge is the middle third of
+  [the dialogue pipeline](/docs/automation-forge/dialogue-pipeline): the lines
+  come from SpeechForge, and the video goes to FaceForge. It links against
+  neither.
+</Callout>
+
 <SetMembers set="performanceforge" />
+
+## The panel
+
+Two pages: **Record**, the teleprompter, and **Session**, the ledger.
+
+<Shot
+  src="/shots/performanceforge/record-page.png"
+  width={2010}
+  height={1240}
+  alt="The Performance Capture panel on its Record page. A header reads 'Line 1 of 2 - Player' with Skip Line and End Session buttons, the line 'I'll leave you now, it's been a pleasure!' in large type, and '0 finished'. Microphone is set to 'Microphone (HD Pro Webcam C920)' and Camera to 'Integrated Camera', with Camera on ticked. A large live webcam preview shows a man framed head and shoulders against a pale wall. Below: a Level meter with a Mirror tick-box, a Slate field prompting 'What this take is - a line id, a scene, a name', a status line reading 'Ready: voice and video onto one take clock.' and a blue Record button. A Takes list at the foot shows two takes with columns Take, When, Audio and Video: 6.70s at 48000 Hz with 201 frames at 30.0 fps, and 5.53s at 48000 Hz with 166 frames at 30.1 fps."
+  caption="The line to perform in large type, the devices above it, and the take ledger below. 'Ready: voice and video onto one take clock' is the mode stated rather than inferred — pick no camera and the same sentence says voice only."
+/>
+
+<Callout type="info">
+  **Read the Video column, not the frame-rate setting.** One take reports
+  *30.0 fps* and the other *30.1 fps*, from the same webcam minutes apart.
+  Those are measurements from the take clock, not a nominal figure — which is
+  exactly why the solve that consumes them stays in sync.
+</Callout>
+
+## The asset
+
+A session is an asset, made from **Content Browser ▸ right-click ▸ Automation
+Forge ▸ PerformanceForge**:
+
+<Shot
+  src="/shots/performanceforge/create-menu.png"
+  width={676}
+  height={331}
+  alt="The Content Browser create menu cascading three levels. Automation Forge is highlighted among engine categories. The second column lists FaceForge, MeshForge, MontageForge, MotionForge, PerformanceForge, SpeechForge and SurfaceForge, with PerformanceForge highlighted. The third column, headed PERFORMANCEFORGE, offers a single entry: Recording Session."
+  caption="One entry, and you will rarely use it — Plan Session on the Speech Library's Perform page makes the same asset with the lines already in it. It is here because a session is a document, and documents are things you can make."
+/>
 
 ## Why this exists
 

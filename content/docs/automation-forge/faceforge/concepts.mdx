@@ -12,6 +12,18 @@ A **face bank** holds clips. A **clip** is one line's facial animation: its
 audio, its solved curves (in layers), its status and origin, and what it bakes
 to.
 
+Both are made from **Content Browser ▸ right-click ▸ Automation Forge ▸
+FaceForge**, though in practice a bank is usually created for you from a
+selection of speech lines:
+
+<Shot
+  src="/shots/faceforge/create-menu.png"
+  width={649}
+  height={322}
+  alt="The Content Browser create menu cascading three levels. Automation Forge is highlighted among engine categories such as Animation, Artificial Intelligence and Audio. The second column lists FaceForge, MeshForge, MontageForge, MotionForge, PerformanceForge, SpeechForge and SurfaceForge, with FaceForge highlighted. The third column, headed FACEFORGE, offers Curve Mapping and Face Bank."
+  caption="Two entries, and the first one is the interesting one: a Curve Mapping is an asset because the translation between a solver's vocabulary and a rig's is data you tune, not code you ship."
+/>
+
 A face bank claims a speech bank, and **the face bank's language is the
 language of the speech bank it claims** — not a field of its own. Localised
 siblings are matched by language first and clip id second.
@@ -46,6 +58,49 @@ than in whatever framework is playing the result.
 A clip list showing status, origin, layers and staleness, plus a **live
 preview stage** with solve, merge and bake controls and an orbit-or-free
 camera.
+
+<Shot
+  src="/shots/faceforge/face-bank-panel.png"
+  width={2560}
+  height={1150}
+  alt="The Face Bank panel on FB_GeneratorBriefing. The clip list has columns Clip, Speaker, Audio, Status, Origin, Layers and 'Solved from', listing five clips — GEN_Renk_Relays, GEN_Astro_Offer, GEN_Renk_Beacon, GEN_Astro_Copy and the selected DLG_GeneratorBriefing_Play… — all Baked and Generated. The first four have 0 layers and an empty 'Solved from'; the selected one reads 'Video + Mouth' and 'video PF_Player_DLG_Gener…'. On the right a preview stage renders a MetaHuman head and shoulders outdoors, with a Preview mesh picker reading SKM_Vivian_FaceMesh and Voice and Orbit tick-boxes. A transport bar reads 0.35 / 6.67 s. Below, a read-only Clip details panel shows Clip Id, Audio, Source Audio Hash and Speaker Id. A 'To the game' row offers Apply Faces to Dialogue and Apply Voice and Faces to Dialogue; the foot carries Solve Bank, Merge Layers, Correct in Sequencer, Snapshot Correction and Bake Bank."
+  caption="Four clips solved from audio alone, and one built from two layers — a video solve carrying the acting with a mouth pass over it. The 'Solved from' column names the source take and its frame count, so a clip can say where its performance came from months later."
+/>
+
+<Callout type="info">
+  **The preview mesh follows the selected clip's speaker.** Selecting the
+  player's line swapped this stage to her face mesh, because the
+  [speaker sheet names a Face Mesh](/docs/automation-forge/speechforge/casting#the-speaker-sheet).
+  You are looking at the character who says that line, not at a generic head.
+</Callout>
+
+### One bank is one character standard
+
+A second character in the same scene means a second bank over the same audio
+— which costs a re-bake, not a re-solve.
+
+<Shot
+  src="/shots/faceforge/face-bank-astronaut.png"
+  width={2560}
+  height={1150}
+  alt="The Face Bank panel on FB_GeneratorBriefing_Astronaut_Skeleton. Only two clips are listed, GEN_Doric_Report and the selected GEN_Doric_Rule, both spoken by Astronaut and both Baked and Generated; the selected one has 'Video + Mouth' layers and is solved from video PF_Astronaut_GEN_D… The Preview mesh picker reads Astronaut.Astronaut and the stage renders a full Character Creator astronaut figure in a grey suit, mid-speech with the mouth open. The transport reads 1.92 / 5.50 s. Correct in Sequencer and Snapshot Correction are greyed out."
+  caption="The same scene's other two lines, on a Character Creator 5 character rather than a MetaHuman. Same solve pipeline, different skeleton and different bank — and the preview happens to show the whole body here because that is the mesh this bank names."
+/>
+
+<Callout type="warn">
+  **Correct in Sequencer is greyed out on this clip, and the reason is
+  vocabulary, not character.** Its tooltip says it plainly:
+
+  > Open the selected clip on the face board in Sequencer: the solve on a base
+  > section, an additive section on top for hand keys. Re-running refreshes the
+  > base and keeps the keys. **Needs a clip solved in the MetaHuman face-board
+  > vocabulary.**
+
+  The other clip in this same Character Creator bank — solved from audio — can
+  be corrected. This one cannot, because its curves came from a video solve in
+  a different vocabulary. See
+  [vocabularies](/docs/automation-forge/faceforge/vocabularies).
+</Callout>
 
 Sibling plugins add "to the game" buttons through a tagged discovery seam —
 no edit to FaceForge, no dependency either way. That is how a framework

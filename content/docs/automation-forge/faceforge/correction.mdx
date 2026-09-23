@@ -17,10 +17,30 @@ regenerating. FaceForge does not make you take that bargain.
 
 ### Create the correction sequence
 
-`CreateFaceCorrectionSequence` builds a Level Sequence with:
+`CreateFaceCorrectionSequence` — or **Correct in Sequencer** on the Face Bank
+panel — builds a Level Sequence with:
 
-- the solve keyed on an **absolute base section**, and
+- the character's face mesh and the clip's audio,
+- the merged solve keyed on an **absolute base section**, and
 - an empty **additive section** on top.
+
+<Shot
+  src="/shots/faceforge/correction-editor.png"
+  width={1915}
+  height={1036}
+  alt="The Unreal editor in Animation Mode with LS_Face_GEN_Astro_Offer open. The viewport shows a MetaHuman head and shoulders selected with an orange outline, surrounded by the dotted control shapes of the face board rig. An Anim Outliner on the right lists SKM_MH_Demo_Person_2_FaceMesh, then Face_ControlBoard_CtrlRig, then controls CTRL_C_eyesAim, CTRL_L_eyeAim, CTRL_R_eyeAim, FRM_convergenceGUI, CTRL_convergenceSwitch, MH_FACIAL_BOARD and CTRL_C_jaw. At the bottom, Sequencer shows the audio track SW_GEN_Astro_Offer with its waveform, the SKM_MH_Demo_Per binding, and two stacked Face_ControlBoard sections — one dense with keys on every frame, one empty below it — above rows of CTRL channels."
+  caption="An ordinary Sequencer session with an ordinary control rig. The face board is the same one a MetaHuman animator already uses; nothing here is a FaceForge-specific editor, which is the point — the animator does not have to learn a new tool to fix a mouth."
+/>
+
+The two stacked sections are the whole mechanism:
+
+<Shot
+  src="/shots/faceforge/correction-sequence.png"
+  width={1316}
+  height={522}
+  alt="A close view of the Sequencer panel for LS_Face_GEN_Astro_Offer at 30 fps. The track list shows an unnamed audio track, the SKM_MH_Demo_Per binding, and three nested Face_ControlBoard rows above a column of CTRL channels. In the timeline, the audio section SW_GEN_Astro_Offer carries a speech waveform across roughly 200 frames; below it sits a section whose key row is dense with keys on every single frame, and beneath that a second, green-outlined section holding none."
+  caption="The keyed section is the solve, written on every frame. The empty one below it is where the animator works. A re-solve rewrites the first and never touches the second — which is the entire trick."
+/>
 
 </Step>
 
@@ -66,6 +86,21 @@ underneath it and the difference still means what it meant.
   This only works because the correction is genuinely additive. An animator
   who rebuilds a curve absolutely, rather than offsetting it, has authored a
   new solve — and that graduates, correctly.
+</Callout>
+
+## It needs the board vocabulary
+
+<Callout type="warn">
+  **The correction round trip only works on a clip solved in the MetaHuman
+  face-board vocabulary**, because the sequence it builds is that board. The
+  Face Bank panel greys *Correct in Sequencer* out otherwise and says so in its
+  tooltip.
+
+  In practice that means an audio solve can be corrected this way and a
+  **video solve cannot** — not because the character is wrong, but because its
+  curves are in a different control set. The two clips in the same bank behave
+  differently, which looks arbitrary until you know what the button is
+  actually asking for.
 </Callout>
 
 ## Corrective as a layer

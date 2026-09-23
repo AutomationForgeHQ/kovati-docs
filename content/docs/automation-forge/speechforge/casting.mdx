@@ -19,15 +19,42 @@ speaker owns follows**.
 
 ## The speaker sheet
 
-- **SpeakerId** — searchable in the asset registry, so resolution is a tag
-  lookup rather than a scan.
-- **DisplayName**.
-- **Description** — casting notes. Genuinely used: this is what a director
-  reads when choosing a voice.
-- **VoiceProfile** — the reference.
-- **External bindings** — a map from a framework name to an asset path, so a
-  speaker can point at your dialogue system's own character definition
-  without SpeechForge knowing what that is.
+Four sections, and the third one does more work than its size suggests.
+
+<Shot
+  src="/shots/speechforge/speaker-sheet.png"
+  width={1398}
+  height={984}
+  alt="The SP_Doric asset open in its own editor, headed 'Asset Type: Speech Speaker'. An Identity section holds Speaker Id 'Doric', Display Name 'Emil Doric' and an empty Description. A Voice section holds Voice Profile VP_Will___Relaxed_Optimist. A Rig section holds Rig Target Face_Archetype_Skeleton and Face Mesh SKM_MH_Demo_Person_2_FaceMesh, each with an asset thumbnail. A Links section holds External Bindings: one map element keyed 'NarrativePro' pointing at NPC_Doric."
+  caption="One character, described once. The Voice section is what SpeechForge reads, the Rig section is what FaceForge reads, and the Links section is what the dialogue system reads — three plugins answered by one asset nobody has to keep in step."
+/>
+
+| Section | Field | What it decides |
+|---|---|---|
+| **Identity** | `SpeakerId` | The handle. Searchable in the asset registry, so resolution is a tag lookup rather than a scan |
+| | `DisplayName` | What a person reads |
+| | `Description` | Casting notes. Genuinely used — this is what a director reads when choosing a voice |
+| **Voice** | `VoiceProfile` | The reference to an instrument |
+| **Rig** | `RigTarget` | The skeleton this character's face is animated on |
+| | `FaceMesh` | The head itself — used for preview and for coverage checking |
+| **Links** | `ExternalBindings` | A map from a framework name to an asset path |
+
+<Callout type="info">
+  **The Rig section is why a scene with two character standards sorts itself
+  out.** The
+  [Perform page](/docs/automation-forge/dialogue-pipeline#perform--where-the-three-plugins-meet)
+  prints a Rig per line and routes each to the face bank that bakes against
+  that skeleton — and it knows which is which because the speaker sheet said
+  so. Nobody assigns lines to face banks by hand.
+
+  It is also what makes the Face Bank panel's preview swap character when you
+  select a different speaker's clip.
+</Callout>
+
+External bindings let a speaker point at your dialogue system's own character
+definition **without SpeechForge knowing what that is**: the key is a
+framework name you choose, the value is any asset path. In the capture above,
+`NarrativePro → NPC_Doric` is what the Cast page's *Links* column counts.
 
 **The set of speaker assets is the cast list.** There is no separate list, so
 there is nothing to fall out of step.
@@ -43,17 +70,46 @@ you open it.
 
 ## The Cast page
 
-Three things side by side:
+Three things side by side.
+
+<Shot
+  src="/shots/speechforge/cast-page.png"
+  width={1760}
+  height={790}
+  alt="The Cast page of the Speech Library. On the left, 'The cast' with a Show all speakers checkbox and a New speaker id field: four rows — Dorian Smith, Emil Doric, Ivo Renk and Player, each marked 'in scene' — with columns Voice, Lines, Links and an Open button. The three NPCs each have 2 lines and 1 link; Player has 1 line and a dash. On the right, 'Voice profiles - reusable, provider-agnostic' lists Callum - Husky Trickster, Lily - Velvety Actress, Roger - Laid-Back Casual Resonant and Will - Relaxed Optimist, each tagged (ElevenLabs, 1 speaker) with a play button, Assign and Open. Below, 'Browse provider voices' with an ElevenLabs picker and a Fetch Voices button, and explanatory text about the ElevenLabs Voice Library. A line at the foot reads: No casting notes on the sheet yet - Open to add some."
+  caption="The cast on the left, the instruments on the right, and the vendor's catalogue underneath them. '(ElevenLabs, 1 speaker)' is the used-by count answering the question a profile list otherwise raises: is anyone actually using this?"
+/>
 
 - **The cast list** — sorted by who appears in the scene, with *create sheet*
   offered for any speaker id that lines reference but no sheet exists for.
+  **· in scene** marks a speaker this bank's lines actually reference;
+  *Show all speakers* widens it to every sheet in the project.
 - **The profiles** — each with *used by*, and *Assign*.
 - **A provider browser** — the vendor's own voice library, with *Save as
-  Profile* and *Cast in one step*.
+  Profile* and *Cast* in one step.
 
 That last one is the path most people take: find a voice you like in the
 vendor's library, and cast it onto a speaker in one action rather than
 creating a profile, naming it, and then assigning it.
+
+<Shot
+  src="/shots/speechforge/cast-provider-voices.png"
+  width={1900}
+  height={900}
+  alt="The Cast page after pressing Fetch Voices. Under 'Browse provider voices' a line reads '21 voice(s) on the account.', followed by guidance: browse the ElevenLabs Voice Library and press Add on any voice — it lands in My Voices and appears here after Fetch; designing a voice from a description or cloning one from recordings lives in the same app, under Voices. A link reads 'Add voices on ElevenLabs'. Beneath, a list of stock voices — Roger, Sarah, Laura, Charlie, George, Callum, River, Harry, Liam — each marked (stock) with a play button, a Save as Profile button and a Cast button."
+  caption="Twenty-one voices on this account, each with three things you can do to it: hear it, keep it as a profile, or give it straight to the selected speaker. The page also says plainly where voices come from, because 'why is my new voice not here' is otherwise a support question."
+/>
+
+<Callout type="info">
+  **Two buttons, and the difference is whether you will use the voice twice.**
+  *Save as Profile* creates a `VP_` asset you can assign to several speakers
+  and recast later in one place. *Cast* skips that and gives the voice to the
+  selected speaker directly.
+
+  Prefer the profile for anyone with more than a line or two — recasting a
+  profile moves every speaker that references it, and recasting a speaker moves
+  only that speaker.
+</Callout>
 
 ## Adapters seed sheets
 

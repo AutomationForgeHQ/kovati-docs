@@ -6,6 +6,26 @@ plugins: [SpeechForge]
 icon: Shapes
 ---
 
+## The assets
+
+Four asset types, all made the same way: **Content Browser ▸ right-click ▸
+Automation Forge ▸ SpeechForge**.
+
+<Shot
+  src="/shots/speechforge/create-menu.png"
+  width={714}
+  height={349}
+  alt="The Content Browser create menu cascading three levels. Automation Forge is highlighted among engine categories such as Animation, Audio, Blueprint and Cinematics. The second column lists FaceForge, MeshForge, MontageForge, MotionForge, PerformanceForge, SpeechForge and SurfaceForge, with SpeechForge highlighted. The third column, headed SPEECHFORGE, offers Speaker, Speech Bank, Speech Line and Voice Profile."
+  caption="Four entries, and in practice you make two of them by hand. Speech Banks and Speakers get created for you by harvesting a dialogue; Voice Profiles get created by the Cast page's Save as Profile."
+/>
+
+| Asset | What it is |
+|---|---|
+| **Speech Bank** (`SB_`) | Many lines, one scene |
+| **Speech Line** | A single line as its own asset |
+| **Speaker** (`SP_`) | Who is speaking — see [casting](/docs/automation-forge/speechforge/casting) |
+| **Voice Profile** (`VP_`) | One voice on one provider, reusable |
+
 ## Two asset shapes, one interface
 
 A **Speech Bank** holds many lines. A single-line asset holds one. Both sit
@@ -31,7 +51,7 @@ lookup **all key off it**.
 
 ## The Speech Library
 
-**Tools ▸ Speech Library**, under the menu's *Automation Forge* heading — five pages behind one switcher:
+**Tools ▸ Speech Library**, under the menu's *Automation Forge* heading — six pages behind one switcher:
 
 | Page | What it is for |
 |---|---|
@@ -40,6 +60,19 @@ lookup **all key off it**.
 | **Write** | The lines: text, direction, speaker, per-line voice override |
 | **Produce** | The pipeline table, the estimate, and Generate |
 | **Perform** | Carrying generated audio onward |
+| **Localize** | A sibling bank per language — see [localisation](/docs/automation-forge/speechforge/localisation) |
+
+<Shot
+  src="/shots/speechforge/write-page.png"
+  width={1760}
+  height={580}
+  alt="The Speech Library window on its Write page. A Bank picker at the top reads SB_GeneratorBriefing, beside Refresh. Below it a switcher shows six pages — Ingest, Cast, Write, Produce, Perform, Localize — with Write selected. A table lists seven lines with columns Line, Speaker, Text, Direction and Voice: GEN_Doric_Report through DLG_GeneratorBriefing_Pla..., spoken by Astronaut, Renk, Doric and Player, in the voices Roger, Callum, Will and Lily. Delete Selected and Clear All Lines sit at the foot."
+  caption="One window, one bank, six pages. The switcher is the pipeline: everything left of the current page has already happened, everything right of it has not."
+/>
+
+The bank picker at the top is the only global state. Every page below it is
+about the bank named there — which is why switching to a localised sibling
+changes what the pages offer rather than opening a second window.
 
 ### Sibling plugins add buttons without editing this
 
