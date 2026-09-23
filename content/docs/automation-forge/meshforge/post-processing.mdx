@@ -63,6 +63,39 @@ A post step a person finishes in Blender.
 - The chain **waits** for *Send back to Unreal*, and a result sent later can
   still be picked up.
 
+<Shot
+  src="/shots/meshforge/blender-step.png"
+  width={664}
+  height={376}
+  alt="The 'Edit in Blender — round trip' step in Unreal, marked 'waiting…', with Run this step greyed out and a Stop waiting button beside Remove. A Blender group holds an empty Reference Meshes array, an unticked Edit Skinned Mesh, and ticked Open in Sculpt Mode and Restore Input Materials. The Input Source is set to 'A step's output — choose the step and the run', resolved below by two pickers reading From step 'Mesh stage (Source Mesh: SM_CC5_…)' and Run 'The Source Mesh'. A line at the foot reads 'Wait for the current job to finish.'"
+  caption="The step in its waiting state: Unreal has handed the mesh over and is holding the chain open. 'Stop waiting' is the way out that does not require Blender to cooperate — close Blender without sending, and the step is still yours to abandon."
+/>
+
+<Callout type="info">
+  The **From step / Run** pickers under Input Source are the *"a step's
+  output"* case made concrete: not just which step, but **which run of it**.
+  That is what lets you send the third attempt to Blender rather than
+  whichever ran last.
+</Callout>
+
+Blender opens on the mesh, in Sculpt Mode if the step asked for it:
+
+<Shot
+  src="/shots/meshforge/blender-sculpt.png"
+  width={2559}
+  height={1528}
+  alt="Blender 5.2 LTS in Sculpt Mode, showing a grey shirt mesh named SM_CC5_Shirt_Source with a brush cursor on its shoulder. The outliner lists the shirt alongside a separate 'MeshForge References' collection. A vertical tab strip on the right of the viewport carries the usual Item, Tool, View and Animation tabs plus one labelled MeshForge."
+  caption="An ordinary Blender session, opened on the mesh with its own collection for references. The extra sidebar tab is the only thing MeshForge adds — everything else is Blender as the artist already knows it."
+/>
+
+<Shot
+  src="/shots/meshforge/blender-panel.png"
+  width={592}
+  height={669}
+  alt="The MeshForge sidebar tab open in Blender. It names the definition MSD_TestCharacter, states '6911 vertices when opened', and offers two buttons: 'Send back to Unreal' and 'Cancel the edit'. Beneath them a note reads: keep topology if the mesh will be retextured or morph-baked later."
+  caption="'6911 vertices when opened' is the number the write-back is checked against. The note underneath is the reason it matters: a retexture or a morph bake both need the topology they were built on, so changing it here breaks something later rather than now."
+/>
+
 With **Edit skinned mesh** it works on a skeletal mesh and brings back a copy
 of the same asset with its vertices moved — **skeleton, weights, morph targets
 and materials untouched.**
