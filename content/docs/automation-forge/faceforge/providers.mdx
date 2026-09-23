@@ -1,0 +1,119 @@
+---
+title: Providers
+description: The engine's own solver, and NVIDIA Audio2Face-3D.
+status: shipped
+plugins: [FaceForgeMetaHuman, FaceForgeACE]
+icon: Plug
+---
+
+| | Engine solver | Audio2Face-3D |
+|---|---|---|
+| **Runs** | In-process, CPU | A container on your GPU, or a rented one |
+| **Cost** | Free | Free beyond hardware |
+| **Emits** | 81 MetaHuman board curves | ARKit-52 natively |
+| **Deterministic** | **Yes** | — |
+| **Emotion** | Read from audio | Read from audio **and** taken as explicit input |
+| **Head pose** | Optional track | — |
+| **Licence tier** | Open source | Free, closed source |
+
+## The engine's own solver
+
+Registers UE 5.8's audio-driven animation solver with FaceForge as a free,
+local, offline provider. Audio in, 81 MetaHuman face-board control curves out,
+plus an optional head-pose track.
+
+**Despite the name, no MetaHuman asset is required anywhere.** The solver is a
+pure function from audio to named floats; only the vocabulary those names are
+in is MetaHuman-specific.
+
+### Deterministic, and why that matters
+
+Same audio and settings give the same curves.
+
+That makes the clip's content hash **a real cache key rather than an
+approximation** — a genuine difference from hosted speech-model solvers, where
+identical input can produce a slightly different solve and every clip
+therefore reads as changed.
+
+Two ONNX models ship with the engine: a Whisper-derived audio encoder of about
+91 MB, and an animation model. `FaceForge.ReleaseModels` drops them — about
+310 MB.
+
+It ships a second module for video-driven solving, which is not audio-driven
+at all.
+
+## NVIDIA Audio2Face-3D
+
+Runs in a container on your own GPU or a rented one.
+
+**The plugin links nothing vendor-specific** — no CUDA, no TensorRT, no SDK.
+Everything GPU-bound lives in the container, which the plugin builds and
+drives over HTTP.
+
+<Callout type="info">
+  That is also what lets **a team of laptops solve against one workstation**
+  with a real card. The container is a network service; the machine running
+  the editor needs nothing but the ability to make a request.
+</Callout>
+
+### ARKit-52 natively
+
+No mapping at all for authored, CC5, Reallusion, Daz or Ready Player Me heads.
+
+A MetaHuman still needs a conversion — see
+[vocabularies](/docs/automation-forge/faceforge/vocabularies#driving-a-metahuman).
+
+### Emotion as an input
+
+Ten named emotions, mixed, taken as an **explicit input** alongside whatever
+the audio reads.
+
+That is the substantive difference from the in-engine solver, which reads
+emotion passively. When a line needs to be delivered angrily and the words do
+not carry it, this is the control that exists.
+
+### Licensing, precisely
+
+- The four lip-sync models are **ungated and baked into the image**, under
+  NVIDIA's Open Model License.
+- Only the optional emotion *detector* is gated, and it is excluded from the
+  default image.
+
+So the common path needs no grant. Only the optional extra does.
+
+### First run builds an engine
+
+The TensorRT engine is treated as first-class per-GPU-architecture,
+per-TensorRT-version state: built on first use onto a persistent volume.
+
+Measured at about 40 seconds on an RTX 5080, against the model metadata's own
+150-second estimate — and reported as **`preparing` rather than as a hang**,
+which is the difference between waiting and restarting.
+
+### The process stays resident
+
+The solver stays up across clips rather than spinning up per request.
+
+That was measured, not assumed: a fresh process per clip made this provider
+**slower than the CPU in-engine solver**.
+
+## Measuring solve speed honestly
+
+<Callout type="warn">
+  **A measurement names its route.** A face-solve ratio measured end to end
+  against a GPU provider is not the figure for the local CPU route — the
+  latter is roughly 1:2, the former roughly 1:4 under its own conditions.
+
+  Quoting one against the other's description is the defect, even though both
+  numbers are real.
+</Callout>
+
+## Gated models need access, not just a key
+
+Where a route does need a gated model, remember that **a token is not a
+grant**. Access is requested from the model's own page, approved by a human at
+the vendor, and can take days.
+
+`FaceForge.Providers` lists solvers and says whether each is ready — **and why
+not** — which is the fastest way to find out you are waiting on an approval
+rather than a bug.

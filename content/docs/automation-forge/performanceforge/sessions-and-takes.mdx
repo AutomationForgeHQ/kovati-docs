@@ -1,0 +1,101 @@
+---
+title: Sessions and takes
+description: The teleprompter, the ledger, and the two dials that replace two products.
+status: shipped
+plugins: [PerformanceForge]
+icon: ListChecks
+---
+
+## A session is two dials, not two products
+
+The temptation was to ship "solo mode" and "production mode". Instead, a
+session asset carries **two independent dials**:
+
+| Dial | What it decides |
+|---|---|
+| **Save takes** | Whether every take is kept, or latest wins |
+| **Process immediately** | Whether the finisher runs on stop, or waits for a choice |
+
+Two actions set them for you:
+
+- **Record Selected…** auto-creates an ad-hoc session defaulted to solo
+  behaviour: latest wins, process immediately.
+- **Plan Session…** creates a planned one: every take kept, nothing processed
+  until a take is chosen.
+
+<Callout type="info">
+  Two dials rather than two modes means the in-between cases exist. "Keep
+  every take *and* process immediately" is a real way to work — you want the
+  result now and the options later — and a two-product design would have made
+  it unreachable.
+</Callout>
+
+## The teleprompter
+
+Lines queued from elsewhere — today, the
+[Speech Library](/docs/automation-forge/speechforge/concepts#the-speech-library)
+— turn the panel into a line-by-line flow.
+
+Stopping a take runs **the finisher**: convert the voice, apply it to the
+line, solve the video into the face clip's layer, merge and bake.
+
+Every one of those steps is a call into a sibling plugin's toolset, **invoked
+by name through reflection**. So:
+
+- A missing plugin is a **missing step with a reason**, not a crash and not a
+  link error.
+- The finisher works with any subset installed.
+- PerformanceForge links against none of them.
+
+## The Session page — the ledger
+
+A job's lines with state and take counts, per-line take lists with play and
+**Choose**, and playback of the take under review.
+
+Playback decodes frames **one at a time into a single reused texture**, on
+their own measured timing, with audio. That is a deliberate constraint against
+cache pressure — a take of a few hundred 720p JPEGs would otherwise be
+hundreds of megabytes of textures.
+
+### Generate Take
+
+Adds a **detached synthesis candidate** to a line's ledger **without touching
+the line**.
+
+That is the quietly important one. It means a director reviewing four recorded
+takes can put a synthesised option beside them, compare, and choose — without
+the act of generating having already changed what the game plays.
+
+A candidate that is not chosen changes nothing. That is
+[keep options, make choices visible](/docs/company/manifesto) as a concrete
+mechanism rather than a slogan.
+
+## Take folders
+
+```
+Forge/Library/Performance/Takes/PF_<slate>_<stamp>/
+```
+
+Inside: the WAV master, the JPEG frames named by media-clock ticks, and
+`take_manifest.json` **written last**.
+
+The manifest being written last is the completeness protocol. A take folder
+without one is an interrupted recording, and nothing downstream has to guess.
+
+## Session assets
+
+`PS_` assets have a factory, so **double-clicking one opens the capture panel
+on that session** rather than a generic details view.
+
+Small thing; it is the difference between a session being a document you work
+in and a struct you inspect.
+
+## Settings
+
+| Where | What |
+|---|---|
+| *Editor Preferences ▸ Automation Forge ▸ PerformanceForge Devices* | The device choice — per user, per machine |
+| *Project Settings ▸ Automation Forge ▸ PerformanceForge* | The take folder path |
+
+Device choice being per-machine rather than per-project is the correct tier:
+your microphone is not a property of the game.

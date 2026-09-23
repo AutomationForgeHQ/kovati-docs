@@ -1,0 +1,92 @@
+---
+title: Localisation
+description: A bank per language, dubbing, and why a translated line keeps its id.
+status: shipped
+plugins: [SpeechForgeDeepL]
+icon: Languages
+---
+
+Localisation is a sibling bank per language — `SB_Scene_DE` beside
+`SB_Scene` — **joined by line id**.
+
+<Callout type="info">
+  **Paid.** Localisation is production-layer work, the same tier as
+  [PerformanceForge](/docs/automation-forge/performanceforge) and
+  [the garment pipeline](/docs/automation-forge/meshforge/garment).
+
+  The translation *seam* is in the open core, and it ships a keyless `Pseudo`
+  provider, so the pipeline can be exercised with no account. The DeepL
+  provider and the localised-bank behaviour are the paid part.
+</Callout>
+
+## A translated line keeps its id
+
+<Callout type="warn">
+  **Never suffix a line id with its language.** A localised line is a new asset
+  with the *same* id. That is the design, not a bug.
+</Callout>
+
+The id is the join that makes a bank-per-language work at all. The staleness
+hash, the dialogue node lookup, the source-to-translation pairing and the
+runtime's "same line, other culture" all key off it.
+
+Suffixing it would reintroduce the mapping table that per-language banks were
+invented to delete.
+
+**The contract instead: identity is (container, line id), and the container
+carries the language.**
+
+This was decided the day a Spanish bank's Perform tab listed six face banks
+and offered an English mouth for Spanish words. A face bank's language is the
+language of the speech bank it claims.
+
+## Localised banks follow the performance
+
+The problem this solves: a fresh localised bank used to read every line's
+origin as `Generated`, so *Generate All* paid for text-to-speech on lines
+whose English source was a **recorded performance** — throwing away the acting
+and paying for the privilege.
+
+Now:
+
+- **Generate All splits** text-to-speech from dubbing, per line, according to
+  what the source actually was.
+- A line whose source is a performance is **dubbed**, carrying the
+  performance into the other language rather than re-synthesising it.
+- Cloned face banks are pointed at their audio rather than sitting empty until
+  somebody remembers to press Create/Update Face Bank.
+- A dubbed line's face **copies the performance's layers** under the dubbed
+  mouth, instead of solving from audio alone and losing the captured acting.
+
+## Dubbing
+
+`DubSpeechLine` carries a recorded performance into another language through a
+provider's dubbing capability, **instead of re-synthesising**.
+
+It tracks which source recording it was dubbed from, so a later re-record of
+the original is **caught as stale** in the dub.
+
+<Callout type="warn">
+  Dubbing has its own, narrower language list than synthesis. The Localize
+  page does not yet say which languages a performance take can be dubbed into
+  versus falling back to text-to-speech. Check the provider's list before
+  planning a language.
+</Callout>
+
+## Known gaps
+
+These are open, and named because planning around them is cheaper than
+discovering them.
+
+- **Voice ↔ language validation.** Nothing yet tells a director, per speaker,
+  which languages their cast voice actually covers, or warns per ticked
+  language which speakers would fall silent. It needs a supported-languages
+  capability on the provider.
+- **Dub ↔ language validation**, as above.
+- **The L10N folder layout is superseded but not migrated.** The settled
+  target is the engine's own `/Game/L10N/<culture>/` asset mirror; today's
+  per-language folders still exist.
+- **Text identity is undecided.** Whether dialogue text gets stable `FText`
+  keys or moves into a string table is an open design question, and nothing
+  yet keeps a translation key stable across re-authoring.
+- **Text export to the Localization Dashboard** is not built.

@@ -1,0 +1,145 @@
+---
+title: SpeechForge
+description: Write a line, generate it, and get a sound wave with character-level timing attached.
+status: shipped
+plugins: [SpeechForge, SpeechForgeElevenLabs, SpeechForgeDeepL]
+icon: AudioLines
+---
+
+Write a line, generate it with a speech provider, and get a `USoundWave`
+imported into the project **with character-level timing data attached**.
+
+One pipeline end to end: resolve the voice, price it, synthesise, import,
+cache.
+
+<SetMembers set="speechforge" />
+
+## What it deliberately does not know
+
+SpeechForge knows nothing about dialogue trees, subtitles, montages, facial
+animation or any gameplay framework.
+
+Those are adapters built on top — the Narrative Pro one lives
+[outside this set](/docs/tools/narrative-pro-addons). It also ships **no
+providers itself**; each registers against it at module startup.
+
+## The screenwriter model
+
+The shape it was designed around: *any dialogue scene has speakers. Define
+them — identity, voice, provider. Then write lines and assign them to
+speakers. Then generation and performance on top.*
+
+<Steps>
+
+<Step>
+### Cast
+A **Speaker** (`SP_`) is the character sheet: an id, a display name, casting
+notes, a voice profile, and bindings out to whatever framework you use.
+
+**The set of speaker assets is the cast list.** There is no separate list to
+keep in step.
+</Step>
+
+<Step>
+### Write
+Lines, with text and direction, each assigned to a speaker — and a per-line
+voice override where one line needs something different.
+</Step>
+
+<Step>
+### Produce
+Price the selection, generate, import. The pipeline table shows what is
+current, what is stale and why.
+</Step>
+
+<Step>
+### Perform
+Take the generated audio onward — faces, body motion, and the rest.
+</Step>
+
+</Steps>
+
+A fifth page, **Ingest**, brings lines in from somewhere else.
+
+## Voice resolution walks four steps
+
+| Step | Beats |
+|---|---|
+| 1. Line override | Everything |
+| 2. Speaker sheet | The bank and project defaults |
+| 3. Bank default | The project default |
+| 4. Project default | Nothing |
+
+**Every result is stamped with which step answered.** A voice that turned out
+wrong is then a question with an answer, rather than an archaeology
+expedition.
+
+## Staleness is computed live, over the resolved request
+
+The content hash is taken over the **resolved** request — text, concrete voice
+id, model, settings, seed — rather than stored, and rather than taken over an
+asset reference.
+
+So re-pointing a voice profile somewhere else is **caught**, not silently
+missed.
+
+<Callout type="info">
+  **A hash is an answer to a question, and the staleness check must ask the
+  same question.**
+
+  Synthesis is a function of the text, so a generated line hashes its text. A
+  voice *conversion* never reads the text at all, so it hashes its source
+  audio and its voice. An early version stored a conversion hash but
+  recomputed a *text* hash to test freshness — two different questions
+  compared as one — so every converted line read as permanently stale, blaming
+  the one thing that could not have mattered.
+
+  Anywhere a hash is written down, check every place it is recomputed.
+</Callout>
+
+## Graduation has two axes
+
+Not one status, but two independent ones:
+
+| Axis | Values |
+|---|---|
+| **Status** | Where the line is in the pipeline |
+| **Origin** | Where the audio came from: `Generated`, `Accepted`, `Edited`, `Recorded` |
+
+That separation makes **"stale and already recorded"** expressible — and that
+is the one report with real money attached, because it is the list of lines
+somebody paid an actor for and then changed the script under.
+
+**Generated audio is never discarded when a line graduates to `Recorded`**,
+and a forced regeneration explicitly refuses to touch anything that is not
+`Generated`.
+
+<Callout type="info">
+  **Provenance follows the source, not the operation.** Re-voicing a
+  recording — or any audio the pipeline cannot attribute — graduates to
+  `Recorded`. Unattributable audio counts as a recording deliberately, so that
+  nothing can overwrite a performance that cannot be regenerated.
+</Callout>
+
+## Alignment
+
+Timing always comes from the provider's **timestamped** endpoint, trimmed and
+re-based so direction tags inside the sent text do not throw off subtitle
+timing.
+
+Where that re-basing cannot be trusted, the result says so with a flag rather
+than quietly shipping timings that are a few hundred milliseconds out.
+
+## Where to go next
+
+<Cards>
+  <Card title="Concepts" href="/docs/automation-forge/speechforge/concepts" description="Banks, lines, handles, takes and where audio lands." />
+  <Card title="Casting" href="/docs/automation-forge/speechforge/casting" description="Speakers, voice profiles, and the Cast page." />
+  <Card title="Providers" href="/docs/automation-forge/speechforge/providers" description="ElevenLabs, and what a provider declares about itself." />
+  <Card title="Localisation" href="/docs/automation-forge/speechforge/localisation" description="A bank per language, dubbing, and why a line keeps its id. Paid." />
+  <Card title="The toolset" href="/docs/automation-forge/speechforge/toolset" description="The whole pipeline, for an agent." />
+</Cards>
+
+## Release notes
+
+<ReleaseNotes set="speechforge" limit={6} />

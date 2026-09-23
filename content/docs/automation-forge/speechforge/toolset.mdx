@@ -1,0 +1,54 @@
+---
+title: The toolset
+description: The whole SpeechForge pipeline, exposed to an agent.
+status: shipped
+plugins: [SpeechForgeToolset]
+icon: Bot
+---
+
+SpeechForge has no toolset of its own. The sibling plugin exposes **the whole
+pipeline**, and adds nothing.
+
+Coverage: discovery, output paths, drift status, navigation, cost estimation,
+authoring, casting, localisation, takes, the generate/convert/graduate
+pipeline, and graduation itself.
+
+<SetMembers set="speechforge" />
+
+## Casting from an agent
+
+The casting tools are the ones worth knowing about, because a voice cast by an
+agent and a voice cast by a person must end up identical:
+
+- Create a voice profile, create or update a speaker, list either.
+- Set a per-line voice override, update a line.
+- **Dedupe a remote voice into a profile** — ask for a profile for a
+  provider's voice and get the existing one if there is one, rather than a
+  second profile pointing at the same voice.
+
+That last one exists because an agent casting forty speakers from a vendor
+library will otherwise create forty profiles for the eight voices it actually
+used.
+
+## Migration is a tool, not a redirect
+
+When the casting model changed, the old assets were **deleted and the data
+migrated live through the toolset** rather than carried forward on redirects.
+
+That is the general rule here: redirects are migration scaffolding. Bake them
+in by resaving, then delete them. A project carrying redirects for a rename
+that happened months ago is carrying a liability nobody remembers.
+
+## What an agent may not do
+
+- **Write a credential.** It can report whether one is present and where it
+  was read from.
+- **Overwrite a recording.** A forced regeneration refuses anything whose
+  origin is not `Generated`, and the refusal says which.
+
+The second one is the whole point of
+[the two-axis graduation model](/docs/automation-forge/speechforge#graduation-has-two-axes).
+An agent asked to "regenerate everything stale" must not be able to destroy a
+line an actor recorded.
+
+<ReleaseNotes plugin="SpeechForgeToolset" limit={3} />

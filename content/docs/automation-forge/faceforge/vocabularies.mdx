@@ -1,0 +1,87 @@
+---
+title: Vocabularies
+description: Why a curve-name mismatch is made inexpressible rather than merely unlikely.
+status: shipped
+plugins: [FaceForge]
+icon: Type
+---
+
+A face solver produces named floats. A character's face consumes named floats.
+If the names do not match, **the curves import cleanly, evaluate to zero, and
+animate nothing — with no warning at all.**
+
+That failure is silent, plausible-looking, and expensive. So vocabularies are
+a type here, not a convention.
+
+## The three vocabularies
+
+| Vocabulary | What it is |
+|---|---|
+| `MetaHumanBoard` | The 81 MetaHuman face-board control curves |
+| `ARKit52` | Apple's 52 ARKit blendshapes — what most authored, CC5, Reallusion, Daz and Ready Player Me heads speak |
+| `MetaHumanRaw` | The raw control values underneath the board |
+
+Every curve set is tagged with its vocabulary, so **a mismatch is
+inexpressible** rather than merely likely.
+
+<Callout type="warn">
+  **Only 81 names are MetaHuman.** If you are writing anything that moves face
+  curves around, carry the vocabulary with them. A bare array of named floats
+  is not enough information to use safely, and treating it as though it were
+  is exactly how a face animates nothing.
+</Callout>
+
+## Two kinds of transform, and they are not interchangeable
+
+| | `UFaceCurveMapping` | A vocabulary converter |
+|---|---|---|
+| **Nature** | Lossy, tunable | Exact |
+| **Defined by** | Data — weighted sums | Code |
+| **Tuning knob** | Yes | **No** |
+| **Example** | Board → ARKit | Board → raw, via the engine's own conversion |
+
+The distinction matters when something looks wrong. A lossy mapping is
+**meant** to be adjusted — that is what the weights are for. An exact
+conversion is not, and adjusting one would only ever make it wrong.
+
+## Coverage, before you bake
+
+`DescribeBankCoverage` reports four things, and each one is a different
+problem:
+
+| Finding | What it means |
+|---|---|
+| Curves the mapping drives with **no matching morph target** | The character cannot do what the mapping is asking |
+| Morph targets the mapping **never touches** | The character can do more than the mapping uses |
+| Source controls **no rule reads** | The solve is producing output that is discarded |
+| Rule terms naming **nonexistent controls** | The mapping has a typo or is out of date |
+
+**Bake itself refuses outright** when not one curve name it is about to write
+is registered on the target skeleton. That is the last line of defence against
+the silent-zero failure — it will not write an animation that could not
+possibly play.
+
+## Driving a MetaHuman
+
+A solver emitting ARKit-52 natively needs no mapping for an ARKit-shaped head.
+**A MetaHuman still needs a conversion** — just a different one.
+
+<Callout type="warn">
+  **The MetaHuman face montage chain has four links, and all four must be
+  right.** A montage needs the correct slot **and** the correct component tag;
+  getting the slot right while the tag is wrong produces a montage that plays
+  and moves nothing.
+
+  If a face plays silently on the body mesh instead, that is the chain, not
+  the solve.
+</Callout>
+
+## A practical consequence
+
+Because the solve is vocabulary-tagged and character-agnostic, **the same
+solve dresses different characters** — the bake is where the character enters.
+
+That is also why a face bank's language is the language of the speech bank it
+claims, rather than something stored separately: identity is (container, line
+id), and the container carries the language. See
+[localisation](/docs/automation-forge/speechforge/localisation#a-translated-line-keeps-its-id).

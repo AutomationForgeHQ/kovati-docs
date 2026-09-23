@@ -1,0 +1,87 @@
+---
+title: Correction
+description: An animator's fix that survives the solve being re-run underneath it.
+status: shipped
+plugins: [FaceForge]
+icon: PenLine
+---
+
+The usual bargain with a generated face is: accept it, or fix it and give up
+regenerating. FaceForge does not make you take that bargain.
+
+## The round trip
+
+<Steps>
+
+<Step>
+
+### Create the correction sequence
+
+`CreateFaceCorrectionSequence` builds a Level Sequence with:
+
+- the solve keyed on an **absolute base section**, and
+- an empty **additive section** on top.
+
+</Step>
+
+<Step>
+
+### The animator keys the additive section only
+
+Normal Sequencer work. The base sits underneath, read-only.
+
+</Step>
+
+<Step>
+
+### Snapshot it back
+
+`SnapshotFaceCorrection` reads the additive section back as **offsets** into a
+`Corrective` layer on the clip.
+
+</Step>
+
+</Steps>
+
+Because the fix is stored as offsets in a layer rather than as edited curves,
+**the base solve can be re-run underneath it without discarding the hand
+work.**
+
+Verified live, frame-exact.
+
+## Why this is the interesting one
+
+Every other part of this family protects hand-authored work by *stopping* —
+[graduation](/docs/company/two-speed-content#graduation) means automation lets
+go of the asset entirely.
+
+That is the right default, and it has a cost: a graduated asset stops
+benefiting from improvements to the generator.
+
+The correction layer is the narrow case where you get both. The animator's
+intent is expressed as a *difference*, so a better base solve arrives
+underneath it and the difference still means what it meant.
+
+<Callout type="info">
+  This only works because the correction is genuinely additive. An animator
+  who rebuilds a curve absolutely, rather than offsetting it, has authored a
+  new solve — and that graduates, correctly.
+</Callout>
+
+## Corrective as a layer
+
+The `Corrective` layer is an ordinary
+[layer](/docs/automation-forge/faceforge#layers): it participates in the merge
+recipe, carries a weight, and can be removed.
+
+So a correction can be dialled back rather than only kept or discarded — which
+is useful when a fix made for one delivery is nearly right for another.
+
+## When a dub arrives
+
+A dubbed line's face **copies the performance's layers** under the dubbed
+mouth, rather than solving from audio alone.
+
+That is the same principle: the acting captured in the original performance is
+layered content, so it survives the mouth underneath it being replaced. See
+[localisation](/docs/automation-forge/speechforge/localisation#localised-banks-follow-the-performance).

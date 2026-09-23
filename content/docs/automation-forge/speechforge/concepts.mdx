@@ -1,0 +1,86 @@
+---
+title: Concepts
+description: Banks, lines, handles, and the Speech Library.
+status: shipped
+plugins: [SpeechForge]
+icon: Shapes
+---
+
+## Two asset shapes, one interface
+
+A **Speech Bank** holds many lines. A single-line asset holds one. Both sit
+behind the same interface and are addressed by every tool through one handle
+type.
+
+That means a tool never has to ask which shape it is looking at, and a project
+can start with loose lines and consolidate later without rewriting anything.
+
+## A line id is the naming scheme
+
+The line id is the join. The staleness hash, the dialogue node lookup, the
+source-to-translation pairing and the runtime's "same line, other culture"
+lookup **all key off it**.
+
+<Callout type="warn">
+  **Generated ids are the naming scheme, not a placeholder.** If you rename
+  ids to something more readable after generating, the audio that was filed
+  under the old id is orphaned — and a subsequent generation writes over
+  whatever now holds the new one. Decide the id scheme before you generate at
+  volume.
+</Callout>
+
+## The Speech Library
+
+**Tools ▸ Automation Forge ▸ Speech Library**, five pages behind one switcher:
+
+| Page | What it is for |
+|---|---|
+| **Ingest** | Bring lines in from somewhere else |
+| **Cast** | Speakers and voice profiles — see [casting](/docs/automation-forge/speechforge/casting) |
+| **Write** | The lines: text, direction, speaker, per-line voice override |
+| **Produce** | The pipeline table, the estimate, and Generate |
+| **Perform** | Carrying generated audio onward |
+
+### Sibling plugins add buttons without editing this
+
+The pages have a reflection-based discovery seam. A sibling plugin marks a
+function with the right metadata and its button appears — no edit to
+SpeechForge, no dependency in either direction.
+
+That is how the face and performance sets put their own actions on the Perform
+page.
+
+## Console commands
+
+There are no in-editor buttons on the settings page, because
+`CallInEditor` buttons **do not render on a developer-settings page** — a real
+engine limitation, not an oversight. So:
+
+```
+SpeechForge.CredentialStatus   # is a key available, and where is it read from
+SpeechForge.TestConnection     # one cheap authenticated call; reports tier and remaining credits
+SpeechForge.ClearKey           # forget the stored key
+```
+
+<Callout type="info">
+  `TestConnection` reporting **remaining credits** rather than just validity is
+  the useful part. "Your key works" and "you can afford this batch" are
+  different facts.
+</Callout>
+
+## Keys
+
+Declared in the plugin's machine configuration and read from the OS credential
+vault — shared with [the hub](/docs/automation-forge/hub) and the plugin's own
+settings page, so a key set in any of them is set for all.
+
+See [keys](/docs/automation-forge/keys).
+
+## Takes
+
+A generated result is a take. Takes are kept, and a provider that supports it
+can **re-fetch a past take from account history for free** rather than
+re-synthesising it.
+
+That matters more than it sounds on a metered provider: recovering a take you
+already paid for should not cost again.

@@ -1,0 +1,152 @@
+---
+title: Providers
+description: TRELLIS.2 on your own GPU, Meshy and Tripo hosted.
+status: shipped
+plugins: [MeshForgeTrellis, MeshForgeCloud]
+icon: Plug
+---
+
+| | TRELLIS.2 (local) | Meshy | Tripo |
+|---|---|---|---|
+| **Runs** | Your GPU, or one you rent | Hosted | Hosted |
+| **Cost** | Free beyond hardware | Metered, your own key | Metered, your own key |
+| **Seed** | Yes — a definition is a recipe | — | — |
+| **Input** | **One image only** | Text or images | Text, image, or up to four views |
+| **Licence tier** | Free, closed source | Free, closed source | Free, closed source |
+
+## TRELLIS.2 — local and reproducible
+
+Microsoft's TRELLIS.2 in Docker on your own GPU or a rented one. Turns a
+single reference image into a textured PBR mesh, costs nothing beyond
+hardware, and honours a seed.
+
+Code and weights are MIT licensed, **with one real asterisk**.
+
+<Callout type="warn">
+  **It conditions on a gated model.** TRELLIS.2 needs
+  `facebook/dinov3-vitl16-pretrain-lvd1689m`, which is gated under Meta's
+  licence and requires **manual approval before anything can generate**.
+
+  Worse, that grant does not currently appear on the Keys page — no mesh
+  provider declares a key-access requirement, so the page shows the shared
+  Hugging Face key without the grant it needs. This is a known gap. Request
+  access at the model's Hugging Face page; approval can take days.
+</Callout>
+
+### One image, and it says so
+
+It generates from one image and nothing else — no text prompt, no multiple
+images. MeshForge reports this as a capability, so **a prompt-only definition
+is refused with a sentence** rather than a schema error.
+
+### No mesh pipeline class
+
+TRELLIS has no mesh pipeline of its own. A definition reaches it through its
+**Provider Id** (Mesh ▸ Advanced, or the default provider), which the Stages
+tab shows as "*&lt;id&gt;* (provider settings, no pipeline)".
+
+The pipeline list therefore offers no TRELLIS mesh entry; an agent names it
+through the definition's `ProviderId`.
+
+### The quality ladder is gated by VRAM
+
+| Quality | Resolution | Measured |
+|---|---|---|
+| Draft | 512³ | — |
+| Standard | 1024³ cascade | — |
+| High | 1024³ cascade | 12.7 min cold on a 32 GB 5090; **24.7 min on 16 GB, by paging** |
+| Ultra | 1536³ | **Never seen to finish below 80 GB** |
+
+A project-level ceiling caps it once (default High), so nobody picks Ultra on a
+laptop and waits.
+
+### Containers come up on demand
+
+A stage that needs a runner takes a **lease**. The runner starts on the first
+lease — off the game thread, then polling health until it answers — and stops
+after the last is dropped: 900 s for the mesh runner, 300 s for the image
+runner.
+
+It **never stops a container it did not start**, and by default leaves runners
+up when the editor closes.
+
+A failure to get ready names one of five causes rather than saying "failed".
+
+### A separate image runner
+
+Local reference-image generation runs in its own container on its own port.
+
+The reason it is separate is measured: a High mesh that took 251 s with the
+card to itself **did not finish in 45 minutes** beside a resident image model.
+
+It offers FLUX.2 klein 4B (Apache-2.0, default, about 15 s, 8.1 GB peak) and
+SDXL 1.0.
+
+<Callout type="info">
+  A helper script decides from measured VRAM whether the two runners may share
+  the card or must take it in turn — a 9-second swap, measured on 16 GB.
+</Callout>
+
+### Blackwell (RTX 50-series)
+
+The runner probes attention kernels and pins one that works, avoiding the one
+that breaks, and reports its compiled architectures on its health endpoint.
+Set `MESHFORGE_ATTENTION_KERNEL=off` to restore default dispatch.
+
+## Meshy — hosted
+
+Four pipelines:
+
+- **Standard (high quality)** — `meshy-7.1` by default, with `meshy-7` marked
+  superseded, plus older models. **`geometry_resolution`** (standard / 2k /
+  4k) replaces the deprecated `ultra_mode`; a saved definition carrying
+  `ultra_mode` is carried to 2k on load, and 4k is refused unless the model
+  supports it with a single picture. Also image enhancement, auto-size, and a
+  multi-image switch (main picture plus up to three views).
+- **Smart lowpoly (T2)** — target polycount 100–15,000.
+- **Image (nano-banana, GPT Image)** — four models at 3 to 9 credits, with
+  pose and aspect ratio.
+- **Retexture** (a post step) — style from a description, one picture or
+  several; 2K / 4K / 8K.
+
+A definition driven by *quality alone*, with no pipeline, keeps the older
+ladder on purpose: Draft and Standard go to smart topology, High and Ultra to
+the standard model.
+
+## Tripo — hosted
+
+Five pipelines, on API v3:
+
+- **Photoreal (H3)** — geometry quality, smart low poly, face limit, quad
+  (returns FBX), generate parts.
+- **Game ready (P2/P1)** — face limit up to 50,000, quad.
+- **Image**, **multi-view (4 angles)**, and **Retexture**.
+
+Both generators carry a **`type`** at the top of their settings:
+
+| Type | What it sends |
+|---|---|
+| `image_to_model` | The default, and what existing definitions keep. Shows the picture it sends |
+| `multiview_to_model` | Up to four views |
+| `text_to_model` | The prompt and no picture. **10 credits cheaper** on H-series and P1, and greys the picture-only options |
+
+Tripo's retexture works on any mesh, including ones Tripo did not make, by
+uploading it.
+
+## Test Connection reports balance
+
+For both hosted vendors, **Test Connection reports the remaining balance**,
+not just whether the key is valid.
+
+That is the difference between "your key works" and "you can afford the run
+you were about to start".
+
+## Choosing
+
+Reach for **TRELLIS** when you want reproducibility, when the reference is
+confidential, when volume is high, or when you already own the GPU — and you
+have a reference image.
+
+Reach for **Meshy or Tripo** for game topology generated rather than
+decimated, multi-image reconstruction, retexturing a mesh they did not make,
+or simply not owning a GPU.

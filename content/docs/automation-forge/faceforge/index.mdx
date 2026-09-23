@@ -1,0 +1,96 @@
+---
+title: FaceForge
+description: Turn spoken audio into facial animation — solve, retarget, bake.
+status: shipped
+plugins: [FaceForge, FaceForgeMetaHuman, FaceForgeACE]
+icon: Smile
+---
+
+Turns spoken audio into facial animation: solves a sound wave to face-control
+curves, retargets those curves into whatever vocabulary a character's face
+understands, and bakes the result to an animation sequence and a montage.
+
+It knows nothing about any particular solver, and nothing about any gameplay
+framework. **It ships with no solvers of its own.**
+
+<SetMembers set="faceforge" />
+
+## Solve and bake are separate, deliberately
+
+| Stage | Cost | Bound to |
+|---|---|---|
+| **Solve** — audio to curves | Slow | The provider |
+| **Bake** — curves to an animation a character can play | Milliseconds | The character |
+
+Clips keep their solved curves **permanently**. So pointing a second character
+at the same audio is a *re-bake*, not a re-solve.
+
+<Callout type="info">
+  This is the single most useful property of the set. Face solving is
+  character-agnostic — the solve is a function from audio to named floats, and
+  only the *vocabulary* those names are in is character-specific.
+
+  A line solved once can dress every character who says it.
+</Callout>
+
+## Layers
+
+Several whole solves kept side by side on one clip, merged by a recipe stored
+as data on the clip: the first layer as a base, later layers laid over it at
+their own weight.
+
+Merging is milliseconds and repeatable.
+
+That is what makes the interesting combinations possible — a raw video solve
+as the base with a mouth-only overlay on top, A/B-proven to change the bake as
+the overlay's weight changes.
+
+## Hand correction, without losing the solve
+
+An animator's fix and a re-solve are usually mutually exclusive. Here they are
+not:
+
+<Steps>
+
+<Step>
+### Build a correction sequence
+A Level Sequence with the solve keyed on an **absolute base section** and an
+empty **additive section** on top.
+</Step>
+
+<Step>
+### Key only the additive section
+The animator works normally. The base is read-only underneath.
+</Step>
+
+<Step>
+### Snapshot it back
+The additive section is read back as *offsets* into a `Corrective` layer.
+</Step>
+
+</Steps>
+
+**The base solve can now be re-run underneath the hand fix without discarding
+it.** Verified frame-exact.
+
+See [correction](/docs/automation-forge/faceforge/correction).
+
+## Graduation
+
+Two axes — status and origin — the same shape as
+[SpeechForge](/docs/automation-forge/speechforge#graduation-has-two-axes).
+Anything whose origin is not `Generated` is left alone by the pipeline.
+
+## Where to go next
+
+<Cards>
+  <Card title="Concepts" href="/docs/automation-forge/faceforge/concepts" description="Face banks, clips, and the preview stage." />
+  <Card title="Vocabularies" href="/docs/automation-forge/faceforge/vocabularies" description="Why a mismatch is made inexpressible, and the two kinds of transform." />
+  <Card title="Providers" href="/docs/automation-forge/faceforge/providers" description="The engine's own solver, and NVIDIA Audio2Face-3D." />
+  <Card title="Correction" href="/docs/automation-forge/faceforge/correction" description="The round trip an animator can use without blocking a re-solve." />
+  <Card title="The toolset" href="/docs/automation-forge/faceforge/toolset" description="What an agent can do here." />
+</Cards>
+
+## Release notes
+
+<ReleaseNotes set="faceforge" limit={6} />

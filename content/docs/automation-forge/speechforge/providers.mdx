@@ -1,0 +1,83 @@
+---
+title: Providers
+description: ElevenLabs, and what a speech provider declares about itself.
+status: shipped
+plugins: [SpeechForgeElevenLabs]
+icon: Plug
+---
+
+SpeechForge ships no providers. Each registers itself at module startup, and
+removing one removes a route — nothing else.
+
+## What a provider declares
+
+Capabilities are **asked at runtime rather than assumed**: sample rate,
+whether it is metered, how honest its seeding is, whether it supports
+alignment, and its concurrency.
+
+Per-model quirks are queried the same way — stitching, direction support,
+character limits.
+
+<Callout type="info">
+  "**How honest its seeding is**" is not a euphemism. Some providers accept a
+  seed and use it as a hint. A provider that declares best-effort seeding gets
+  its candidates marked unreproducible in
+  [the ledger](/docs/automation-forge/concepts#the-ledger), which means they
+  are never pruned — because the bytes are the only copy that will ever exist.
+</Callout>
+
+## ElevenLabs
+
+Open source, free to install, metered against your own ElevenLabs account.
+
+### Timestamps, always
+
+Synthesis **always** goes through the timestamped endpoint — same price as
+plain synthesis — returning character-level alignment. The plain endpoint is
+never called.
+
+There is no setting for this, because there is no reason to want less
+information for the same money.
+
+### Inline direction
+
+On the expressive model, direction tags travel inside the text.
+
+That is exactly why alignment is trimmed and re-based: the tags are in the
+sent text but not in the spoken audio, and subtitle timing derived from the
+raw alignment would drift by however long the tags were.
+
+### Speech to speech
+
+Voice conversion: take existing audio and re-voice it.
+
+Two things follow, both covered elsewhere but worth repeating here because
+they surprise people:
+
+- A conversion's staleness hashes **its source audio and voice**, not the
+  text — it never read the text. See
+  [the hash rule](/docs/automation-forge/speechforge#staleness-is-computed-live-over-the-resolved-request).
+- Re-voicing a recording produces audio whose origin is `Recorded`, because
+  [provenance follows the source](/docs/automation-forge/speechforge#graduation-has-two-axes).
+
+### Free re-fetch
+
+Past takes can be pulled back from account history for free rather than
+re-synthesised.
+
+## Translation providers
+
+A separate seam. The core ships a **keyless `Pseudo` provider** so the whole
+localisation pipeline is exercisable with no vendor account at all.
+
+That is deliberate: a pipeline you cannot run without buying something is a
+pipeline nobody evaluates. The real provider is DeepL, in the
+[localisation plugin](/docs/automation-forge/speechforge/localisation).
+
+## Costs
+
+Priced before spend, through the same resolver that submits — so the estimate
+is the price of the request that would go.
+
+`SpeechForge.TestConnection` reports the tier and the **remaining credits**,
+not just whether the key works.

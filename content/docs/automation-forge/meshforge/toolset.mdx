@@ -1,0 +1,63 @@
+---
+title: The toolset
+description: What an agent can do in MeshForge — and the three things it cannot.
+status: shipped
+plugins: [MeshForgeToolset, MeshForgeGarmentToolset, MeshForgeTrellisToolset]
+icon: Bot
+---
+
+MeshForge has no toolset of its own. The sibling plugin exposes it, and adds
+nothing.
+
+Covered: definitions and workflows, stage switches, pipeline selection and
+per-pipeline options, cost estimation, submission and polling, takes, post-step
+management and **reordering**, thumbnail rebuilding, and a command channel for
+steps a person finishes interactively.
+
+The garment toolset adds the Garment Studio's own tools, driving **the same
+window a person uses** — there is no headless studio.
+
+## Three human actions have no tool
+
+The README's rule is "anything a person can do here, an agent can do". Three
+things currently escape it, and saying so is cheaper than letting an agent
+discover it:
+
+| Missing | Where it exists |
+|---|---|
+| **Stop waiting** on an interactive step | Only on the Stages panel |
+| **Pick up result** on an interactive step | Only on the Stages panel |
+| **Export glTF** | Only on the definition |
+
+`MeshForge.VerifyStageHashes` is also console-only.
+
+The viewer's own controls — Floor, Align, an add-on's Character — are
+view-only and have no tools, which is expected rather than a gap.
+
+## Deliberately absent
+
+- **No tool writes a credential.**
+- **No tool deletes a generated asset.**
+
+Both are [decisions, not omissions](/docs/company/humans-and-agents#what-an-agent-may-not-do).
+
+## The panel and the agent converge
+
+A contradictory generator setting is refused **where the panel and agent
+routes meet**, not in the panel's own validation.
+
+That placement is the point: it means an agent cannot submit a request the
+Stages tab would have refused. A check that lives in the UI is a check an
+agent routes around by accident.
+
+## Panels integrate by reflection
+
+If you are building an add-on that wants to appear in MeshForge's surfaces:
+the integration points are reflection-based and header-only. A post step from
+a plugin that does not link MeshForge is a settings class and a function; a
+control in the viewer's bar is an extension interface.
+
+Providers, notably, **do not get toolsets of their own** — the core's toolset
+names a provider through the definition's provider id.
+
+<ReleaseNotes plugin="MeshForgeToolset" limit={3} />

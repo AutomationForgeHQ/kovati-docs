@@ -1,0 +1,54 @@
+---
+title: The toolset
+description: Solving, layering, correcting and baking, for an agent.
+status: shipped
+plugins: [FaceForgeToolset, FaceForgeACEToolset]
+icon: Bot
+---
+
+FaceForge has no toolset of its own — confirmed by there being zero callable
+tools in the core. The sibling plugin exposes it.
+
+<SetMembers set="faceforge" />
+
+## What is covered
+
+Solving to a layer, snapshotting, merging, removing a layer, baking, bank
+coverage, the line-to-face lookups, graduation, and the correction round trip.
+
+The ACE toolset covers its provider's own surface — the container lifecycle
+and the emotion inputs.
+
+## The useful agent jobs here
+
+This set rewards agent work more than most, because the questions are
+countable:
+
+- **Which clips in this bank are stale, and why?**
+- **Which clips have no solve at all?**
+- **Does this character's face actually support the curves this mapping
+  drives?** — `DescribeBankCoverage` answers it in one call instead of a
+  manual comparison of two lists.
+- **Re-bake every clip for a second character** — a re-bake, not a re-solve,
+  so it is milliseconds per clip.
+
+That last one is the payoff of
+[keeping solve and bake separate](/docs/automation-forge/faceforge#solve-and-bake-are-separate-deliberately),
+and it is a loop nobody would run by hand.
+
+## What an agent may not do
+
+- Overwrite a clip whose origin is not `Generated`.
+- Write a credential.
+
+## One tool carries extra metadata
+
+One tool is tagged both as callable and as a Speech Library action, which is
+how it appears as a button on
+[SpeechForge's Perform page](/docs/automation-forge/speechforge/concepts#sibling-plugins-add-buttons-without-editing-this)
+without either plugin linking against the other.
+
+Worth knowing if you are counting tools with a regex: a strict pattern
+undercounts it.
+
+<ReleaseNotes plugin="FaceForgeToolset" limit={3} />

@@ -1,0 +1,217 @@
+---
+title: Garment
+description: Fit clothing to a character, sculpt it, and skin it — the Garment Studio.
+status: shipped
+plugins: [MeshForgeGarment, MeshForgeGarmentToolset]
+icon: Shirt
+---
+
+MeshForgeGarment dresses a character in an imported or generated garment, as
+steps on MeshForge's [Post stage](/docs/automation-forge/meshforge/post-processing).
+
+<Callout type="info">
+  **Paid.** Bought once on [the account app](https://app.kovati.dev), and
+  installed by the hub like anything else. Its toolset is open — see
+  [distribution](/docs/automation-forge/distribution#a-toolset-beside-a-paid-plugin-is-still-open).
+
+  It needs MeshForge 0.3.0 or later. Removing it changes nothing about
+  MeshForge, and what it made stays as ordinary assets.
+</Callout>
+
+## The fit step
+
+Exports the target skeletal mesh in its reference pose with its bone
+landmarks, finds and welds on a MetaHuman's face, hands the body and the
+garment to a Blender solver — locally or on a runner service — and brings the
+same garment back **wrapped around the body with its vertices, UVs and
+material slots untouched.**
+
+### Two modes
+
+| Mode | For |
+|---|---|
+| **Place** (default) | A garment made on the character's own picture. Only scales, aligns, and clears the garment off the skin |
+| **Fit** | A garment made for another body, or none. Runs the full articulate / project / relax solve |
+
+Plus a garment type (13 kinds, which decide which limbs may be wrapped), fit
+style, clearance, shape preservation, projection strength, relaxation and
+collision passes, and a yaw correction.
+
+*Additional Meshes* covers a modular character's hands and feet.
+
+Each fit writes its body, landmarks, request, Blender log and a diagnostics
+file under `Intermediate/MeshForge/GarmentFit/<id>/`.
+
+## The Garment Studio
+
+One window holds the character and the garment, in three modes that decide who
+gets the mouse.
+
+<Steps>
+
+<Step>
+
+### Pose and place
+
+Move, turn and scale the garment, and turn up to **15 joint handles** —
+shoulders, elbows, wrists, hips, knees, feet, chest, pelvis, and optionally
+the head.
+
+*Mirror X* is on by default and turns the opposite side too.
+
+</Step>
+
+<Step>
+
+### Sculpt
+
+Epic's Vertex Sculpt, Smooth, Lattice and Bend/twist, on the garment **where
+it was placed** and against the body **as it was bent**.
+
+The sculpt is kept as a plain file in the definition's generated folder, not
+as an asset — stored as per-vertex positions plus a **fingerprint of the
+input**.
+
+<Callout type="warn">
+  A sculpt made on a garment that has since been regenerated is **refused with
+  the reason**, rather than applied to different geometry. *Back to the
+  original* discards it, and a changed sculpt makes the step stale.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Wrap
+
+Runs the fit inside the window — about fifteen seconds — from *My sculpt* or
+*The original*, with the step's settings.
+
+The solver reports where each vertex went and **the studio moves its own
+vertices there**, so the wrapped garment keeps the input's vertex order, UVs
+and material slots instead of being re-imported.
+
+The studio flags a wrap that is out of date with the pose, placement, sculpt
+or settings. A wrapped garment can be sculpted too, and wrapping again over
+that sculpt asks first.
+
+</Step>
+
+</Steps>
+
+**Save** keeps the placement, pose, sculpt and last wrap on the step.
+**Finish** saves the wrap as an asset and records it as the step's output.
+**Stop using the finished garment** undoes Finish. Closing with unsaved
+changes asks first.
+
+### A finished garment goes on unchanged
+
+If the step's input still matches the fingerprint it was finished on, **a
+chain run passes the finished asset straight on without wrapping again.**
+
+If the input changed, or the finished asset is gone, the studio opens with the
+reason and the chain waits.
+
+A step that was never finished wraps by itself, from the saved placement and
+sculpt — so an unattended chain still runs.
+
+## Wardrobe skinning
+
+Makes a skeletal asset using Unreal's own weight transfer.
+
+**It binds to the body mesh, not to the shared skeleton.** That is the whole
+trick: the reference skeleton comes from the body mesh, so the garment matches
+the character it was fitted to rather than an idealised skeleton asset that
+differs from it.
+
+Before saving, every bone is checked against the body's reference pose, and
+the step **fails if any is more than 0.01 cm out.**
+
+### Retries
+
+The configured settings, then the normal test disabled, then that plus triple
+radius. A rung that would leave a garment piece with nothing to inpaint from
+is **skipped rather than run**.
+
+### Bone profiles
+
+A data asset choosing which body bones a garment follows.
+
+| Rule | Effect |
+|---|---|
+| **Follow** | Keep this bone and everything below it |
+| **Stop At** | Drop this bone and everything below it |
+
+The **nearest listed ancestor decides**, and *Drop Corrective Bones* folds
+shape helpers into their main bones.
+
+The profile acts on the body **before** the transfer. An excluded bone's
+weight goes to the nearest kept ancestor. After the transfer, the step fails
+if any garment vertex still carries an excluded bone.
+
+Thirteen ship: Head, Shirt/jacket, T-shirt, Vest, Arms only, Hands and feet,
+Pants, Pants and feet, Shorts, Full bodysuit, Full bodysuit and head,
+Backpack, Belt.
+
+## Sculpt mesh — for any static mesh
+
+A general hand-finished step, anywhere in a chain.
+
+Epic's Vertex Sculpt, Smooth, Lattice and Bend/twist — **all of which only
+move vertices**. Tools that remesh are not offered, and a changed topology is
+refused on write-back.
+
+Reference meshes stand locked beside the subject (a MetaHuman body brings its
+face), and UV seams are welded while sculpting.
+
+*Finish edit* hands the working copy to the chain with **nothing exported or
+re-imported.**
+
+## Character in MeshForge's Mesh tab
+
+Adds a *Character* control to MeshForge's viewer through the extension slot,
+so **MeshForge itself knows nothing about characters.**
+
+Off by default. Offers *No character*, *The one this definition fits*, other
+characters named in the chain, a shared Recent list, and *Any character*. The
+answer is filed per definition in per-user settings, so a definition never
+asked about draws nobody.
+
+With a character shown, the viewer does not centre, turn or scale anything,
+and Align is disabled.
+
+## Not built
+
+- **A Studio wrap through the runner service** — it fails with "the runner
+  service does not return vertex positions yet". The local Blender route
+  works.
+- The skeletal output creates **no Chaos Cloth asset, physics asset or
+  animation Blueprint.**
+- **No partial bone filter** that keeps part of a bone.
+- **No check that a garment is skinned to the body it was fitted to.**
+
+## Traps worth knowing
+
+<Callout type="warn">
+  **MetaHuman meshes report themselves as dirty on load.** The editor's
+  `is_dirty` lies about them. Compare an md5 on disk before deciding whether
+  something changed, and back up before writing.
+</Callout>
+
+<Callout type="warn">
+  **A saved copy of a transient mesh has no geometry** and asserts on the next
+  load. Duplicate the source asset and then write positions into it — never
+  save a transient mesh directly.
+</Callout>
+
+<Callout type="warn">
+  **A procedural skeletal mesh needs an LOD model**, or it crashes on load.
+</Callout>
+
+## Settings
+
+*Editor Preferences ▸ Automation Forge ▸ MeshForge Garment Fit*, never
+committed: the route (Blender here else the runner / Blender on this machine /
+the runner service), the runner URL, the Blender executable, and a timeout.
+
+`Auto` tries local Blender first.

@@ -1,0 +1,6 @@
+{
+  "title": "PerformanceForge",
+  "description": "Record performances as sessions and takes",
+  "icon": "Mic",
+  "pages": ["index", "sessions-and-takes", "toolset"]
+}

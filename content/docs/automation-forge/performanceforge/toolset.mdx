@@ -1,0 +1,57 @@
+---
+title: The toolset
+description: Six tools, two of which are buttons in another plugin's panel.
+status: shipped
+plugins: [PerformanceForgeToolset]
+icon: Bot
+---
+
+Six tools, and the interesting thing about them is where two of them appear.
+
+| Tool | What it does |
+|---|---|
+| `QueueRecordingSession` | Start an ad-hoc session from selected lines |
+| `PlanRecordingSession` | Create a planned session |
+| `OpenRecordingSession` | Open one |
+| `StartPlannedSession` | Begin it |
+| `ListPerformanceSessions` | What exists, and its state |
+| `ChoosePerformanceTake` | Pick the take a line uses |
+
+## Two of them are buttons somewhere else
+
+`QueueRecordingSession` and `PlanRecordingSession` carry Speech Library
+metadata, which is how they surface as **Record Selected…** and **Plan
+Session…** in SpeechForge's panel — **without either plugin linking against
+the other.**
+
+<Callout type="info">
+  This is worth dwelling on as a pattern. A paid plugin adds two buttons to a
+  free plugin's panel, and the free plugin has no knowledge of it, no optional
+  dependency, and no conditional code.
+
+  It works because the integration is a reflected tag rather than a call. A
+  customer without PerformanceForge sees a panel with two fewer buttons and no
+  broken references.
+</Callout>
+
+## Everything downstream is also reflection
+
+The finisher that runs when a take stops — convert the voice, apply it, solve
+the video, merge, bake — is a sequence of sibling toolset functions **invoked
+by name**.
+
+PerformanceForge links against none of SpeechForge, FaceForge or MotionForge.
+A missing one is a missing step with a reason.
+
+That is the same mechanism the buttons use, pointed the other way: this plugin
+calls out by name, and is called in by tag.
+
+## What an agent gets, and does not
+
+An agent can plan sessions, list them, and choose takes — the *management*
+surface.
+
+It cannot press record. Capture needs a person at a microphone, and there is
+no headless recording path, deliberately.
+
+<ReleaseNotes plugin="PerformanceForgeToolset" limit={3} />

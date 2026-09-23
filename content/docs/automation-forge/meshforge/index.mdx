@@ -1,0 +1,127 @@
+---
+title: MeshForge
+description: Turn a prompt or a reference image into a game-ready static mesh, finished and imported.
+status: shipped
+plugins: [MeshForge, MeshForgeTrellis, MeshForgeCloud, MeshForgeGarment]
+icon: Box
+---
+
+MeshForge owns one pipeline end to end: **submit to a provider, poll,
+download, import** — and finish with collision, lightmap UVs, Nanite and a
+sized, grounded pivot.
+
+It ships **no generator of its own**. Every provider, local or hosted,
+registers through the same interface, so an empty provider list is a normal
+state rather than a fault.
+
+<SetMembers set="meshforge" />
+
+## Five stages
+
+The unit of work is a **Mesh Definition**, and it has five stages:
+
+<Steps>
+
+<Step>
+### Concept
+Generate a reference image from a prompt, where the pipeline on this stage
+reads one.
+</Step>
+
+<Step>
+### References
+Choose which pictures the generator sees — a main image plus up to three extra
+views.
+
+<Callout type="warn">
+  **Half built.** Choosing pictures works. *Making* more pictures — a Refine
+  pipeline for background removal or extra angles — does not exist.
+</Callout>
+</Step>
+
+<Step>
+### Mesh
+The generation itself. A generator declares whether it builds from **words, a
+picture, or either**, and the settings, the refusal, the quoted price and the
+take record all follow that.
+</Step>
+
+<Step>
+### Post
+A chain of steps on the result: retexture, edit in Blender, garment fit,
+sculpt. See [post-processing](/docs/automation-forge/meshforge/post-processing).
+</Step>
+
+<Step>
+### Import
+Collision, hull count, size, pivot, Nanite, lightmap resolution.
+
+**Re-finishing is free** — all of it re-applies with no provider call.
+</Step>
+
+</Steps>
+
+Every stage is re-runnable and stale-tracked by a hash chain: editing an early
+stage marks everything after it stale **without discarding what it made**.
+
+**Any stage can be switched off per definition.** A switched-off stage is
+hidden from the tabs, refused by every tool, and left out of staleness.
+
+## A definition is a recipe, not a receipt
+
+Pictures, quality, seed, polygon budget and finish settings are recorded on
+the asset. Point a definition at a seeded provider and it can be regenerated
+identically.
+
+**Each prompt belongs to the pipeline that reads it** — the concept image
+pipeline's words, the mesh generator's words where its provider takes text, a
+retexture step's own style prompt. There is no definition-wide prompt, because
+a single prompt shared by three stages was never true.
+
+## Workflows
+
+A **Mesh Workflow** is the stage switches, the pipeline on each stage, the
+post chain with its settings, and optionally the import settings — in one
+choice.
+
+A new definition asks which workflow to start from. Three ship:
+
+| Workflow | For |
+|---|---|
+| `WF_GenerateFromPrompt` | Words in, mesh out |
+| `WF_GenerateFromPicture` | A reference image in |
+| `WF_EditMeshInBlender` | A round trip through Blender |
+
+Applying a workflow copies it into the definition. The Stages tab can reapply
+it — keeping prompts, pictures, source mesh, takes and the outputs of steps
+still in place — list what has changed since, and **Save as Workflow**.
+
+## What it deliberately does not do
+
+**MeshForge generates static meshes and rigs nothing.**
+
+It does now *store, show, thumbnail and round-trip* the skeletal meshes that
+post steps such as [garment skinning](/docs/automation-forge/meshforge/garment)
+produce — but it makes no skeleton itself.
+
+## Cost before spend
+
+*What would this cost?* runs through **the same resolver as submission**, so
+the quote is the price of the request that would be sent.
+
+A contradictory generator setting is refused where the panel and agent routes
+converge — so an agent cannot submit what the Stages tab would have refused.
+
+## Where to go next
+
+<Cards>
+  <Card title="Concepts" href="/docs/automation-forge/meshforge/concepts" description="Definitions, takes, staleness, and where everything lands." />
+  <Card title="Providers" href="/docs/automation-forge/meshforge/providers" description="TRELLIS.2 locally, Meshy and Tripo hosted." />
+  <Card title="Post-processing" href="/docs/automation-forge/meshforge/post-processing" description="Chains, input sources, and the Blender round trip." />
+  <Card title="Garment" href="/docs/automation-forge/meshforge/garment" description="Fitting clothing to a character, and the Garment Studio. Paid." />
+  <Card title="The toolset" href="/docs/automation-forge/meshforge/toolset" description="What an agent can do, and the three things it cannot." />
+</Cards>
+
+## Release notes
+
+<ReleaseNotes set="meshforge" limit={6} />

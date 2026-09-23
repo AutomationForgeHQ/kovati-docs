@@ -1,0 +1,83 @@
+---
+title: Casting
+description: Speakers, voice profiles, and the Cast page.
+status: shipped
+plugins: [SpeechForge]
+icon: Users
+---
+
+Two assets, and the distinction between them is the whole model.
+
+| | What it is | Analogy |
+|---|---|---|
+| **Speaker** (`SP_`) | The character sheet — who is speaking | The role |
+| **Voice Profile** (`VP_`) | The instrument — provider, preset, model, settings | The performer |
+
+A speaker *references* a voice profile. Several speakers can share one; a
+speaker can be recast by pointing at a different one, and **every line that
+speaker owns follows**.
+
+## The speaker sheet
+
+- **SpeakerId** — searchable in the asset registry, so resolution is a tag
+  lookup rather than a scan.
+- **DisplayName**.
+- **Description** — casting notes. Genuinely used: this is what a director
+  reads when choosing a voice.
+- **VoiceProfile** — the reference.
+- **External bindings** — a map from a framework name to an asset path, so a
+  speaker can point at your dialogue system's own character definition
+  without SpeechForge knowing what that is.
+
+**The set of speaker assets is the cast list.** There is no separate list, so
+there is nothing to fall out of step.
+
+## The voice profile
+
+Display name, the provider's own voice name (cached), and the
+provider/preset/model/settings/provenance.
+
+Caching the provider's voice name is worth noting: it means the Cast page can
+show you what a profile actually points at without a network call every time
+you open it.
+
+## The Cast page
+
+Three things side by side:
+
+- **The cast list** — sorted by who appears in the scene, with *create sheet*
+  offered for any speaker id that lines reference but no sheet exists for.
+- **The profiles** — each with *used by*, and *Assign*.
+- **A provider browser** — the vendor's own voice library, with *Save as
+  Profile* and *Cast in one step*.
+
+That last one is the path most people take: find a voice you like in the
+vendor's library, and cast it onto a speaker in one action rather than
+creating a profile, naming it, and then assigning it.
+
+## Adapters seed sheets
+
+An adapter for a dialogue framework does not *resolve* voices — it **creates
+or updates speaker sheets** and sets the binding.
+
+<Callout type="info">
+  **Empty fields never clobber a cast voice.** An adapter re-harvesting a
+  dialogue will not blank a voice somebody chose, because a field it has no
+  opinion about is left alone rather than written as empty.
+
+  This matters because harvesting tends to be re-run, and the first version
+  that overwrites a director's casting is the last version anyone runs.
+</Callout>
+
+One concrete trap from the Narrative Pro adapter: an authoring template's
+speaker array is routinely empty, so the harvest reads speakers off the
+dialogue's **class defaults** instead.
+
+## Per-line overrides
+
+A line can override its speaker's voice. It is the first step of
+[the resolution walk](/docs/automation-forge/speechforge#voice-resolution-walks-four-steps),
+and the result says so.
+
+Use it for the line where a character whispers, shouts, or is heard through a
+radio — not as a substitute for casting.

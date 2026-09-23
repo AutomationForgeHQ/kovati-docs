@@ -1,0 +1,86 @@
+---
+title: Concepts
+description: Face banks, clips, layers and the preview stage.
+status: shipped
+plugins: [FaceForge]
+icon: Shapes
+---
+
+## Face banks and clips
+
+A **face bank** holds clips. A **clip** is one line's facial animation: its
+audio, its solved curves (in layers), its status and origin, and what it bakes
+to.
+
+A face bank claims a speech bank, and **the face bank's language is the
+language of the speech bank it claims** — not a field of its own. Localised
+siblings are matched by language first and clip id second.
+
+## Layer operations
+
+| Operation | What it does |
+|---|---|
+| `SolveFaceClipToLayer` | Solve audio into a named layer |
+| `SnapshotFaceSolveToLayer` | Capture the current solve into a layer |
+| `MergeFaceClipLayers` | Apply the recipe — base plus overlays at their weights |
+| `RemoveFaceClipLayer` | Drop one |
+
+The merge recipe is **data on the clip**, so a merge is repeatable and a
+weight is adjustable without re-solving anything.
+
+## Line-to-face lookups
+
+Three questions FaceForge can answer because it owns the facts:
+
+- What face montages are in this bank?
+- What face montages serve this speech bank?
+- What speech bank does this face bank claim?
+
+They join on facts only FaceForge owns, which is why they live here rather
+than in whatever framework is playing the result.
+
+## The Face Bank panel
+
+**Tools ▸ Automation Forge ▸ Face Bank.**
+
+A clip list showing status, origin, layers and staleness, plus a **live
+preview stage** with solve, merge and bake controls and an orbit-or-free
+camera.
+
+Sibling plugins add "to the game" buttons through a tagged discovery seam —
+no edit to FaceForge, no dependency either way. That is how a framework
+adapter puts its own export action on the panel.
+
+## Console
+
+```
+FaceForge.Providers       # list solvers, and say whether each is ready — and why not
+FaceForge.ReleaseModels   # drop loaded models (~310 MB for the engine solver)
+```
+
+`ReleaseModels` is worth knowing about on a machine that is also running an
+editor viewport and a container.
+
+## Lipsync is not shareable between takes
+
+<Callout type="warn">
+  A solve belongs to **the audio it was solved from**. Two takes of the same
+  line — even the same actor, same words, same day — do not share a solve,
+  because the timing differs.
+
+  Copying a solve from one take to another produces a mouth that is subtly,
+  consistently out. Re-solve per take. The solve is the slow part, but it is
+  the part that has to be right.
+</Callout>
+
+Related and different: a solve **is** shareable between *characters*, because
+it is character-agnostic. Audio decides the solve; the character decides the
+bake.
+
+## Verify what is playing
+
+<Callout type="info">
+  When a face looks wrong in play, check that the asset in play is the one you
+  edited. A bake writes a new animation and a montage; a montage that still
+  points at the previous bake looks exactly like a solve that did not work.
+</Callout>

@@ -1,0 +1,146 @@
+---
+title: PerformanceForge
+description: A miniature performance-capture stage inside the Unreal editor.
+status: shipped
+plugins: [PerformanceForge, PerformanceForgeToolset]
+icon: Mic
+---
+
+Records a performer's microphone and webcam onto **one take clock** — voice
+alone, or voice and video — and files every take with a manifest.
+
+<Callout type="info">
+  **Paid.** Bought once on [the account app](https://app.kovati.dev). Its
+  toolset is open — see
+  [distribution](/docs/automation-forge/distribution#a-toolset-beside-a-paid-plugin-is-still-open).
+</Callout>
+
+<SetMembers set="performanceforge" />
+
+## Why this exists
+
+Because [a recorded human performance is a route like any other](/docs/company/providers#what-that-looks-like-in-a-real-project).
+
+If "we generated it" and "we recorded it properly" land in different places,
+with different provenance, and cannot replace each other — then the whole
+[replace it safely](/docs/company/two-speed-content#three-honest-futures)
+promise is only true for generated content, which is the half that needed it
+least.
+
+## What it is, and is not
+
+**It is:** capture, sessions and take management.
+
+**It is not:** face solving (that is
+[FaceForge](/docs/automation-forge/faceforge)), voice conversion (that is
+[SpeechForge](/docs/automation-forge/speechforge)), or body motion (that is
+[MotionForge](/docs/automation-forge/motionforge)).
+
+It reaches all three **by name through the toolset registry, and never links
+against them** — so a missing plugin is a missing step with a reason, rather
+than a link-time failure.
+
+## The manifest records what was measured, never what was requested
+
+A take folder holds a 16-bit PCM WAV master, JPEG frames named by media-clock
+ticks, and a manifest **written last** — its presence is what "complete"
+means.
+
+The manifest records:
+
+- the audio's **real** sample rate,
+- the frame count **actually on disk**,
+- the frame rate **measured from tick deltas**, rather than a nominal figure.
+
+<Callout type="info">
+  **Because webcams drop frames as normal behaviour.** A manifest saying
+  "30 fps" because 30 was requested is a manifest that will desynchronise
+  audio and video downstream, and nobody will know why.
+
+  Measured-not-requested is the rule, and it is why playback uses the frames'
+  own timing.
+</Callout>
+
+## Two modes, decided by one choice
+
+Whether a camera is selected:
+
+| Mode | What is captured |
+|---|---|
+| **Voice only** | The microphone master alone |
+| **Voice and video** | Microphone and webcam on one take clock |
+
+Device selection is remembered per user, per machine, with a live preview.
+**The preview mirrors by default for framing; the recording always keeps true
+orientation.**
+
+## Verified, and what broke
+
+Driven end to end through the panel: a 5.8 s voice-only take (48 kHz stereo
+WAV matching its manifest exactly, read back with an independent parser) and
+an 8.1 s voice-and-video take (227 real 1280×720 JPEG frames at **28.03 fps
+measured**, manifest complete). Device enumeration and preview survive an
+editor restart.
+
+Two failures found and fixed the same night, both worth knowing if you build
+anything similar:
+
+<Callout type="warn">
+  **The camera's NV12 samples are refused by the engine's own media
+  recorder.** Frames are now read back from the GPU-converted preview texture
+  instead.
+</Callout>
+
+<Callout type="warn">
+  **An unfocused editor throttles itself to about 3 fps**, which would ruin
+  every take recorded while the performer looked at their script. Capture now
+  suspends and restores that throttle, exactly as the engine's own Take
+  Recorder does.
+</Callout>
+
+## Your takes stay yours
+
+Take storage lives on the **free** side, in SpeechForge's core.
+
+So a customer who stops paying for PerformanceForge keeps every take they
+recorded, and loses only the surface that plans, records, reviews and chooses.
+
+That is deliberate. Recordings are the one thing in this product that cannot
+be regenerated.
+
+## Console
+
+```
+PerformanceForge.Panel
+PerformanceForge.Devices
+PerformanceForge.Record <seconds> [av] [slate]
+PerformanceForge.Stop
+PerformanceForge.Takes
+```
+
+Every panel action has a console equivalent.
+
+## Not built
+
+<Callout type="warn">
+  **Real in-editor video playback of a take is deferred.** Today: audio
+  playback plus the frame folder opened on disk.
+
+  The reasons are concrete — no container file exists, no encoder is bundled,
+  the timing is variable and measured, A/V sync would be manual, and cache
+  pressure is real. The ladder out is a frame scrubber, then a
+  hand-rolled-clock image-media player, then encoding at capture; the last is
+  gated on an encoder licensing decision.
+</Callout>
+
+A body-motion adapter off the same webcam video is explicitly MotionForge's
+future work, not this plugin's.
+
+<Cards>
+  <Card title="Sessions and takes" href="/docs/automation-forge/performanceforge/sessions-and-takes" description="The teleprompter, the ledger, and the two dials that replace two products." />
+  <Card title="The toolset" href="/docs/automation-forge/performanceforge/toolset" description="Six tools, two of which are buttons in another plugin's panel." />
+</Cards>
+
+## Release notes
+
+<ReleaseNotes set="performanceforge" limit={4} />
