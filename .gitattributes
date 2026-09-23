@@ -1,0 +1,11 @@
+# Text files are stored with LF and checked out as-is.
+#
+# The Colony repository commits CRLF for historical reasons; this one does not,
+# and being explicit here stops a future `core.autocrlf=true` on somebody's
+# machine from rewriting every file in a single noisy commit.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary

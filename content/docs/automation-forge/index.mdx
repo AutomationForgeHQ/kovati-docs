@@ -1,0 +1,114 @@
+---
+title: Automation Forge
+description: A family of Unreal Engine plugins that turn generated content into content the game can use.
+status: shipped
+icon: Hammer
+---
+
+Automation Forge is a family of Unreal Engine 5.8 editor plugins. Each one
+takes a kind of content that is now cheap to generate — a motion clip, a voice
+take, a face solve, a mesh, a performance — and does the unglamorous work that
+makes it *playable*: the retarget, the slot, the notify, the binding, the
+provenance record, and the rule that stops automation overwriting work a human
+has since touched.
+
+<SetMembers set="automationforge" />
+
+## The unit is a set, not a plugin
+
+Nobody installs `MotionForgeKimodo` on its own. They install motion
+generation, which happens to be a core plugin, a provider, a quality add-on
+and three toolsets. **The set is what you choose; the members are how it is
+packaged**, and they only start to matter once you are already interested.
+
+Every core plugin ships a matching **toolset** — the same subsystem exposed as
+typed Model Context Protocol tools, adding nothing of its own. That is not a
+footnote. It is how a person and an agent end up doing the same work through
+the same rules, with the same cost gates and the same refusals. See
+[humans and agents](/docs/company/humans-and-agents).
+
+## The sets
+
+<Cards>
+  <Card
+    title="MotionForge"
+    href="/docs/automation-forge/motionforge"
+    description="Generate character motion, judge it, retarget it onto your skeleton, and keep the root motion honest."
+  />
+  <Card
+    title="MeshForge"
+    href="/docs/automation-forge/meshforge"
+    description="Generate meshes from text or images, import them properly, and fit garments to a character."
+  />
+  <Card
+    title="SpeechForge"
+    href="/docs/automation-forge/speechforge"
+    description="Cast speakers, generate dialogue takes, localise them, and keep a line's identity across languages."
+  />
+  <Card
+    title="FaceForge"
+    href="/docs/automation-forge/faceforge"
+    description="Solve faces from audio onto MetaHuman and non-MetaHuman characters, and correct the result."
+  />
+  <Card
+    title="PerformanceForge"
+    href="/docs/automation-forge/performanceforge"
+    description="Capture performance as sessions and takes, and turn a recording into engine-ready animation."
+  />
+  <Card
+    title="MontageForge"
+    href="/docs/automation-forge/montageforge"
+    description="Build montages from a recipe — slots, notifies, blends — rather than by hand."
+  />
+  <Card
+    title="SurfaceForge"
+    href="/docs/automation-forge/surfaceforge"
+    description="Generate and age materials. The newest set, and the least proven."
+  />
+</Cards>
+
+## The spine
+
+`AutomationForge` itself is not a content generator. It is the part every
+other set plugs into:
+
+- **A pipeline executor** — wire the sets that declare nodes into one
+  definition, and leave a run going for hours. Stepped, resumable and cached,
+  so nothing generates twice.
+- **A ledger** — every generated asset knows what made it, what it cost, and
+  what depends on it, recorded from before the asset exists.
+- **A cost gate** — price a run before it spends anything, and stop where a
+  machine should not decide alone.
+- **Graduation** — the moment an asset is hand-authored, the tooling stops
+  touching it. A force-regenerate is not a licence to destroy authored work.
+- **One keys page** — a provider account is entered once, into the operating
+  system's credential vault, and every set that needs it finds it.
+
+All editor-side. Nothing from Automation Forge ships inside your packaged
+game.
+
+<Callout type="info">
+  **Nothing installs without an account.** Free plugins are added with one
+  click; paid ones are bought once. That is a deliberate design, not a
+  licensing afterthought — see [accounts](/docs/automation-forge/accounts).
+</Callout>
+
+## Where to go next
+
+<Cards>
+  <Card
+    title="Getting started"
+    href="/docs/automation-forge/getting-started"
+    description="Hub installed, account signed in, a set running in your project."
+  />
+  <Card
+    title="Concepts"
+    href="/docs/automation-forge/concepts"
+    description="Definitions, runners, provenance and graduation — the five ideas every set shares."
+  />
+  <Card
+    title="Open, free and paid"
+    href="/docs/automation-forge/distribution"
+    description="Which plugins are open source, which are free but closed, and which are paid."
+  />
+</Cards>

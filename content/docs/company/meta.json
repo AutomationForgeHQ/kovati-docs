@@ -1,0 +1,18 @@
+{
+  "title": "Company",
+  "description": "PlayableOps, the vision, and who we are",
+  "icon": "Building2",
+  "root": true,
+  "pages": [
+    "index",
+    "playable-ops",
+    "manifesto",
+    "---Practice---",
+    "two-speed-content",
+    "humans-and-agents",
+    "providers",
+    "---Us---",
+    "structure",
+    "how-we-work"
+  ]
+}

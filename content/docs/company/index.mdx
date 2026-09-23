@@ -1,0 +1,83 @@
+---
+title: The company
+description: What Kovati is building, and the one problem everything here is pointed at.
+status: shipped
+icon: Building2
+---
+
+Kovati builds the software layer that turns generated content into content a
+game can actually use.
+
+That is a narrower claim than it sounds, and the narrowness is the point.
+There is no shortage of tools that produce an animation, a voice take, a face
+solve or a mesh. There is a severe shortage of anything that gets that result
+onto the right skeleton, into the right montage slot, carrying the right
+gameplay event, bound to the right ability, with a record of what made it and
+a safe way to replace it later.
+
+We call that distance **the playable gap**, and closing it **PlayableOps**.
+
+<Cards>
+  <Card
+    title="PlayableOps"
+    href="/docs/company/playable-ops"
+    description="The gap, two-speed content, graduation, and what this is not. The five-minute version."
+  />
+  <Card
+    title="The manifesto"
+    href="/docs/company/manifesto"
+    description="The values version — what we will and will not do, written down so it can be held against us."
+  />
+</Cards>
+
+## Why a game studio built a tools company
+
+Automation Forge is built inside **Colony Origins**, a real Unreal Engine
+production, and nothing ships from it that has not first been used there.
+
+This is not a marketing arrangement. It is the only quality gate we trust. A
+plugin written against an imagined project passes every test its author
+thought of; a plugin used to actually finish a scene fails in the specific,
+unglamorous ways that matter — the skeleton faces the wrong axis, the prop
+leaves the hand, the face montage plays on the body mesh, the NPC cached its
+bark at spawn and never heard the new one.
+
+Every hard-won fact in this wiki came from that loop. Where a page tells you
+something oddly specific, it is because the general version was wrong once.
+
+## The three product lines
+
+**Automation Forge** is the first and by far the largest — a family of Unreal
+Engine plugins covering motion, speech, face, mesh and performance, with a hub
+that installs them and pipelines that run them unattended. That is what
+[most of this wiki](/docs/automation-forge) is about.
+
+**Kovati Studio** is the video production workspace we use to record and cut
+tutorials and demos. It is not released — the desktop app and the Windows
+companion both ship before it is documented here.
+
+**Kovati Pro** is the shared, web-hosted version of the pipelines: the same
+definitions and the same ledger, operated for a team rather than on one
+workstation. It does not exist yet. The
+[whitepaper](https://kovati.dev/whitepaper) describes what it is meant to be.
+
+<Callout type="info">
+  Two of those three have no documentation here, deliberately. A section that
+  promises documentation and delivers a placeholder is worse than no section
+  at all — so Studio and Pro appear when they ship, not before.
+</Callout>
+
+## Who is behind it
+
+<Cards>
+  <Card
+    title="Structure"
+    href="/docs/company/structure"
+    description="Kovati, MetaWorx, Blackcode and Colony Origins — which entity does what, and where your account data actually sits."
+  />
+  <Card
+    title="How we work"
+    href="/docs/company/how-we-work"
+    description="Nine repositories, one source of truth per fact, and the discipline that keeps them agreeing."
+  />
+</Cards>

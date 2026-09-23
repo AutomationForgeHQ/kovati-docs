@@ -1,0 +1,30 @@
+{
+  "title": "Automation Forge",
+  "description": "The plugin family for Unreal Engine",
+  "icon": "Hammer",
+  "root": true,
+  "pages": [
+    "index",
+    "---Install and run---",
+    "getting-started",
+    "accounts",
+    "hub",
+    "cli",
+    "keys",
+    "---How it works---",
+    "concepts",
+    "pipelines",
+    "integrations",
+    "distribution",
+    "---The sets---",
+    "motionforge",
+    "meshforge",
+    "speechforge",
+    "faceforge",
+    "performanceforge",
+    "montageforge",
+    "surfaceforge",
+    "---Help---",
+    "troubleshooting"
+  ]
+}

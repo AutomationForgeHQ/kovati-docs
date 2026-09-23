@@ -1,0 +1,35 @@
+{
+  "name": "kovati-docs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "docs.kovati.dev — the Kovati wiki: Automation Forge, the tools, and the company",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "verify": "cross-env NEXT_DIST_DIR=.next-verify next build",
+    "start": "next start",
+    "sync:manifest": "node tools/sync-manifest.mjs",
+    "postinstall": "fumadocs-mdx"
+  },
+  "dependencies": {
+    "fumadocs-core": "16.15.13",
+    "fumadocs-mdx": "15.4.3",
+    "fumadocs-ui": "16.15.13",
+    "lucide-react": "^1.47.0",
+    "next": "16.3.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "cross-env": "^10.1.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.2"
+  }
+}

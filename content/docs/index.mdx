@@ -1,0 +1,68 @@
+---
+title: Kovati Docs
+description: Automation Forge, the tools around it, and the discipline they serve.
+icon: Home
+---
+
+Three sections, because they answer three different questions.
+
+<Cards>
+  <Card
+    title="Automation Forge"
+    href="/docs/automation-forge"
+    description="The plugin family for Unreal Engine — motion, speech, face, mesh and performance, plus the hub, the command line and the pipelines that run them."
+  />
+  <Card
+    title="Tools"
+    href="/docs/tools"
+    description="Utilities that are not part of a Forge set, and the add-ons that bridge Automation Forge into frameworks you already build on."
+  />
+  <Card
+    title="Company"
+    href="/docs/company"
+    description="What the playable gap is, why closing it is the whole product, and who is behind it."
+  />
+</Cards>
+
+## How to read this wiki
+
+Every page carries a chip under its title saying how far to trust it.
+
+- **Documented in depth** — written against the source, used in a real
+  production, and honest about where the edges are. Today that is
+  [MotionForge](/docs/automation-forge/motionforge),
+  [MeshForge](/docs/automation-forge/meshforge),
+  [SpeechForge](/docs/automation-forge/speechforge),
+  [FaceForge](/docs/automation-forge/faceforge) and
+  [PerformanceForge](/docs/automation-forge/performanceforge).
+- **Overview** — what it is and what it does, without the detail. The plugin's
+  own README goes further until the page catches up.
+- **Not released** — described because it is being built. Nothing in it is
+  installable.
+
+No page on this site types a version number, a download link or a release date
+by hand. All of that is read from
+[the release manifest](https://github.com/AutomationForgeHQ/automation-forge/blob/main/manifest.json),
+which CI generates from the plugin register and the published releases. If you
+find a number here that contradicts what the hub tells you, the hub is right
+and this is a bug — [open an issue](https://github.com/AutomationForgeHQ/kovati-docs/issues).
+
+## Start here
+
+<Cards>
+  <Card
+    title="Getting started"
+    href="/docs/automation-forge/getting-started"
+    description="From nothing installed to a Forge set running in your project."
+  />
+  <Card
+    title="PlayableOps"
+    href="/docs/company/playable-ops"
+    description="The gap all of this exists to close, in about five minutes of reading."
+  />
+  <Card
+    title="Releases"
+    href="/releases"
+    description="Every published version of every plugin, with its notes."
+  />
+</Cards>
