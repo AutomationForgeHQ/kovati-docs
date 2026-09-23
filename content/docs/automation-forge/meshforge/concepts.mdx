@@ -98,6 +98,22 @@ An advanced preview scene with A/B compare and a normalising **Align**.
 - Add-ons can put a control in its bar and draw meshes beside the subject —
   the garment plugin's *Character* is the first.
 
+<Shot
+  src="/shots/meshforge/compare-ab.png"
+  width={1191}
+  height={931}
+  alt="The Mesh viewer with Compare A/B and Align both ticked. A nuclear battery prop, labelled NB-7, is split down the middle by a vertical wipe: the left half is the raw Tripo take, the right half the post-processed version, visibly darker and more weathered. Pickers above name A as 'Tripo — P2-20260801' and B as 'post-processed — Tripo', with a Swap button between them. The status bar reads A at 18,907 triangles and 26,102 vertices, B at 18,907 triangles and 26,131 vertices, both 1 material and 54 by 80 by 100 cm."
+  caption="The same prop before and after a retexture, wiped down the middle. Both counts are printed because the comparison is not only visual — here the triangles are identical and the vertices differ by 29, which is a UV change, not a geometry change."
+/>
+
+<Callout type="info">
+  **Identical triangles and different vertices is the signature of a UV
+  edit.** Splitting a UV island duplicates vertices along the seam without
+  touching the surface, so a step that claims to have only retextured
+  something should move the second number and not the first. If the triangle
+  count moved too, the step did more than it said.
+</Callout>
+
 <Callout type="info">
   **Anything drawn beside the mesh switches the viewer to true space** —
   nothing centred or scaled — and Align is greyed with the reason. Comparing a
