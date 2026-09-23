@@ -68,10 +68,16 @@ camera.
 />
 
 <Callout type="info">
-  **The preview mesh follows the selected clip's speaker.** Selecting the
-  player's line swapped this stage to her face mesh, because the
-  [speaker sheet names a Face Mesh](/docs/automation-forge/speechforge/casting#the-speaker-sheet).
-  You are looking at the character who says that line, not at a generic head.
+  **The preview mesh follows the selected clip, not the bank.** Selecting a
+  different speaker's line swaps the head on the stage, so you are looking at
+  the character who says that line rather than at a generic one.
+
+  Where it gets the head from: the speaker's
+  [sheet names a Face Mesh](/docs/automation-forge/speechforge/casting#the-speaker-sheet),
+  and this bank names none of its own. In this scene Renk's clips preview on
+  `SKM_MH_Demo_Person_1_FaceMesh`, which is exactly what `SP_Renk` names. The
+  player's sheet names no face mesh at all and the panel still finds one, so
+  there is a fallback here that this page does not describe.
 </Callout>
 
 ### One bank is one character standard

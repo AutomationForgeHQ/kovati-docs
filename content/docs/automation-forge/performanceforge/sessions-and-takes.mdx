@@ -82,6 +82,16 @@ Inside: the WAV master, the JPEG frames named by media-clock ticks, and
 The manifest being written last is the completeness protocol. A take folder
 without one is an interrupted recording, and nothing downstream has to guess.
 
+The slate is the line id, so a folder name carries its whole provenance:
+
+```
+PF_Player_DLG_GeneratorBriefing_Player_IllLeaveYouNow_20260909_000321
+   └ speaker  └ line id                             └ when
+```
+
+That is why [the ledger](/docs/automation-forge/performanceforge#the-panel)
+can list three takes of two lines and say which is which without a database.
+
 ## Session assets
 
 `PS_` assets have a factory, so **double-clicking one opens the capture panel
