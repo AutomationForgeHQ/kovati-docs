@@ -101,6 +101,23 @@ Each beat becomes its own segment of the generated clip. Providers declare
 their own limits — one local provider caps a beat at 10 seconds and a whole
 clip at 60.
 
+<Shot
+  src="/shots/motionforge/kimodo-beats.png"
+  width={1200}
+  height={1000}
+  alt="A Motion Definition on Kimodo. The Prompt section is headed '12 s, 2 beats'. Below the length field, which notes 'Shared by the beats. Up to 10 s a beat, 60 s in all', two rows read Beat 1 at 6.0 s and Beat 2 at 6.0 s, each showing the start of its sentence. A note says the length is shared evenly and changing a beat's seconds gives it more or less time. The Generate section's provider dropdown reads 'Kimodo (local) — free, runs on this machine'. Five takes are listed, with Take 1 in the game."
+  caption="Two full stops in the prompt became Beat 1 and Beat 2, each with its own seconds. The length is shared evenly until you change one — which is how you give an action the time it actually needs without rewriting the sentence."
+/>
+
+<Callout type="info">
+  Compare the same panel on
+  [Uthana](/docs/automation-forge/motionforge/providers#uthana--hosted): one
+  beat, *"4 s to 10 s"*, and a price per generated second, where this one reads
+  *"Up to 10 s a beat, 60 s in all"* and *"free, runs on this machine"*. The
+  limits and the price are the provider's own, shown where the decision is
+  made rather than in a table you have to go and find.
+</Callout>
+
 <Callout type="info">
   The full-stop rule has an obvious trap, and it is handled: a decimal point
   inside a number is detected before submission rather than silently splitting
@@ -135,3 +152,19 @@ Seven console commands: `MotionForge.GetStarted`, `MotionForge.Library`,
 `MotionForge.ListCharacters`.
 
 The tab opens on **Get started** until the project has a motion to show.
+After that it opens on the library.
+
+<Shot
+  src="/shots/motionforge/library.png"
+  width={1052}
+  height={1000}
+  alt="The MotionForge library listing 77 motion definitions. Filter tabs read All, Draft, Working, Review, Ready 77 and Failed, beside a search box. The table columns are Definition, Status, Provider, Takes, Animation and Prompt. Most rows show Kimodo (local); four MD_EP1 rows show Uthana. Take counts range from 1 to 14, each marked 'chosen'. Nothing is selected, so Open, Show Animations, Import Chosen Take and Generate are all disabled."
+  caption="One row per definition, with the provider and the take count beside it — so 'which of these used the paid provider' is a glance rather than an audit. With nothing selected, every action is disabled: this panel cannot be made to generate by accident."
+/>
+
+<Callout type="info">
+  Worth noticing in that list: take counts of 11, 13 and 14 sit beside counts
+  of 1. Nothing was tidied away — takes are
+  [hidden, never deleted](#takes), so a definition that was hard to get right
+  still carries the evidence of it.
+</Callout>

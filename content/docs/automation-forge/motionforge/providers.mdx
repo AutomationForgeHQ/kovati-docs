@@ -142,6 +142,22 @@ Only the asynchronous `text-to-motion-3.0` model is implemented — declared as
 4–10 seconds. The synchronous `text-to-motion-2.0`, which exposes seed,
 `cfg_scale` and steps, is **not**.
 
+<Shot
+  src="/shots/motionforge/uthana-definition.png"
+  width={1200}
+  height={1000}
+  alt="A Motion Definition using Uthana. The Prompt section is headed '5 s, 1 beat' and the length field notes 'Uthana makes 4 s to 10 s.' The Character section warns that Narrative Biped has a provider rig but no Retargeter, so a clip could not be moved onto the game's skeleton, offering Import directly, Upload again and Import Uthana's rig. The Generate section's provider dropdown reads 'Uthana — pay as you go, $0.10 a generated second', described as hosted, generating on your own uploaded character, with good hands, 4 to 10 seconds a take. The takes table lists Take 2 as ready and Take 1 as in the game, with the Seed, Length and Cost columns empty."
+  caption="Three Uthana facts the prose can only assert: its own length range on the field that sets it, the published price named in the dropdown that selects it, and an empty Seed column — because this model has no seed, so these takes can never be regenerated."
+/>
+
+<Callout type="warn">
+  The amber block in that capture is the failure
+  [retargeting](/docs/automation-forge/motionforge/retargeting) is about:
+  *"has a provider rig but no Retargeter, so a clip could not be moved onto the
+  game's skeleton."* It is raised on the definition, before a generation is
+  paid for — not after one arrives on the wrong rig.
+</Callout>
+
 ### No seed, and what follows from it
 
 Uthana's implemented model has no seed. Two consequences, both deliberate:

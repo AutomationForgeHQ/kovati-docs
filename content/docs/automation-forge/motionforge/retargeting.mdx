@@ -25,6 +25,32 @@ they are not, you need a retargeter — and the character window tells you,
 including the case that matters most: **when clips would stop on a provider
 rig for want of one.**
 
+The same project, two Motion Characters aimed at the same skeleton. The only
+difference that matters is one field:
+
+<Shot
+  src="/shots/motionforge/character-direct.png"
+  width={1200}
+  height={1000}
+  alt="The MC_Quinn_Direct Motion Character window. Its Pairing summary reads: Provider 'any — this character names none, so the definition's provider decides'; Pipeline 'direct — clips import straight onto SK_Mannequin_Narrative'; and 'Ready — usable with any provider that needs no upload'. A 'With Kimodo (local)' section reports ready, clips built directly onto the skeleton through the bone map. A 'With Uthana' section is amber and reports 'No ProviderCharacterId — upload the character to the provider and paste its id here', with an Upload to Uthana button. Under Retargeting, Provider Mesh is None."
+  caption="Provider Mesh empty, so the pipeline line reads direct. Note the two provider sections below it: the same character is ready for one provider and refused by the other, and the refusal names what is missing rather than waiting for generation to fail."
+/>
+
+<Shot
+  src="/shots/motionforge/character-retargeted.png"
+  width={1200}
+  height={1000}
+  alt="The MC_Quinn_Kimodo Motion Character window. Its Pairing summary reads: Provider 'Kimodo (local)'; Pipeline 'retargeted — clips arrive on SK_KimodoSOMA'; Retargeter RTG_KimodoSOMA_To_SKM_Quinn_FK; and 'Ready to generate with Kimodo (local)'. A 'With Kimodo (local)' section says clips are built on the Kimodo rig then retargeted onto SKM_Quinn, and offers Rebuild Kimodo rig and Import directly instead. Under Retargeting, Provider Mesh is SK_KimodoSOMA."
+  caption="The same target skeleton, with Provider Mesh set to SK_KimodoSOMA — so the pipeline line reads retargeted, and names the retargeter it will pass through. 'Import directly instead' is the way back to the other route."
+/>
+
+<Callout type="info">
+  **The window states the route as a sentence**, not as a field you have to
+  interpret: *clips import straight onto SK_Mannequin_Narrative*, or *clips
+  arrive on SK_KimodoSOMA*. Read that line before generating; it is the
+  cheapest check there is.
+</Callout>
+
 ## Building the provider rig
 
 For Kimodo, `Kimodo.CreateRig` builds it procedurally — the SOMA skeleton and

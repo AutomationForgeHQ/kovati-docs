@@ -58,6 +58,13 @@ on it.
   report a dead route.
 </Callout>
 
+<Shot
+  src="/shots/hub/runners.png"
+  width={1008}
+  height={761}
+  alt="The hub's Runners tab shows Kimodo stopped under This machine. Docker is detected, Start is available and Stop is disabled. The rented GPU section says a Runpod key is needed and offers Set the Runpod key."
+  caption="Start a runner before opening an editor. Start and Stop act on container state read from Docker itself, so the hub and editor can both see what is really running."
+/>
 ## Keys, Settings and the account
 
 Three drawers over one scrim — opening any closes the others.
@@ -66,10 +73,24 @@ Three drawers over one scrim — opening any closes the others.
 entries the plugins use, so a key set in either place is set for both. See
 [keys and runners](/docs/automation-forge/keys).
 
+<Shot
+  src="/shots/hub/keys.png"
+  width={1008}
+  height={761}
+  alt="The Keys drawer is open over the dimmed Runners tab. It reports 2 of 4 keys set and 1 still needed. Hugging Face is marked Not set, with an empty key field and disabled Save button; its access notice names the gated model and Request access. The Runpod entry begins below."
+  caption="One list brings together the keys installed plugins declare and reaches the same Windows Credential Manager entries the editor uses. The Hugging Face entry also separates having a token from being granted model access; more keys continue below."
+/>
 **Settings** (`%LOCALAPPDATA%\AutomationForge\settings.json`): channel, start
 with Windows, keep running in the tray, notifications, and one extra folder of
 plugins to look at.
 
+<Shot
+  src="/shots/hub/settings.png"
+  width={1008}
+  height={761}
+  alt="The Settings drawer is scrolled to Background and Where it looks. Keep running in the tray, Start with Windows and Notify me when updates appear are all checked. The extra plugin folder field is empty. The Data section shows the local data folder and an Open folder button."
+  caption="Tray behaviour, start with Windows and update notifications are separate choices. The extra folder lets the hub discover plugins in a working tree. Stable and Nightly channel choices sit higher in this drawer, above the captured scroll position."
+/>
 ## How the hub knows what a plugin needs
 
 **The hub cannot ask a plugin anything.** It is a separate process that may be
