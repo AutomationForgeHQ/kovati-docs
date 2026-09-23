@@ -51,6 +51,19 @@ difference that matters is one field:
   cheapest check there is.
 </Callout>
 
+### When the route stops short
+
+The case worth recognising on sight: a character that **has** a provider rig
+but no retargeter. The clip generates, arrives, and then has nowhere to go.
+
+<Shot
+  src="/shots/motionforge/get-started-character.png"
+  width={1048}
+  height={277}
+  alt="Step 2 of Get started, 'Who it is for', headed 'Narrative Biped — needs a fix for Uthana'. The character dropdown reads 'Narrative Biped (for Uthana, does not suit)'. A line explains clips are generated on your character, uploaded as cErKdwcf, and stopped on SKM_MC_NarrativeBiped_Provider, with no retargeter to move them onto SKM_Quinn. An amber warning follows: 'Narrative Biped' has a provider rig but no Retargeter, so a clip could not be moved onto the game's skeleton. Import directly instead, or set a Retargeter on the character. Buttons offer Import directly, Upload again and Import Uthana's rig."
+  caption="'Stopped on SKM_MC_NarrativeBiped_Provider — no retargeter moves them onto SKM_Quinn.' The step header says which provider the character fails for, and both ways out are offered beside the warning rather than left for you to work out."
+/>
+
 ## Building the provider rig
 
 For Kimodo, `Kimodo.CreateRig` builds it procedurally — the SOMA skeleton and

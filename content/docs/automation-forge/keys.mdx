@@ -54,11 +54,26 @@ project.
 
 ## One Keys page for everything installed
 
-**Tools ▸ Automation Forge ▸ Keys** in the editor, and the **Keys** drawer in
-[the hub](/docs/automation-forge/hub), are the same list: every key every
-installed plugin declares, with what it is for and whether it is set.
+**Tools ▸ Keys** in the editor, under the menu's *Automation Forge* heading,
+and the **Keys** drawer in [the hub](/docs/automation-forge/hub), are the same
+list: every key every installed plugin declares, with what it is for and
+whether it is set.
 
 A provider account is entered **once**, and every set that needs it finds it.
+
+<Shot
+  src="/shots/keys/keys-panel.png"
+  width={1038}
+  height={634}
+  alt="The Automation Forge Keys window. Its header reads: kept in this computer's credential vault, never in the project, so a key does not travel with a copied folder or a commit. A General section marked '2 of 2 set' lists Hugging Face, used by MotionForge Kimodo and FaceForge ACE, marked Configured (OS credential vault). Beneath it in amber: 'A token is not access. You must also be granted:' followed by Meta Llama 3 8B Instruct with a Request access link noting it is reviewed by a human, and NVIDIA Audio2Emotion v2.2 with an Accept the terms link. Runpod follows, noting it needs write access because a read-only key lists hardware happily and then fails to create anything. Each entry shows its vault path and environment variable. A MeshForge Cloud section follows."
+  caption="One key, two plugins, and the grants it still needs listed under it. 'Request access' is marked as reviewed by a human — start it early — because a token that installs fine and fails at generation time is the expensive version of this mistake."
+/>
+
+<Callout type="warn">
+  The Runpod line is worth reading twice: **a read-only key lists hardware
+  happily and then fails to create anything.** That is a key which passes
+  every check you would think to run and still cannot rent you a GPU.
+</Callout>
 
 ### Some keys belong to you, not to a plugin
 

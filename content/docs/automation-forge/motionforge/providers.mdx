@@ -78,7 +78,7 @@ per take and records it), `diffusion_steps` (100; 10–500), `postprocess`,
 
 ### Setup
 
-The **Kimodo Runner** panel — *Tools ▸ Automation Forge ▸ Kimodo Runner*, or
+The **Kimodo Runner** panel — *Tools ▸ Kimodo Runner*, or
 `Kimodo.Panel` — has three targets: *This machine*, *Another machine*, and
 *A rented GPU*.
 
@@ -90,6 +90,24 @@ silently wrong.
 Setup steps are **measured, not assumed**: where it runs, Docker Desktop, the
 Hugging Face token, access to Llama 3, the runner image, the runner, and
 renting a GPU instead.
+
+Both providers declare their setup the same way, so Get started can put them
+side by side and let you pick on evidence:
+
+<Shot
+  src="/shots/motionforge/get-started-providers.png"
+  width={1090}
+  height={615}
+  alt="Step 1 of MotionForge's Get started, 'Where motion is made', with Uthana selected and marked Ready. Two cards sit side by side. The Kimodo (local) card is headed 'Starts when you generate', costs 'free, runs on this machine', and lists measured rows: where it runs, Docker Desktop running with its version, a Hugging Face token stored in the system credential vault, Access to Llama 3 'not checked yet — a token alone installs fine and fails later, so this is worth checking', the runner image, the runner not running with a Start runner button, and renting a GPU instead. The Uthana card costs 'pay as you go, $0.10 a generated second, Uthana's published price', and lists its API key, the plan, one uploaded character in this project, and a connection that is 'not tested yet — testing is free'."
+  caption="Two providers, the same measured rows, one decision. Every amber row states what is unverified rather than assuming it is fine: Llama 3 access is 'not checked yet', the Uthana connection is 'not tested yet — testing is free'."
+/>
+
+<Callout type="info">
+  The cost line sits at the top of each card, before any of the setup. Kimodo
+  reads *"free, runs on this machine"*; Uthana reads *"pay as you go, $0.10 a
+  generated second, Uthana's published price"* — the published-price note
+  appearing exactly where the choice between them is made.
+</Callout>
 
 <Callout type="info">
   **Llama 3 access is measured too.** Hugging Face is asked whether your stored
@@ -108,6 +126,23 @@ renting a GPU instead.
   alt="Kimodo Runner offers This machine, Another machine and Rented GPU, with This machine selected. It reports Not answering: Docker is running but the runner container is stopped. The image is up to date and a Hugging Face token is stored. Llama 3 access says not checked yet, with Model page and Check links. Start is available and Stop is disabled."
   caption="Docker running, a runner image and a stored token are separate facts. Here the container is stopped and Llama 3 access is 'not checked yet' — the panel does not present a stored token as proof of access."
 />
+
+### Another machine — one GPU for the team
+
+Point the project at a runner on somebody else's workstation. **Nothing is
+installed or started on your machine, and your project pays for nothing.**
+
+<Shot
+  src="/shots/motionforge/runner-another-machine.png"
+  width={1048}
+  height={646}
+  alt="The Kimodo Runner panel on its 'Another machine' target. It describes a runner on another computer — a workstation with a big NVIDIA GPU that the whole team generates against — noting nothing is installed or started here and this project pays for nothing. Fields for Address and a Runner token, which reads 'Stored. Type a new one and press Enter to replace it.' Instructions follow for the other machine: install Docker Desktop and a current NVIDIA driver, copy the plugin's Runner folder across, and start it from inside that folder; it needs its own Hugging Face token with Llama 3 access and port 8757 open. A copyable block shows the four environment variables and the docker compose command. Buttons: Generate on that machine, and Show the Runner folder."
+  caption="The setup for the other machine is given as the commands to run there, not as prose to translate. Note the token field: it says a token is stored without showing it, and replacing it is a deliberate keypress."
+/>
+
+The token for that runner lives in **this** computer's vault, not in the
+project — so pointing at a shared workstation does not put its credential into
+source control.
 
 ### Renting a GPU
 
@@ -178,6 +213,23 @@ Uthana's implemented model has no seed. Two consequences, both deliberate:
 The rate starts at Uthana's published price ($0.10/s). While it is still that
 price, **every cost line says so** — "Uthana's published price; set your own
 on the MotionForge Uthana settings page."
+
+That page is where you make the figures match your actual account:
+
+<Shot
+  src="/shots/motionforge/uthana-billing.png"
+  width={1321}
+  height={760}
+  alt="Project Settings showing 'Automation Forge — MotionForge Uthana'. Its description reads: how your Uthana account is billed, so every cost line and confirmation in MotionForge states the right price before you spend. Set the plan to match your account; the two plans reverse the right way to work. A note says these settings are saved in DefaultEditor.ini, which is currently writable. Under Billing: plan is 'pay as you go', Rate Per Generated Second is 0.1, Rate Per Downloaded Second is greyed out at 0.0, and Currency is USD."
+  caption="Rate Per Downloaded Second is greyed out because the plan is pay as you go — on that plan fetching is free, so the field cannot apply. Switch the plan and the two swap over, which is what 'the two plans reverse the right way to work' means in practice."
+/>
+
+<Callout type="info">
+  This is a **project** setting, not a per-person one: what your team is billed
+  is a fact about the project, so it belongs in a committed file. Contrast the
+  key itself, which is per person and never in an `.ini` — see
+  [the three tiers](/docs/automation-forge/keys#who-owns-it-decides-where-it-lives).
+</Callout>
 
 ### Characters
 
