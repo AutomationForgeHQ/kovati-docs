@@ -21,6 +21,14 @@ A Mesh Definition opens with **five tabs**:
 A generator's pictures sit at the top of its settings; a step's Advanced
 actions sit under the settings they work on.
 
+<Shot
+  src="/shots/meshforge/pistol-images-tab.png"
+  width={1645}
+  height={1018}
+  alt="The Images tab of a Mesh Definition for the SEC-17 rifle. A line at the top reads: the generator will be shown T_MSD_Pistol_41a52ebb, plus 3 extra views. It can read up to 3. A large white-background render of the rifle fills the tab, with previous and next arrows. Beneath it: 'Added — 1,448 × 1,086' and, in green, 'Main image — this is what the generator is shown'. A strip of four thumbnails all marked Added sits below, with the counter '1 of 4' and buttons for Is the main image, Add as view, Find and Remove."
+  caption="'It can read up to 3' is the provider's own limit, stated where you choose pictures rather than discovered when a fourth is ignored. The green line marks which one the generator actually sees — the rest are extra views, and which is which is a choice, not an ordering accident."
+/>
+
 ## Takes are read from disk, not from the definition
 
 The Takes tab reads the library **from the provenance vault on disk** rather
@@ -31,6 +39,21 @@ re-imported. The list is a view; the vault is the record.
 
 The originating vendor task is carried **separately** from "what ran last", so
 a post step no longer erases where a mesh came from.
+
+<Shot
+  src="/shots/meshforge/pistol-takes-tab.png"
+  width={1641}
+  height={1014}
+  alt="The Takes tab of a Mesh Definition. A line reads: 3 takes in Forge/Library, 3 still on this disk. A cleaned take keeps its record and can be fetched again where the provider's ids are stable. The table has columns When, Made by, Size, Took, Cost and On disk, listing one Meshy meshy-7 take at 66 MB that took 2m 28s and cost 30 credits, and two Tripo v3.1 takes at 56 MB and 1 MB costing about $0.60 and $0.40. The selected take's detail pane below reports its id, provider, that it ran on the provider's hardware, and 'Cost 30 credits — this provider publishes no rate, so there is no dollar figure'. It then lists the main image and three view images by full content path, each with a blake3 hash, followed by the settings that were sent."
+  caption="Every take keeps what produced it: the provider and model, the wall-clock time, the cost in that vendor's own unit, and a blake3 hash of each input picture. Two vendors appear in one definition's history — Tripo drew the references, Meshy built the mesh that shipped."
+/>
+
+<Callout type="info">
+  **"This provider publishes no rate, so there is no dollar figure."** One
+  vendor bills in credits and one in dollars, and the record says which rather
+  than inventing a conversion. A cost you cannot state honestly is better left
+  in the unit you were actually charged in.
+</Callout>
 
 ## Staleness
 

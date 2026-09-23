@@ -30,8 +30,18 @@ The unit of work is a **Mesh Definition**, and it has five stages:
 
 <Step>
 ### Concept
-Generate a reference image from a prompt, where the pipeline on this stage
-reads one.
+
+Draw a reference image from a prompt. The mesh generators here reconstruct
+from pictures, so this stage is often where the real art direction happens —
+get the reference right and the mesh follows it.
+
+<Shot
+  src="/shots/meshforge/concept-image-stage.png"
+  width={565}
+  height={610}
+  alt="The Concept image stage, marked 'not run', using the 'Image — Tripo API v3' pipeline. A Prompt field carries placeholder guidance: describe the object, not the picture — 'a dented steel ammunition crate with rope handles' is a prop, 'a photo of a crate on white, studio lighting' is a photograph of one, and the second puts the studio in the mesh. A Model group sets model to gemini-3.1-flash, template to none and Takes to 1. Framing offers t_pose and a greyed-out sketch_to_render marked v2 legacy. Input offers Use Existing Pictures, and Pipeline holds a Description and an Enabled tick. A note at the foot reads: write what to draw in the prompt below first, and it costs about 20 Tripo credits."
+  caption="The image generator is a pipeline like any other — chosen from a dropdown, with that vendor's own fields under it. The greyed 'sketch_to_render (v2 legacy)' is a setting the selected model does not take: shown, so you know it exists, disabled, so you cannot send it."
+/>
 </Step>
 
 <Step>
