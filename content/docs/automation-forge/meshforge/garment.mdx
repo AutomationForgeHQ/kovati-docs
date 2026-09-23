@@ -374,8 +374,35 @@ Epic's Vertex Sculpt, Smooth, Lattice and Bend/twist — **all of which only
 move vertices**. Tools that remesh are not offered, and a changed topology is
 refused on write-back.
 
+<Shot
+  src="/shots/meshforge/sculpt-step.png"
+  width={667}
+  height={292}
+  alt="The 'Sculpt mesh — in the editor' step, numbered 4 and marked 'not run yet', with Run this step greyed out and Remove available. A Sculpt group offers an 'Open sculpt window' button and an empty Reference Meshes array. An Input group sets Input Source to 'Step above, latest run (the Mesh stage's selected take…)'. A Pipeline group holds a Description and a ticked Enabled box. A line across the foot reads: 'No valid input: the previous step has no saved output. Run it first, or select a mesh / saved output.'"
+  caption="Run this step is greyed, and the line underneath says why and what to do about it: the step above produced nothing, so either run it or point this one somewhere else. A disabled button that explains itself beats an enabled one that fails."
+/>
+
 Reference meshes stand locked beside the subject (a MetaHuman body brings its
 face), and UV seams are welded while sculpting.
+
+<Shot
+  src="/shots/meshforge/sculpt-window.png"
+  width={1513}
+  height={964}
+  alt="The standalone Sculpt mesh window, titled for SM_TestCharacter_Sculpt, showing a grey shirt mesh with a brush circle on its shoulder. The Mesh panel reports 'Nothing beside it' and states that seams are welded while you sculpt — 7,314 vertices sculpt as 6,911, and both sides of a seam move together. Below it the controls are listed: left-drag sculpts, square brackets size the brush, Ctrl inverts, Shift smooths, Alt with left-drag orbits, right-drag looks, the wheel zooms, Ctrl+Z undoes a stroke. A Tools row offers Sculpt, Smooth, Lattice and Bend / twist above Accept, Cancel and a ticked Show references, with brush and sculpting settings beneath."
+  caption="'Seams are welded while you sculpt: 7,314 vertices sculpt as 6,911.' A UV seam splits one edge into two rows of vertices, so sculpting across one unwelded tears the mesh open along it. Here both sides move together — and the panel says by how many vertices."
+/>
+
+<Callout type="info">
+  **'Nothing beside it'** is the Reference Meshes slot reporting empty. Fill
+  it and the body stands locked beside the garment while you work, which is
+  the difference between sculpting a shirt and sculpting a shirt *that has to
+  fit someone*.
+
+  The same window serves this step and
+  [the Garment Studio's Sculpt mode](#sculpt) — same four tools, same brushes,
+  same controls. Only what it is handed differs.
+</Callout>
 
 *Finish edit* hands the working copy to the chain with **nothing exported or
 re-imported.**
