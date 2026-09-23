@@ -1,0 +1,143 @@
+---
+title: Getting started
+description: From nothing installed to a Forge set running in your project.
+status: shipped
+icon: Rocket
+---
+
+Requirements: **Windows 10 or 11, 64-bit, and Unreal Engine 5.8.**
+
+<Callout type="info">
+  Prefer to watch? [The whole setup in under eight minutes](https://youtu.be/qROAvFtDoBw)
+  — the hub installed and signed in, sets installed and updated, and the
+  plugins turned on in a project.
+</Callout>
+
+<Steps>
+
+<Step>
+
+### Get the hub
+
+Download from **[kovati.dev/download](https://kovati.dev/download)**, or take
+the assets directly from
+[the latest release](https://github.com/AutomationForgeHQ/automation-forge/releases/latest).
+
+- **`AutomationForge-Setup.exe`** — the installer. Per-user, no administrator
+  prompt. Installs the hub and the `forge` command line, adds `forge` to
+  `PATH`, and can start the hub with Windows.
+- **Portable**, if you would rather not install anything:
+  `AutomationForge-Hub-win-x64.zip` and `forge-win-x64.zip` separately, plus
+  `SHA256SUMS.txt` to check them.
+
+Asset names never carry a version, so those links always point at the newest
+release.
+
+<Callout type="warn">
+  The installer is unsigned until the code-signing certificate arrives.
+  Windows will ask you to confirm the first run.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Create an account and sign in
+
+**Nothing installs without one.** In the hub, top right: **Sign in.** It opens
+[app.kovati.dev](https://app.kovati.dev) in your browser — create an account
+there with Google, GitHub, or email and password — and say **Yes, connect it**
+when asked.
+
+No password ever passes through the desktop. [Accounts](/docs/automation-forge/accounts)
+explains exactly how that works and what the hub and CLI show once you are in.
+
+From the command line instead:
+
+```powershell
+forge login
+```
+
+</Step>
+
+<Step>
+
+### Add a Forge set
+
+In the hub's **Plugins** tab, pick a set — say, MotionForge — and press
+**Add & install**. Free plugins are added to your account and installed in the
+same click; a paid member of a set is named and left out until you buy it.
+
+```powershell
+forge install motionforge
+```
+
+`forge list` shows every set, what is on your account, and what is installed.
+`forge engines` shows which Unreal installations the hub found.
+
+</Step>
+
+<Step>
+
+### Open Unreal
+
+Open your project, or a fresh 5.8 one. **Automation Forge** is in the toolbar,
+after Play — that menu comes with every engine install and is on in every
+project.
+
+Under **Installed**, tick the plugins this project should use. The editor
+applies them when it restarts.
+
+```powershell
+forge enable MotionForge --project C:\Games\MyGame
+```
+
+Each set's editor panels are then under **Automation Forge** in the toolbar.
+
+</Step>
+
+<Step>
+
+### Know what you are running
+
+The hub checks for updates every four hours and shows a Windows notification
+when one is ready; `forge update` does the same from the command line.
+
+**What's new**, beside a plugin's Update button, lists every release since the
+version you have — skipped ones included — before you take it.
+
+</Step>
+
+</Steps>
+
+## If a set needs a key or a local runner
+
+Some sets need an API key (a hosted voice or motion provider) or a local model
+runner (a Docker container, or a GPU rented by the hour).
+
+The hub's **Keys** and **Runners** drawers cover both. Keys go straight into
+the Windows Credential Manager; a runner can be started or stopped there
+**before** you open the editor — which is usually what you want, since an
+editor that opens against a stopped runner just reports a dead route.
+
+See [keys and runners](/docs/automation-forge/keys).
+
+## Where to go next
+
+<Cards>
+  <Card
+    title="Concepts"
+    href="/docs/automation-forge/concepts"
+    description="Definitions, providers, the ledger and graduation — the ideas every set shares."
+  />
+  <Card
+    title="The sets"
+    href="/docs/automation-forge"
+    description="What each one is for, and how far it has actually been taken."
+  />
+  <Card
+    title="Troubleshooting"
+    href="/docs/automation-forge/troubleshooting"
+    description="The failures that come up most, and what they actually mean."
+  />
+</Cards>

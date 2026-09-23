@@ -1,0 +1,206 @@
+---
+title: Pipelines
+description: A definition anyone can author, run by an executor that behaves like a build system.
+status: shipped
+plugins: [AutomationForgePipelines]
+icon: Workflow
+---
+
+```
+author (panel, agent, or a graph) → check → plan → run, unattended → a gate, sometimes → done
+```
+
+Editor and commandlet only. The thing that runs a pipeline is called the
+**executor** rather than the runtime, for exactly that reason: it drives an
+unattended pass over hours, not a per-frame system.
+
+<Callout type="warn">
+  **Honest status.** The mechanism is built and proven by its own checker and
+  planner. Nothing in our own production currently drives a pipeline end to
+  end — it is waiting on a definition worth running unattended. Treat this
+  page as an accurate description of a working mechanism, not of a well-worn
+  path.
+</Callout>
+
+## A build system, not a flowchart
+
+That framing decides everything else:
+
+- A step's output identity is a hash of its resolved inputs, so **re-running
+  skips what is unchanged**.
+- State lives per *item*, not per run. Item 23 failing does not cost the other
+  39 whatever they already have.
+- A dry run typechecks the definition and reports a cost before anything
+  commits.
+- **Nothing may block on a human or open a dialog.** A modal in a commandlet
+  hangs a build machine forever, so a human decision is a *suspended run and a
+  review record* — never a prompt.
+
+## Three shapes
+
+The whole loop is three shapes over a keyed hierarchy of items, where every
+step **adds channels and never rewrites them**.
+
+| Shape | What it does |
+|---|---|
+| **Expand** | One item becomes many, at a deeper grain — discovery, and reading a source asset |
+| **Map** | One item gains channels — everything that generates, solves or ingests |
+| **Reduce** | Every item at a grain folds into its parent. Executes identically to a map at the parent's grain; kept as its own shape because it says what the step is *for* |
+
+## A pipeline is data
+
+A pipeline is a `UDataAsset` — steps and the wires between them — **rather
+than a graph**, and that ordering is the architecture.
+
+A definition written as data can be authored by a person in a panel, by an
+agent from a description, or drawn in a graph later, and all three produce the
+same thing. A definition that could only be *drawn* would make the graph
+load-bearing and the other two impossible.
+
+### Three constructs
+
+| Construct | What it is |
+|---|---|
+| **Node** | Runs something from [the node library](/docs/automation-forge/concepts#the-node-library). Almost every step |
+| **Filter** | Keeps only the items whose channel matches, and runs nothing. **There is no separate conditional** — the steps after a filter *are* the "then" branch |
+| **Gate** | Stops, and waits for a person. The one construct that is not about data: a filter drops what fails its test silently; a gate raises a judgement somebody has to make |
+
+A wire is a **binding, not an ordering**. Execution order is worked out from
+the wires rather than declared, which is what lets the graph branch, rejoin
+and end in more than one place. Two branches simply write their channels onto
+the same items, so a node downstream of both reads two channels with no
+special construct for joining.
+
+### Per-step settings worth knowing
+
+| Setting | What it is for |
+|---|---|
+| `LedgerChannel` / `HashAlso` | Cache this step's result and skip items already current. **`HashAlso` is where a provider and its model version belong** when the node's own inputs do not carry them — without naming them there, swapping models leaves the hash, and the cache, unchanged |
+| `GuardChannel` | Refuse to write when the channel already holds something the ledger never recorded. The protection for a project that had content before it had a ledger |
+| `DoneWhenChannel` / `DoneWhenEquals` / `TimeoutSeconds` | For a node that starts async work: which field on its status node means finished, and how long to wait |
+| `OutputPath` / `NamePattern` | Where output goes and what it is called. Overrides the pipeline's root, which overrides the plugin's default. **Most specific wins** |
+
+## Check, plan, run
+
+<Steps>
+
+<Step>
+
+### Check — free, and worth doing every time
+
+Validates a definition without running it: a step whose node id resolves to
+nothing, a binding that reads a channel no earlier step produces, an expand
+with no key, a grain that jumps two levels.
+
+This is possible because the item model is a keyed hierarchy, so the set of
+available channels at every step is known ahead of running anything.
+
+</Step>
+
+<Step>
+
+### Plan — what it would cost
+
+What the pipeline would cost, without writing an asset, calling a provider, or
+leaving a run behind.
+
+Steps that declare themselves read-only **are genuinely executed**, because
+the only way to know how many lines an episode has is to go and read them. At
+the first step that would *write* something, the plan counts what reaches it
+and **stops** — everything after reads output that does not exist yet, and the
+plan says so rather than presenting a subtotal as a total.
+
+</Step>
+
+<Step>
+
+### Run — and come back tomorrow
+
+`StartRun` begins a run and returns immediately with a run id. It **refuses to
+start if `Check` finds an error**, because a pipeline that stops halfway has
+usually spent money on the half it did.
+
+`AdvanceRun` moves a run forward by one step, or polls it once if it is
+waiting on an async node. A ticker drives it in the editor; a commandlet calls
+the same function in its own loop.
+
+`RunToCompletion` starts and pumps to the end. It blocks — which the stepped
+design otherwise exists to avoid — so it is for a commandlet or a test with
+nothing else to do, never the editor.
+
+</Step>
+
+<Step>
+
+### Answer the gate
+
+`GetPendingDecisions` says what a suspended run is waiting on; `AnswerGate`
+answers it — approve to let items through, hold them back otherwise.
+
+**Approving is a decision to spend.** The steps after a gate are usually the
+expensive ones. That is why the gate is there.
+
+</Step>
+
+</Steps>
+
+`CancelRun` stops a run where it is. What it produced stays; what it had not
+started never will.
+
+## A run is a file
+
+`FAFRunState` is serialisable in full — a list of items plus where the run had
+got to — and lives under `<Project>/AutomationForge/Runs/<RunId>.json`, beside
+the ledger and for the same reasons.
+
+So a run **outlives the process that started it**. An agent can start a pass
+overnight and a person can open the graph the next morning to answer its gate.
+
+A **lease** — an owner and a heartbeat, not a lock — records who is currently
+advancing it, because a lock held by a process that crashed is worse than no
+lock at all.
+
+## Authoring without drawing anything
+
+The authoring API builds and edits a pipeline exactly the way a graph would,
+purely as data: `AddStep`, `EditStep`, `RemoveStep`, `MoveStep`, `Connect`,
+`Disconnect`, `RenameStep` (which takes its wires with it), `SetBinding`,
+`SetPipelineOutput`, `DescribePipeline` and `ListPipelines`.
+
+`DescribePipeline` is the interesting one: it reads a pipeline back with the
+**channel namespace readable at every step** — the answer to "what can I bind
+to here", which is not answerable from the definition alone.
+
+This exists so the graph never becomes the only way in. A definition an agent
+writes is the same definition a person draws later, because the graph is a
+view over this and not a second format.
+
+### Layout is shared, and never automatic
+
+`Arrange` lays steps out left to right in columns by how far downstream each
+one is, sized from an estimate of how wide each box will actually draw.
+
+It lives **outside** the editor module deliberately: a pipeline an agent
+writes without ever opening a graph still opens in a readable arrangement,
+which only holds if there is one layout implementation rather than one per
+surface.
+
+Authoring never calls it automatically — re-tidying somebody's layout while
+they work would be worse than never tidying at all.
+
+## The graph editor
+
+A graph, a details panel, and a toolbar whose buttons are convenience over the
+exact same calls above, never a second mechanism.
+
+- **Check** sits on the toolbar rather than in a menu, because it is the thing
+  worth doing before every run.
+- **Start Run** refuses under the same condition the executor does.
+- The **Runs** panel lists every run that names this pipeline, and — when one
+  is suspended — the decisions it is waiting on, answered through the same
+  executor call an agent or a commandlet would use. **A run started here can
+  be finished from anywhere, and one started anywhere can be finished here.**
+- **The graph is a view**, so undo restores the definition and the drawing
+  rebuilds from it. Without that, steps would come back after an undo and the
+  boxes would not, which reads as undo losing work rather than the drawing
+  going stale.

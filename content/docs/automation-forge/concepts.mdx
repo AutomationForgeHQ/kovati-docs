@@ -1,0 +1,161 @@
+---
+title: Concepts
+description: The ledger, the node library, definitions and graduation — the ideas every set shares.
+status: shipped
+plugins: [AutomationForge]
+icon: Boxes
+---
+
+Five ideas run through every set. Learn them once and each new set is mostly
+vocabulary.
+
+`AutomationForge` itself is where they live. It **runs nothing** — it answers
+"what can run, and what has already", never "run it". The executor is
+[AutomationForgePipelines](/docs/automation-forge/pipelines).
+
+Editor and commandlet only. Nothing here ships inside a packaged game.
+
+## The ledger
+
+The ledger answers one cheap question before anything expensive happens:
+**is there already a result for these exact inputs?**
+
+### Slots, keys and candidates
+
+A **slot** is keyed by a *grain* — `dialogue`, `node`, `take`, or whatever a
+pipeline's own source domain calls its levels — plus a hierarchy of stable
+natural ids, and a **channel** naming the modality: `speech`, `face`,
+`bodyMotion`.
+
+Every produced result is a **candidate**: content-addressed by a hash of
+everything that decided it — node type and version, provider, model version,
+seed, resolved inputs — immutable once made, and **never overwritten**.
+
+That distinction is the whole design. A slot is a place in your game. A
+candidate is one answer to it. There can be many; exactly one is bound.
+
+### The operations
+
+| Operation | What it does |
+|---|---|
+| **RecordCandidate** | Files a result under its hash. Recording the same hash twice is not an error — it is what a re-run of an interrupted pass does |
+| **IsCurrent** | Does this slot already hold a candidate for this hash? **A graduated slot always answers true**, because a human's edit outranks anything a pipeline would produce |
+| **SelectCandidate** | Binds an existing candidate to a slot — what a review gate does when somebody picks one over the others |
+| **SetGraduated** | Marks a slot hand-edited. A pipeline refuses to overwrite it, but keeps the candidate chain that produced it |
+| **AdoptExisting** | Takes something that already exists into the ledger without claiming to have made it |
+| **PlanRun** | Costs a set of items **before** anything runs — how many are current, how many would be made, what it would cost |
+
+<Callout type="info">
+  **`SetGraduated` keeps the chain on purpose.** The candidates that led to a
+  hand-edited asset are the production brief for whoever makes the next one.
+  Throwing them away when a human takes ownership would discard exactly the
+  context that made the ownership worth taking.
+</Callout>
+
+### Adoption, and why an adopted asset is never "current"
+
+`AdoptExisting` is the answer for a project that had content before it had a
+ledger. An adopted candidate is protected from being overwritten and
+**deliberately never counts as current**.
+
+The reason: it has no honest input hash. Nobody knows what produced it. So the
+first genuine request to regenerate will do the work rather than assume the
+existing file satisfies it — which is the safe direction to be wrong in.
+
+### It is JSON on disk, not a UAsset
+
+Plain JSON files under `<Project>/AutomationForge/Ledger`, one per slot, and
+that is deliberate:
+
+- Two processes may touch it — a commandlet running overnight while the editor
+  stays open, on purpose.
+- A binary asset is lock-prone and merge-hostile. JSON shows up in code
+  review, **which is where a surprising bill gets noticed.**
+
+`bReproducible` is carried per candidate rather than assumed: false for
+anything without a seed, and also false for a provider whose seed is only
+best-effort. An unreproducible candidate may never be pruned, because the
+bytes are the only copy that will ever exist.
+
+## The node library
+
+A pipeline needs to know what it can do. Maintaining that list by hand is how
+it goes stale.
+
+So the node registry **knows no plugin's name.** It walks the loaded classes
+and takes what has declared itself. Enabling `AutomationForge` alongside any
+other generation plugin surfaces that plugin's whole subsystem as nodes with
+**no code written on either side.**
+
+Two ways for a function to qualify:
+
+| Route | What qualifies |
+|---|---|
+| **Marked** | Any `UFUNCTION` — C++ or Blueprint, on any `UObject` class — tagged `meta = (AFNode = "Category/Path")`. Works from your own game module |
+| **Free** | Any `BlueprintCallable` function on an editor subsystem outside the engine. Every plugin in this family already exposes its capability surface this way |
+
+A node's identity is a `NodeTypeId`, minted once from the function's current
+address and remembered at `<Project>/AutomationForge/NodeTypeIds.json` —
+**deliberately not the function's name**, so a pipeline authored today
+survives that function being renamed.
+
+Pins, types, tooltips and asset-picker hints are read off the function's own
+parameters and doc comments, the same way Blueprint builds its palette.
+
+<Callout type="info">
+  **Nodes are not sourced from the toolsets**, even though both reflect the
+  same subsystems. A toolset depends on an Experimental engine registry, and
+  dragging that into an executor that must run headless on a build machine
+  would be a bad trade. The toolset layer and the node library are siblings,
+  never a stack.
+</Callout>
+
+### Writing a node by hand
+
+`UAFNode` is the route in for a step nobody has written a function for — a
+reader for your own dialogue format, a filter over your own asset registry
+query, a writer that puts audio back into a framework this family has never
+seen.
+
+Subclass it in C++ or Blueprint, add `EditAnywhere` properties (they become
+input pins, reflected the same way a function's parameters are), and implement
+`Execute`.
+
+A node instance is created per step and keeps its property values, so state
+belonging to the *step* — a connection, a cached query — can live on it. State
+belonging to a *run* may not: the same node may execute several items, and a
+run has to survive the editor closing.
+
+<Callout type="warn">
+  **Do not block waiting for something slow.**
+
+  A pipeline runs unattended for hours, sometimes on a build machine with no
+  editor open. A node that waits inside `Execute` stalls everything behind it.
+  Start the work, return what identifies it, and let a companion status node
+  report on it — the same async shape the executor gives every marked node.
+</Callout>
+
+## Definitions
+
+Every set's work starts from a **definition**: a data asset describing intent,
+not a record of a run.
+
+A motion definition says what motion, for which skeleton, with which provider
+and which options. A speech definition says which line, in which voice. The
+definition is authored, committed, and re-runnable; the run is what happens
+when you point the executor at it.
+
+This is why [switching a provider](/docs/company/providers) is a change to one
+field rather than a rebuild — and also why a definition that has been run
+still carries the old provider's defaults until you look at them.
+
+## Graduation
+
+The rule that makes all of the above safe:
+
+> **The moment an asset is hand-authored, it graduates — and the tooling never
+> touches it again.**
+
+A force-regenerate is not a licence to destroy authored work. See
+[two-speed content](/docs/company/two-speed-content#graduation) for the full
+argument, and the ledger's `SetGraduated` above for the mechanism.

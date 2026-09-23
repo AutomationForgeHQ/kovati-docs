@@ -1,0 +1,90 @@
+---
+title: Providers are infrastructure
+description: Today's model is the worst model we will ever ship on — so nothing is built around one.
+status: shipped
+icon: Plug
+---
+
+Models and services change. Prices change. Licences change. Quality changes,
+usually upward and usually faster than anyone plans for.
+
+A production system built around a specific vendor inherits that vendor's
+quality ceiling, its pricing decisions, its outages and its licence terms.
+That is a bad trade even when the vendor is excellent, because the thing you
+are trading away is your ability to benefit from the next one.
+
+> Today's model is the worst model we will ever ship on.
+
+## The rule
+
+**Core plugins never name a provider.**
+
+A provider registers a capability, declares its inputs, says whether it is
+metered, and reports its readiness. Removing a provider removes a *route* — it
+does not remove the definitions, the targets, the history or the bindings
+built on top of it.
+
+That inversion is the whole design. The definition says "generate motion for
+this intent, onto this skeleton, landing here". It does not say "call
+Kimodo". Which route serves it is a choice made later, changeable, and
+recorded in the ledger so you know which one actually ran.
+
+## What that looks like in a real project
+
+One project, several origins, one lifecycle:
+
+- Block out motion **locally** on your own GPU, where it costs nothing but
+  electricity and nothing leaves the building.
+- Regenerate the hero shots on a **hosted provider** with better hands.
+- Keep secondary voice-over **hosted** because the volume is high and the
+  quality bar is lower.
+- Run faces **locally** because the audio is under NDA.
+- Replace the three lines that matter with a **recorded human performance**,
+  landing in the same targets.
+
+Every one of those is a route. None of them is the system.
+
+<Callout type="info">
+  A recorded human performance is a route like any other. That is not a
+  rhetorical flourish — [PerformanceForge](/docs/automation-forge/performanceforge)
+  exists precisely so that "we recorded it properly" and "we generated it" land
+  in the same place, with the same provenance, replaceable by each other.
+</Callout>
+
+## Don't abstract the vendor's options away
+
+There is a tempting mistake here, and we have made it: building a beautiful
+neutral interface that exposes the *intersection* of what every provider can
+do.
+
+The result is a system where no provider can do its best work, and where the
+one option that makes a vendor worth using is the one you cannot reach.
+
+So the design is the other way around. The **contract** is neutral — inputs,
+readiness, metering, cost, provenance. The **options** are the provider's own,
+declared by the provider, shown as the provider names them. If a vendor has a
+setting that matters, you get that setting, spelled the way their
+documentation spells it.
+
+## Cost before the click
+
+Creative flow dies when every experiment feels like a financial risk.
+
+Paid work is made clear before it starts: readiness, likely cost, and the
+limits that matter, shown before a person or an agent spends anything. Local
+work, rented compute and hosted calls have genuinely different trade-offs, and
+the system should make those visible without requiring the developer to become
+an infrastructure expert.
+
+> Cost is part of the creative decision.
+
+The related rule: **separate expensive generation from free refinishing.** A
+retarget, a montage rebuild, a curve remap or a re-import costs nothing and
+runs in the engine. Doing those on the far side of a paid API call is paying
+twice for the same second of screen time.
+
+## Which providers exist today
+
+See [integrations](/docs/automation-forge/integrations) for the current list,
+what each one needs from you, and what it costs. That page is where provider
+facts live, so that this one can stay about the principle.

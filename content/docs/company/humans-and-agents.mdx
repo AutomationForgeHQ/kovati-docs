@@ -1,0 +1,86 @@
+---
+title: Humans and agents
+description: One capability surface, two kinds of client, neither an afterthought.
+status: shipped
+icon: Triangle
+---
+
+Software used to be a line: software on one side, a person on the other. Every
+design decision assumed that shape — discovery meant a menu, failure meant a
+dialog, permission meant a button somebody clicked.
+
+Agents add a second user. Not a macro clicking a panel built for someone else,
+but a client with its own discovery model, its own failure modes and its own
+permission risks.
+
+So Automation Forge is built as a triangle: **software, human and agent**,
+with no core capability written for a person and adapted for a machine later.
+
+| Human client | Shared production core | Agent client |
+|---|---|---|
+| Native Unreal panels, previews, take strips | Definitions, typed operations, cost gates, ledger, provenance, permissions | Tool registry, reflected schemas, explicit failures |
+| Enters credentials, approves destructive actions | The same boundary regardless of caller | May use approved capabilities; cannot write keys or delete unrecoverable work |
+| Judges performance and aesthetics visually | Selections and evidence stay first-class data | Can batch, inspect, compare and retry without inventing hidden state |
+
+> **Different clients. Equal reach. One source of truth.**
+
+## Why every core plugin ships a toolset
+
+Every core plugin has a matching `*Toolset` plugin: the same subsystem exposed
+as typed Model Context Protocol tools, **adding nothing of its own**.
+
+That last clause is the discipline. The moment a toolset implements a
+capability the panel does not have, the two surfaces have diverged and one of
+them is now lying about what the product does. A toolset is a projection, not
+a second product.
+
+In practice this means:
+
+- A tool's signature **is** its schema. A tool that takes a JSON blob as a
+  string has given up on being typed, and an agent calling it is guessing.
+- A refusal is explicit and says why. An agent that gets an empty result
+  cannot tell "nothing matched" from "you lack permission" from "the provider
+  is down" — and will retry all three identically.
+- Cost gates apply to both callers. An agent does not get to skip the estimate
+  because it is impatient.
+
+## What an agent may not do
+
+The rule is not "agents are less trusted". It is that **some actions require a
+human because only a human can be accountable for them**:
+
+- **Write credentials.** Keys go into the operating system's credential vault,
+  entered by a person. An agent can discover that a key is missing and say so;
+  it cannot supply one.
+- **Destroy unrecoverable work.** Anything that cannot be undone, and anything
+  touching a [graduated](/docs/company/two-speed-content#graduation) asset.
+- **Spend without a gate.** Where a run costs money, the estimate comes first
+  and the approval is a decision, not a formality.
+
+Conversely — and this matters just as much — an agent gets **no secret
+powers**. There is no faster path, no hidden endpoint, no "agent mode" that
+skips a check a person has to pass. If an agent can do it, a person can do it,
+and through the same operation.
+
+<Callout type="info">
+  A human should not use one hidden system while an agent uses a weaker copy.
+  An agent should not receive powers that bypass the rules shown to people.
+  Both call the same operations and see the same costs, permissions, limits,
+  failures, history and recovery paths.
+</Callout>
+
+## What this buys in practice
+
+The honest answer is: it makes the boring things possible.
+
+An agent can sweep forty dialogue lines and report which have no face solve.
+It can re-run a failed batch without inventing state. It can compare two
+motion candidates against the same oracle and tell you which scored better and
+by how much. It can notice that a definition points at a provider whose key is
+not set — before the run starts, rather than four minutes in.
+
+None of that is glamorous, and all of it is work a person would otherwise do
+badly because it is tedious.
+
+The panel is still where judgement happens. Nobody should be reading a
+Slate table to decide whether a walk cycle looks right.

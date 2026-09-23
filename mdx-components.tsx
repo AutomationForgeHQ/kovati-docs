@@ -10,6 +10,7 @@ import type { MDXComponents } from 'mdx/types'
 import { SetMembers } from '@/components/SetMembers'
 import { PluginVersion } from '@/components/PluginVersion'
 import { ReleaseNotes } from '@/components/ReleaseNotes'
+import { DistributionTable } from '@/components/DistributionTable'
 
 /**
  * Components every page can use without importing them.
@@ -40,6 +41,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     SetMembers,
     PluginVersion,
     ReleaseNotes,
+    DistributionTable,
     ...components,
   }
 }

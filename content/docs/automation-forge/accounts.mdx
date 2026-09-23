@@ -1,0 +1,131 @@
+---
+title: Accounts
+description: One account, three surfaces — the site, the hub, and the command line.
+status: shipped
+icon: UserRound
+---
+
+**Nothing installs without an account.** Every plugin — free or paid — is
+added to an account first; then the hub installs what the account holds.
+
+- A **free** plugin is added with one click, on the site or by the hub's
+  *Install* itself, the first time.
+- A **paid** plugin is bought on the account site, or bought on Fab and linked.
+- Once a plugin is on the account it is *yours* everywhere: the site says so,
+  the hub shows *Install*, `forge whoami` lists it.
+
+<Callout type="info">
+  This is a deliberate design, not a licensing afterthought. An account is what
+  lets the hub know which build you are entitled to, what lets a paid plugin be
+  installed on your second machine without a licence file to lose, and what
+  makes "add all free" a single click rather than seven downloads.
+</Callout>
+
+## Creating one
+
+Go to **[app.kovati.dev](https://app.kovati.dev)** and pick one:
+
+- **Continue with Google** or **Continue with GitHub** — a normal OAuth
+  pop-up; nothing to type. The account takes the name and photo from there.
+- **Email and password** — type both, press *No account yet? Create one.*,
+  then *Create the account*. Eight characters at least. *Forgot the password?*
+  sends a reset link.
+
+Whichever you use first is your account. Signing in later with the same email
+through a different provider joins it to the same account.
+
+## What the account site shows
+
+| Page | What is there |
+|---|---|
+| **Account** | Name, email, how you sign in, since when, the account id |
+| **Plugins** | Every set and plugin — *Add to account* on the free ones, *Buy* on the paid ones, *yours* on what you hold. *Add all free* per set |
+| **Hub** | The hub installer and the command line |
+| **Orders** | What was bought, and whether it is paid |
+
+Adding a toolset adds the plugins it depends on too.
+
+Plugins are not downloaded from the site. The hub installs them.
+
+## Signing the hub in
+
+In the hub, top right: **Sign in.** The browser opens the account site — sign
+in there if you are not already — and asks *Sign the hub in as …?* Say **Yes,
+connect it.**
+
+The browser shows *Connected*, the hub is signed in, and the tab can be
+closed. Your photo (or a person glyph) replaces the button; click it for
+**Account** or **Sign out**.
+
+Signed in, each plugin row says one of:
+
+| Row | Meaning |
+|---|---|
+| **Add & install** | Free, not on your account yet — one click adds it and installs it |
+| **Install** | On your account, not installed here |
+| **Buy** | Paid, not on your account — opens the account site at that plugin |
+| **Update** / **Installed** | As you would expect |
+
+*Install set* installs every free member and every paid member the account
+holds, and **says which paid ones it left out** rather than failing silently.
+
+## From the command line
+
+```powershell
+forge login              # opens the browser; finishes when you say yes there
+forge login --no-browser # prints the link instead (remote sessions)
+forge whoami             # who this machine is signed in as, and what the account holds
+forge list               # every plugin: yours - free - paid, with what is installed
+forge claim <set|plugin> # add free plugins to the account without installing them
+forge install <set>      # adds free plugins as it goes; names paid ones it cannot
+forge logout             # forget the sign-in kept on this machine
+```
+
+Exit codes worth knowing:
+
+| Code | Meaning |
+|---|---|
+| `2` | What you asked for is not there — a mistyped `--project`, an engine that is not installed, an unknown plugin |
+| `4` | Not signed in, or the account service could not answer |
+| `5` | Something in the request is paid and not on the account. **The rest was installed** |
+
+The hub and the CLI share the sign-in: sign in with one and the other knows.
+
+## How it actually works
+
+**No password ever passes through the desktop.**
+
+The hub (or `forge`) listens on a loopback port, opens
+`/connect/?port=…&state=…` on the account site, and waits. When you say yes,
+the page posts your session — a refresh token, your id, email, name and photo
+— to that port, and the hub answers by sending the browser back to the
+*Connected* page. The one-time `state` ties the answer to the request that
+asked for it; anything else is refused.
+
+The session is kept in `%LOCALAPPDATA%\AutomationForge\account.bin`, protected
+with Windows DPAPI under your Windows user. From it the hub mints an hour-long
+ID token whenever it needs one, reads what your account holds, and asks the
+account API for each download — the API checks the entitlement and answers
+with a URL that lives for a few minutes.
+
+<Callout type="info">
+  The manifest's own URLs are where the *API* finds a package, not where a
+  client fetches it. That is why a paid plugin's manifest entry carries no
+  download URL: there is nothing there a client could use.
+</Callout>
+
+Signing out deletes the local file. The account site and your other machines
+are untouched.
+
+## Fab purchases
+
+A plugin bought on Fab is linked from inside Unreal Editor — **Automation
+Forge → Link my Fab purchases** — through Epic's own ownership check, which
+asks the Epic Games Launcher.
+
+<Callout type="warn">
+  **That link is designed and not built yet.** Until it is, send the Fab order
+  id to `bojan@blackcode.ch` and the plugin is added to your account by hand.
+  There is no seller-side Fab API, so the launcher, once, is the only route
+  Epic sanctions.
+</Callout>

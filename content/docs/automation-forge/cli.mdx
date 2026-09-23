@@ -1,0 +1,76 @@
+---
+title: The forge command line
+description: Everything the hub does, without the window.
+status: shipped
+icon: Terminal
+---
+
+`forge` and the hub share the same core — manifest, release discovery,
+engines, installs, receipts, project descriptors, settings — so anything you
+can do in one you can do in the other, and they see each other's results.
+
+It is installed by `AutomationForge-Setup.exe` and added to `PATH`, or
+available on its own as `forge-win-x64.zip`.
+
+## Commands
+
+```powershell
+forge engines                     # the Unreal installations on this machine
+forge list [--engine 5.8]         # every set and plugin, with what is installed
+forge install montageforge        # a set, or a plugin, dependencies first
+forge install MotionForge --project C:\Games\MyGame
+forge update                      # everything on a target, to its latest
+forge uninstall MontageForge
+forge enable MontageForge --project C:\Games\MyGame   # the .uproject edit
+forge channel [stable|nightly]    # the channel both surfaces follow
+forge claim <set|plugin>          # add free plugins to your account, without installing
+forge login / logout / whoami     # one account for the site, the hub and the CLI
+```
+
+## Exit codes
+
+Worth wiring into a script rather than parsing output:
+
+| Code | Meaning |
+|---|---|
+| `0` | Done |
+| `2` | What you asked for is not there — a mistyped `--project`, an engine that is not installed, an unknown plugin |
+| `4` | Not signed in, or the account service could not answer |
+| `5` | Something in the request is paid and not on the account. **The rest was installed** |
+
+That last one is the important distinction: exit `5` is a *partial success*.
+A set install that hits a paid member does the free ones and tells you which
+it skipped, rather than refusing the lot.
+
+## Engine installs need elevation
+
+A target under `Program Files` makes the CLI relaunch itself elevated, once.
+You approve a single prompt rather than one per plugin.
+
+Project installs need nothing — which is a good reason to prefer
+`--project` while you are still deciding what a project should use.
+
+## Signing in on a machine with no browser
+
+```powershell
+forge login --no-browser
+```
+
+prints the link instead of opening one. Open it anywhere you are signed in,
+say yes, and the session lands on the machine that asked.
+
+<Callout type="info">
+  Useful over SSH or RDP, and the only sane route on a build machine. The
+  session is still kept under DPAPI for the Windows user that ran the command
+  — it is not transferable by copying the file.
+</Callout>
+
+## What it does not do
+
+The CLI is an installer and an account client. It does not generate content,
+does not open projects, and does not drive the editor.
+
+Running a pipeline unattended is the editor's job — see
+[pipelines](/docs/automation-forge/pipelines). Nothing in the pipeline
+executor needs the editor *UI*, so a commandlet of your own can advance a run.
+**We do not ship one yet.**

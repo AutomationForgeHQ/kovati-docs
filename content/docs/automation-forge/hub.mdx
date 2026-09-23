@@ -1,0 +1,135 @@
+---
+title: The hub
+description: The desktop application that installs plugins, holds keys, and runs runners.
+status: shipped
+plugins: [AutomationForgeHub]
+icon: LayoutDashboard
+---
+
+The hub is a resident Windows application: an icon by the clock, a check every
+four hours across every engine and project it has installed into, a
+notification when something new appears, and a self-replacement through the
+installer when a newer hub is released.
+
+Two tabs and three drawers.
+
+## Plugins
+
+The catalogue: sets, one action per plugin, an engine picker, update counts.
+It relaunches itself headless and elevated for engine installs, so you approve
+once rather than per plugin.
+
+**What's new**, beside a plugin's Update button, lists **every release since
+the version you have** — skipped ones included, with each one's notes, paid
+plugins too. The notes travel inside the manifest, read from each plugin's
+`CHANGELOG.md`, so the window works offline from the cached catalogue.
+
+## Runners
+
+What this machine can run, and whether it is running.
+
+Today that is a Docker container and a GPU rented by the hour, both belonging
+to [MotionForge Kimodo](/docs/automation-forge/motionforge/providers). Docker
+state and container state are read from Docker itself, and Start and Stop act
+on it.
+
+<Callout type="info">
+  The point of putting this in the hub rather than the editor: **starting a
+  runner is something you do before opening an editor**, or after one has
+  failed to start. An editor that opens against a stopped container can only
+  report a dead route.
+</Callout>
+
+## Keys, Settings and the account
+
+Three drawers over one scrim — opening any closes the others.
+
+**Keys** reaches the Windows Credential Manager directly, at exactly the
+entries the plugins use, so a key set in either place is set for both. See
+[keys and runners](/docs/automation-forge/keys).
+
+**Settings** (`%LOCALAPPDATA%\AutomationForge\settings.json`): channel, start
+with Windows, keep running in the tray, notifications, and one extra folder of
+plugins to look at.
+
+## How the hub knows what a plugin needs
+
+**The hub cannot ask a plugin anything.** It is a separate process that may be
+running with no editor open at all.
+
+So a plugin *declares* what it needs from the machine, in
+`Config/ForgeMachine.json`, and the hub reads it. Nothing is hard-coded — a
+plugin written next year needs no change to the hub.
+
+```json
+{
+  "keys": [
+    {
+      "id": "MotionForge.Uthana",
+      "displayName": "Uthana",
+      "owner": "MotionForge",
+      "purpose": "Motion generation through Uthana. Without it this provider cannot be used.",
+      "optional": false,
+      "vaultEntry": "MotionForge/Uthana",
+      "environmentVariable": "MOTIONFORGE_UTHANA_KEY"
+    }
+  ],
+  "runners": [
+    {
+      "id": "Kimodo",
+      "displayName": "Kimodo",
+      "compose": "Runner/docker-compose.yml",
+      "composeProject": "runner",
+      "service": "runner",
+      "health": "http://127.0.0.1:8757/health",
+      "cloud": { "provider": "runpod", "keyId": "Kimodo.Runpod", "podName": "motionforge-kimodo" }
+    }
+  ]
+}
+```
+
+The keys block is exactly the static half of the editor's own key provider.
+The other half is closures over the plugin's credential store, which cannot
+cross a process boundary — so the hub reads the metadata from the file and
+performs the operations itself, against the same vault entry.
+
+<Callout type="warn">
+  **If a release predates 2026-09-08, its Keys and Runners pages are empty.**
+
+  The engine's own `BuildPlugin` filter does not include `Config/`, so every
+  package published before then left `ForgeMachine.json` behind. Plugins now
+  carry a `Config/FilterPlugin.ini` naming it, and CI fails a build that drops
+  it. If you are on an older build, update.
+</Callout>
+
+## Where it looks
+
+Three roots:
+
+1. **Every engine's** `Plugins/AutomationForge`.
+2. **Everywhere the hub has installed** — from its own receipts, which covers
+   project installs.
+3. **One folder named in Settings** — for whoever is writing a plugin, whose
+   working tree is not a release and never will be one.
+
+## What stays in the editor, and why
+
+Three things deliberately do not move into the hub, for the same reason each
+time: **they need knowledge the hub does not have.**
+
+| Stays in the editor | Because |
+|---|---|
+| **Creating a container** | The compose file interpolates a model cache, a token and a signature only the plugin knows. The hub finds containers by the labels compose stamps on them, and starts and stops them by id — which needs none of that |
+| **Renting a GPU** | Which card, in which region, under what price ceiling is a decision made against what a model needs. The hub lists what is rented, says what it costs, and stops or releases it |
+| **Testing a key** | One authenticated call in the provider's own shape. Offering it in the hub would mean a second copy of every provider's authentication |
+
+## Channels
+
+`stable` never sees pre-releases. `nightly` sees them — of the hub and of the
+plugins — and on nightly whichever build is newest wins, so a stable release
+published after a nightly takes over.
+
+```powershell
+forge channel stable
+forge channel nightly
+```

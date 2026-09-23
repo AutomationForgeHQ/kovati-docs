@@ -1,0 +1,170 @@
+---
+title: PlayableOps
+description: The gap between a generated result and content a game can use — and the discipline for closing it.
+status: shipped
+icon: Workflow
+---
+
+> **PlayableOps** — the operational discipline and software layer that turns
+> creative intent into content that is playable, reviewable, traceable and
+> replaceable.
+
+## The playable gap
+
+AI made a candidate cheap. An animation, a voice take, a face solve, a mesh —
+minutes and cents, where each used to be days and a specialist.
+
+It did not make that candidate part of a game.
+
+The result still has to fit a character, respect timing, carry gameplay
+events, survive review, connect to the right target, remember what produced
+it, and be replaceable when the real work arrives.
+
+<Callout type="info">
+  **On paper** — "Inject stimpack."
+
+  **A generated candidate** — a four-second character clip.
+
+  **A playable operation** — motion on the target skeleton, prop alignment,
+  montage slot, gameplay-event notify, timing, blend, and ability binding.
+</Callout>
+
+The distance between the first and the third is the **playable gap**.
+
+Most ambitious first games die there. Not because the developer cannot
+imagine the game, and not because they cannot produce any single asset — but
+because every verb in the design asks them to become a temporary animation
+engineer, voice producer, technical artist and build manager before they can
+test whether the idea was any good.
+
+## Why this is not an AI problem
+
+It is worth being precise, because "AI pipeline" is where this gets
+misunderstood.
+
+Every production has always created candidates. Every team has always
+reviewed. Every game has always needed targets, and every final asset has
+always had a history — even when nobody wrote it down. A studio with a mocap
+stage and four animators has the same lifecycle problem; they just solve it
+with people who have done it before.
+
+AI did not create the playable gap. It **made it impossible to ignore**, by
+removing the one thing that used to hide it: scarcity. When a clip took a
+week, the overhead of placing it properly was noise. When a clip takes ninety
+seconds, the overhead *is* the project.
+
+So the discipline matters more when output is abundant, not less.
+
+## The four commitments
+
+<Steps>
+
+<Step>
+
+### Make it playable
+
+The unit of progress is a playable change — something the team can see, hear,
+control, review and test. Not a count of files a model returned.
+
+A beautiful output may be useless. A rough output may be exactly what the team
+needs to test the design. The model does not decide which; the game does.
+
+</Step>
+
+<Step>
+
+### Keep it traceable
+
+A result should never arrive alone. What was requested, what went in, which
+route produced it, which settings mattered, what it cost, who reviewed it,
+where the chosen result landed.
+
+Without that record every revision starts from memory. With it, a team can
+reproduce the work where possible, understand it where reproduction is not,
+and replace it without guessing. See [two-speed content](/docs/company/two-speed-content).
+
+</Step>
+
+<Step>
+
+### Let people own it
+
+Automation may prepare, check, generate, import, solve, bake, compare and
+suggest. People decide what the work means, what belongs in the game, and when
+it is finished.
+
+Speed grants no authority. A model has no authorship because it returned
+first. Use automation to shorten the distance to judgment — never to remove
+judgment.
+
+</Step>
+
+<Step>
+
+### Replace it safely
+
+A candidate has three honest futures: keep it, fix it by hand, or replace it
+with a mocap take, a recording, a commissioned mesh or final animation landing
+in the same target.
+
+The surrounding game has to survive all three. That is what
+[graduation](/docs/company/two-speed-content#graduation) is for.
+
+</Step>
+
+</Steps>
+
+## What PlayableOps is not
+
+- **Not "AI makes the whole game."** The discipline matters more when output
+  is abundant, not less.
+- **Not a mandate to ship generated assets.** A candidate may ship, be edited,
+  be recorded, be commissioned, or be thrown away.
+- **Not one universal graph.** Different teams keep their own frameworks,
+  providers and approval rules.
+- **Not enterprise process imposed on a solo developer.** For one person it
+  should feel like good defaults and a clean history, not a procurement
+  portal.
+- **Not provenance as paperwork.** The ledger is a by-product of doing the
+  work, not another form to fill in.
+
+## Three users, one path
+
+We design against three archetypes — not three market sizes.
+
+| | What they need | What changes for them |
+|---|---|---|
+| **A first serious solo developer** | Safe defaults, visible cost, a path through work they have never done | AI gave them the courage to start; then getting a file turned out not to be building a game |
+| **A 5–10 person indie studio** | Throughput without chaos — reusable definitions, provider choice, a ledger that stays out of the way | Their scattered folders, scripts and naming rules become one repeatable path |
+| **A larger studio and its vendors** | The same lifecycle as policy — briefs, approvals, audit, source-control-aware delivery | A take choice becomes an approval; a definition becomes a production brief |
+
+These are three levels of one problem, served in that order: **help one
+developer finish, prove the path with indie teams, grow the same lifecycle
+into studio orchestration.**
+
+The surface changes as the team grows. The content path does not.
+
+## Read next
+
+<Cards>
+  <Card
+    title="Two-speed content"
+    href="/docs/company/two-speed-content"
+    description="Fast candidates and committed work have different jobs — and graduation is the rule that keeps them apart."
+  />
+  <Card
+    title="Humans and agents"
+    href="/docs/company/humans-and-agents"
+    description="Why every core plugin ships a toolset, and why an agent gets no secret powers."
+  />
+  <Card
+    title="Providers are infrastructure"
+    href="/docs/company/providers"
+    description="Today's model is the worst model we will ever ship on. Nothing should be built around one."
+  />
+  <Card
+    title="The manifesto"
+    href="/docs/company/manifesto"
+    description="Fourteen principles, what they rule out, and what we refuse to build."
+  />
+</Cards>
