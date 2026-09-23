@@ -38,12 +38,22 @@ style, clearance, shape preservation, projection strength, relaxation and
 collision passes, and a yaw correction.
 
 <Shot
-  src="/shots/meshforge/garment-fit-jacket.png"
-  width={1200}
-  height={1000}
-  alt="A Mesh Definition for a jacket. The left viewer shows the wrapped jacket, 13,219 triangles and 7,817 vertices at 82 by 32 by 59 cm. On the right, the Post-processing stage is marked stale and its first step, 'Garment fit — wrap around a character', is expanded. It offers an 'Open Garment Studio' button, a Target Character slot holding a skeletal mesh with a thumbnail of the body, an empty Additional Meshes array, a ticked 'Find Meta Human Face' option, and a Garment Type dropdown set to Jacket."
-  caption="The fit step's own settings. 'Find Meta Human Face' is ticked by default because a MetaHuman body and its face are separate meshes, and a collar fitted to a headless body is fitted wrong. Additional Meshes is where a modular character's hands and feet go."
+  src="/shots/meshforge/garment-fit-settings.png"
+  width={676}
+  height={598}
+  alt="The Garment fit step expanded, ticked green and showing a last-run date, with Run this step and Remove buttons. Its settings: an Open Garment Studio button; Target Character set to SKM_MH_Demo_Player_Naked_BodyMesh with a thumbnail; an empty Additional Meshes array; Find Meta Human Face ticked; Garment Type set to Armour; Mode set to 'Place — scale, align, clear the skin'; a collapsed Pose Match group; Fit Style Regular; Clearance 1.2 cm; Shape Preservation 1.0; Projection Strength 0.0; Smoothing Iterations 0; Collision Iterations 3; and Garment Yaw 0 degrees. An Input group below sets Input Source to 'Step above, latest run (the Mesh stage's selected take…)'."
+  caption="Every dial the solve takes, and the mode it runs in. Projection Strength and Smoothing sit at zero here because this is Place mode — it only scales, aligns and clears the skin, so the settings that belong to the full solve are left alone rather than hidden."
 />
+
+<Callout type="info">
+  **Find Meta Human Face** is ticked by default because a MetaHuman body and
+  its face are separate meshes, and a collar fitted to a headless body is
+  fitted wrong. **Additional Meshes** is where a modular character's hands and
+  feet go.
+
+  **Input Source** is the same picker every post step has — see
+  [where a step's input comes from](/docs/automation-forge/meshforge/post-processing#where-a-steps-input-comes-from).
+</Callout>
 
 <Callout type="info">
   **Garment Type is not cosmetic.** It decides which limbs may be wrapped, so
@@ -68,11 +78,51 @@ gets the mouse.
 
 ### Pose and place
 
-Move, turn and scale the garment, and turn up to **15 joint handles** —
-shoulders, elbows, wrists, hips, knees, feet, chest, pelvis, and optionally
-the head.
+Two jobs in one mode, and the panel keeps them apart: **place the garment**,
+and **pose the body underneath it**.
 
-*Mirror X* is on by default and turns the opposite side too.
+<Shot
+  src="/shots/meshforge/garment-studio-pose.png"
+  width={1509}
+  height={954}
+  alt="The Garment Studio window titled for the Neon Vanguard chest plate. Mode tabs read Pose and place, selected, then Sculpt and Wrap; beside them are Select garment, Select character, Move, Rotate, Scale, World and Snap. The viewport shows a MetaHuman standing in the armour, with cyan joint handles on shoulders, elbows, wrists, chest, hips, knees and feet. The right panel is divided into Fitting, which names the garment and both the body and face meshes; Garment, explaining that new garments start near their body region and offering Select garment and Auto place; Body, explaining that clicking a joint handle lets W drag it and E turn the bone, with Mirror X ticked, a Show head handle option, Reset pose and Frame buttons, and the readout 'Gizmo on nothing. 0 bones turned.'; and Then, explaining what Save and Finish each do. The fit step's settings are repeated at the bottom."
+  caption="The character, the garment and every handle in one window. The status line under the Body section — 'Gizmo on nothing. 0 bones turned.' — tells you what the next drag will actually move, which matters when the handles sit on top of the armour."
+/>
+
+The instructions are in the panel rather than in a manual, and they are worth
+reading once:
+
+> Click a joint handle. **W** drags it: a wrist or foot pulls its limb, an
+> elbow or knee aims the bone above it. **E** turns the bone. *Bend the body
+> until it sits inside the cloth; the arms are usually all it takes.*
+
+Up to **15 joint handles** — shoulders, elbows, wrists, hips, knees, feet,
+chest, pelvis, and optionally the head. *Mirror X* is on by default and turns
+the opposite side too.
+
+<Shot
+  src="/shots/meshforge/garment-studio-move.png"
+  width={1504}
+  height={955}
+  alt="The Garment Studio in Pose and place with Move highlighted. A translation gizmo sits on the chest plate itself, and the readout reads 'Gizmo on the garment. 0 bones turned.' The joint handles remain visible across the body."
+  caption="Move selected and the gizmo on the garment: W moves it, E turns it, R scales it. This is placing the armour, not posing the person."
+/>
+
+<Shot
+  src="/shots/meshforge/garment-studio-rotate.png"
+  width={1503}
+  height={954}
+  alt="The Garment Studio in Pose and place with Rotate highlighted. A coloured rotation gizmo sits on the character's left shoulder joint, and the readout reads 'Gizmo on Left shoulder. 0 bones turned.'"
+  caption="The same mode, a joint selected instead: the readout names the bone, so you know whether the next drag turns a shoulder or nudges the whole garment."
+/>
+
+<Callout type="info">
+  **You are bending the body to suit the cloth, not the other way round.**
+  That sounds backwards until you read the panel's own advice — *bend the body
+  until it sits inside the cloth* — and remember the pose is thrown away. It
+  exists only so the solver starts from a position where the garment already
+  roughly encloses the limbs.
+</Callout>
 
 </Step>
 
@@ -83,9 +133,52 @@ the head.
 Epic's Vertex Sculpt, Smooth, Lattice and Bend/twist, on the garment **where
 it was placed** and against the body **as it was bent**.
 
+The panel says why that matters better than a paragraph could:
+
+> Sculpt the garment where it sits, against the body as you bent it: loosen a
+> tight neck, pull a hem out of the legs. **The wrap starts from this shape.**
+
+<Shot
+  src="/shots/meshforge/sculpt-brush.png"
+  width={1504}
+  height={954}
+  alt="The Garment Studio in Sculpt mode. A brush circle sits on the chest plate, which is drawn untextured so its geometry reads. The right panel explains sculpting the garment where it sits, notes that the sculpt is kept with the definition rather than as an asset, and reports 'Nothing kept yet: the garment as the fit step receives it (12,996 vertices), as saved. Brush work joins it when you switch mode or save.' A Tools row offers Sculpt, Smooth, Lattice and Bend / twist with Sculpt in use, above Accept and Cancel and a ticked Show references. Tool settings below cover Stroke, Brush size, stamp spacing and lazy, a Sculpting group with a Move brush, falloff and region, Symmetry, and Move Brush strength."
+  caption="The garment renders untextured here so the geometry is legible under the brush. 'Show references' keeps the body visible while you work — you are shaping the garment against the person, not in isolation."
+/>
+
+<Shot
+  src="/shots/meshforge/sculpt-brushes.png"
+  width={889}
+  height={487}
+  alt="The brush type palette, showing eighteen brushes as labelled icons: Smooth, SmoothFill, Move (selected), SculptN, SculptV, SculptMx, Inflate, InflateSt, InflateMax, Pinch, Flatten, PlaneN, PlaneV, PlaneW, Scale, Grab, GrabSharp and Twist."
+  caption="The brush list is Unreal's own, not a reduced set — eighteen brushes, the same ones the engine's modelling mode offers. Nothing here is a reimplementation."
+/>
+
+For shapes a brush is the wrong instrument for, two deformers:
+
+<Shot
+  src="/shots/meshforge/sculpt-lattice.png"
+  width={1510}
+  height={963}
+  alt="The Garment Studio in Sculpt mode using Lattice Deform. A red lattice cage of control points surrounds the chest plate, with a transform gizmo on one of them. Tool settings show Clear Constraints and Constrain buttons, a Soft Deformation option, X, Y and Z axis resolutions all set to 5, padding of 0.01, linear interpolation, a Deform Normals option, and gizmo coordinate settings."
+  caption="Lattice for broad reshaping — drag a cage point and the geometry inside follows. A five-by-five-by-five cage is coarse on purpose: it moves the whole panel rather than individual plates."
+/>
+
+<Shot
+  src="/shots/meshforge/sculpt-bend.png"
+  width={1503}
+  height={960}
+  alt="The Garment Studio in Sculpt mode using Space Warp. The chest plate is shown mid-bend with the original mesh drawn as a translucent overlay and a bend gizmo through it. Tool settings set Operation Type to Bend, with upper and lower bounds of about 25 and minus 25, Bend Degrees at 90, a Lock Bottom option, and both Show Original Mesh and Draw Visualization ticked."
+  caption="Bend and twist, with the original drawn through the result so you can see how far you have moved it. 'Show Original Mesh' is the useful one: a deformation you cannot compare against is a deformation you cannot judge."
+/>
+
 The sculpt is kept as a plain file in the definition's generated folder, not
 as an asset — stored as per-vertex positions plus a **fingerprint of the
 input**.
+
+The panel is explicit about when brush work becomes part of that: *"Nothing
+kept yet… Brush work joins it when you switch mode or save."* Until then it is
+live geometry, and **Back to the original** throws it away.
 
 <Callout type="warn">
   A sculpt made on a garment that has since been regenerated is **refused with
@@ -118,6 +211,18 @@ that sculpt asks first.
 **Finish** saves the wrap as an asset and records it as the step's output.
 **Stop using the finished garment** undoes Finish. Closing with unsaved
 changes asks first.
+
+The studio puts the distinction in its own words, in the *Then* section:
+
+> **Save** keeps the placement, the turned bones, the sculpt and the last wrap
+> with the fit step and saves the definition. **Finish** hands the wrap on
+> screen to the chain as the step's output, as it is: a chain run then uses it
+> without wrapping again, until the garment changes.
+
+And beneath it, the current state in one line — *"Not finished: a chain run
+wraps this step by itself, from the saved placement and sculpt."* So you can
+always tell which of the two behaviours a later chain run will take, without
+guessing from whether the button looks pressed.
 
 ### A finished garment goes on unchanged
 

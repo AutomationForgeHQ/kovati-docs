@@ -9,6 +9,24 @@ icon: Layers
 The Post stage is a chain of steps. Each one takes a mesh and produces
 another, or produces an asset.
 
+<Shot
+  src="/shots/meshforge/post-chain.png"
+  width={715}
+  height={334}
+  alt="The Post-processing stage, headed in red 'failed — TransferBoneWeightsFromMesh: Failed to transfer the weights'. Under it the chain is summarised as 'Garment fit — wrap around a character → Wardrobe skinning — Unreal inpainting', with the error repeated. The two steps are listed separately: the first ticked green and marked with a last-run date, the second numbered and marked 'not run yet'. Each carries up and down reorder arrows and its own Run this step and Remove buttons. An 'Add a step' picker sits below, above a note explaining that Run chain executes enabled steps using their chosen inputs, Run this step uses an existing input without running earlier steps, and every completed step creates a separate output — this one costing local Unreal skin-weight inpainting, no credits — beside a Run chain button."
+  caption="A failed chain, reported per step rather than as one verdict. The garment fit is ticked and keeps its last-run date; only the skinning below it failed, and only that step needs running again."
+/>
+
+<Callout type="info">
+  **Two different run buttons, and the difference is money.** *Run chain*
+  executes the enabled steps in order. *Run this step* takes an existing input
+  and runs one step without re-running anything before it — which is what
+  makes retrying the failure above cost nothing but the skinning.
+
+  Every completed step creates a **separate output**, so a step that worked is
+  still there to be used after a later one breaks.
+</Callout>
+
 ## Where a step's input comes from
 
 Four sources, chosen per step:
