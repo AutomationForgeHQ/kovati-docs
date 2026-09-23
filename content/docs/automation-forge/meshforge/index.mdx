@@ -143,7 +143,17 @@ A **Mesh Workflow** is the stage switches, the pipeline on each stage, the
 post chain with its settings, and optionally the import settings — in one
 choice.
 
-A new definition asks which workflow to start from. Three ship:
+A new definition asks which workflow to start from, before anything else:
+
+<Shot
+  src="/shots/meshforge/new-definition.png"
+  width={433}
+  height={349}
+  alt="A dialog titled New Mesh Definition, headed 'Start from a workflow'. It lists seven buttons: Edit a mesh in Blender, Garment for a character, Generate from your own picture, Generate from a prompt, Narrative clothing item, WF_Test_Clothing, and finally 'Blank — every stage on, nothing chosen'."
+  caption="The first question is what kind of job this is, not which provider to use. 'Blank — every stage on, nothing chosen' is the escape hatch, and it is last because starting from the nearest workflow is almost always quicker."
+/>
+
+Three ship with MeshForge itself:
 
 | Workflow | For |
 |---|---|
@@ -151,9 +161,31 @@ A new definition asks which workflow to start from. Three ship:
 | `WF_GenerateFromPicture` | A reference image in |
 | `WF_EditMeshInBlender` | A round trip through Blender |
 
-Applying a workflow copies it into the definition. The Stages tab can reapply
-it — keeping prompts, pictures, source mesh, takes and the outputs of steps
-still in place — list what has changed since, and **Save as Workflow**.
+**The rest of that list comes from elsewhere.** *Garment for a character*
+arrives with [MeshForgeGarment](/docs/automation-forge/meshforge/garment);
+*Narrative clothing item* comes from a plugin in the project that is not part
+of Automation Forge at all; `WF_Test_Clothing` is an asset somebody in the
+project made and never gave a display name.
+
+<Callout type="info">
+  Workflows are extensible the same way
+  [post steps are](/docs/automation-forge/meshforge/post-processing#steps-from-plugins-that-do-not-link-meshforge).
+  A studio with its own conventions ships them as assets, and they appear in
+  this list beside the ones MeshForge brought.
+</Callout>
+
+Applying a workflow copies it into the definition, so a definition is never
+bound to the workflow it started from. The Stages tab can reapply one —
+keeping prompts, pictures, source mesh, takes and the outputs of steps still
+in place — list what has changed since, and **Save as Workflow**:
+
+<Shot
+  src="/shots/meshforge/workflow-picker.png"
+  width={718}
+  height={199}
+  alt="The Workflow picker on the Stages tab, currently reading 'Custom — set up by hand' and opened to show six entries: Edit a mesh in Blender, Garment for a character, Generate from your own picture, Generate from a prompt, Narrative clothing item and WF_Test_Clothing. A 'Save as Workflow' button sits to the right, and the stage tick-boxes for Mesh, Post-processing and Import are visible behind the open menu."
+  caption="'Custom — set up by hand' is what a definition reads once it no longer matches any workflow — which is most of them, most of the time. Reapplying is a deliberate act, not something that happens because the source asset changed."
+/>
 
 ## What it deliberately does not do
 

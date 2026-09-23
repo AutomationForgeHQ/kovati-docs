@@ -6,6 +6,32 @@ plugins: [MeshForge]
 icon: Shapes
 ---
 
+## The three assets
+
+MeshForge adds three asset types, all made the same way: **Content Browser ▸
+right-click ▸ Automation Forge ▸ MeshForge**.
+
+<Shot
+  src="/shots/meshforge/create-menu.png"
+  width={669}
+  height={327}
+  alt="The Content Browser create menu cascading three levels. Automation Forge is highlighted among engine categories such as Animation, Blueprint and Material. The second column lists FaceForge, MeshForge, MontageForge, MotionForge, PerformanceForge, SpeechForge and SurfaceForge, with MeshForge highlighted. The third column, headed MESHFORGE, offers Garment Bone Profile, Mesh Definition and Mesh Workflow."
+  caption="Three entries, and only one of them is the thing you make every day. A Mesh Workflow is a definition's starting shape saved for reuse; a Garment Bone Profile is a short list of bone rules."
+/>
+
+| Asset | What it is |
+|---|---|
+| **Mesh Definition** | The unit of work — one thing you are making |
+| **Mesh Workflow** | A definition's stages, pipelines and post chain, saved to start from. See [workflows](/docs/automation-forge/meshforge#workflows) |
+| **Garment Bone Profile** | Which body bones a garment may follow. Only useful with [MeshForgeGarment](/docs/automation-forge/meshforge/garment#bone-profiles) |
+
+<Callout type="info">
+  **Garment Bone Profile appears here even though it belongs to a different
+  plugin.** The branch is assembled from whatever is installed, so a project
+  without the garment plugin simply sees two entries — and a project with a
+  plugin of its own sees that plugin's assets alongside.
+</Callout>
+
 ## The asset editor
 
 A Mesh Definition opens with **five tabs**:
