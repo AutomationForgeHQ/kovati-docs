@@ -1,0 +1,75 @@
+---
+title: The toolset
+description: What an agent can do in MotionForge, and how that surface is kept honest.
+status: shipped
+plugins: [MotionForgeToolset, MotionForgeKimodoToolset, MotionForgeQualityToolset]
+icon: Bot
+---
+
+MotionForge ships no toolset of its own. Its MCP surface is the sibling
+plugin, and it **adds nothing** — every tool forwards to the same subsystem
+the windows call.
+
+That is the rule for every toolset in the family. See
+[humans and agents](/docs/company/humans-and-agents).
+
+<SetMembers set="motionforge" />
+
+## What is exposed
+
+The MotionForge toolset covers the whole loop: definitions and characters,
+drafts and request previews, provider switching and per-provider options,
+setup steps, submission and polling, take listing, preview, choose-and-import,
+hiding takes, clip users, activity, cancelling one definition, opening the
+MotionForge window, and migration.
+
+Because everything the windows do lives on the subsystem, **all of it is also
+reachable from Python and Blueprint** — the toolset is one of three ways in,
+not a privileged one.
+
+A native skill asset carries what the signatures cannot: the ordering, the
+gotchas, and when not to reach for a tool at all.
+
+### The Kimodo toolset
+
+Its own plugin, for the provider-specific surface: the runner lifecycle, rig
+creation, pose capture and authoring, constraint preview and verification.
+
+### The Quality toolset
+
+Three tools — `MeasureMotionPenetration`, `CorrectMotionPenetration` and
+`CreateMotionMeasurementProxy` — each forwarding straight to the quality
+subsystem.
+
+`ListMotionClips` and `MeasurePenetrationDepth` have **no tool**. An agent
+reaches them through Python or a [pipeline](/docs/automation-forge/pipelines).
+
+## What an agent may not do here
+
+- **Enter a key.** It can discover that a key is missing, and say which one.
+- **Rent a GPU without a decision.** Generate starts a *free* stopped runner;
+  it never starts anything that bills.
+- **Overwrite a graduated clip.** The ledger refuses, and the refusal says so.
+
+## A tool's signature is its schema
+
+If you are writing tools of your own against this: the signature is the
+contract an agent reads. A tool taking a JSON blob as a string has given up on
+being typed, and the agent calling it is guessing.
+
+Two consequences we hit and fixed:
+
+- **Const-ref parameters are skipped as inputs.** A parameter declared
+  `const FFoo&` does not appear in the reflected schema, so the tool silently
+  loses an input it looks like it has.
+- **A printed struct omits defaults.** Reading a struct back by printing it
+  gives you the fields that differ from the default, not the fields that
+  exist. Enumerate the properties instead.
+
+## Version
+
+The number an agent is told is read at runtime from the plugin descriptor —
+not a constant somebody maintains — so there is no window between a version
+bump and a fix in which an agent is told something false.
+
+<ReleaseNotes plugin="MotionForgeToolset" limit={3} />

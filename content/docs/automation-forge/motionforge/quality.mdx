@@ -1,0 +1,142 @@
+---
+title: Quality
+description: Measuring what is wrong with a clip, whatever made it — and the correction that is parked.
+status: shipped
+plugins: [MotionForgeQuality]
+icon: Ruler
+---
+
+MotionForgeQuality measures defects in an animation clip **regardless of who
+or what made it**.
+
+It knows nothing about providers, motion definitions or generation. A limb
+inside a torso is a property of a clip, and a retarget onto different
+proportions produces the same defect with no generative model involved
+anywhere.
+
+It is an add-on. Removing it changes nothing about the core pipeline.
+
+## Why measurement, not inspection
+
+The usual way to check a generated clip is to watch it. That does not scale
+past about twenty clips, and it does not give a pipeline anything to gate on.
+
+So: one number a gate can test.
+
+## The five functions
+
+All take asset paths, all Blueprint- and Python-callable.
+
+### CreateMeasurementProxy
+
+Builds a physics asset **dense enough to measure against**, fitted to a
+character's own vertices, with a configurable minimum bone size — default 1 cm
+against the engine's own 20 cm default, which produces a palm with no fingers.
+
+**It is never assigned to the mesh.** The character keeps its gameplay
+ragdoll; the proxy exists purely to be measured against.
+
+Measured on our own character: **114 bodies, 100% surface coverage** — versus
+the shipped gameplay ragdoll's 21 bodies and 38.8%.
+
+<Callout type="info">
+  That gap is the whole reason this function exists. Measuring penetration
+  against a gameplay ragdoll measures almost nothing, and reports that as
+  clean.
+</Callout>
+
+### MeasurePenetration
+
+Measures how far one shape's **axis** is inside another's surface.
+
+Not surface overlap — which scores a hand resting on a shoulder the same as a
+hand buried in a chest, and is therefore useless as a defect measure.
+
+Calibrated against each body pair's **own rest-pose overlap**, so a
+hand-authored idle reads 2.4 cm instead of 11.9 cm. Without that calibration
+every clip fails, including correct ones.
+
+- Joint-separation filter (default 3), so adjacent bones do not report
+  themselves.
+- The physics asset's own collision-disable table is **ignored by default** —
+  honouring it tests nothing on a ragdoll that disables all 210 pairs.
+- **Reports `SurfaceCoveredPercent` first.** Under 90%, everything else is
+  advertised as *unmeasured* rather than clean.
+
+That last rule is the discipline: a measurement that could not see most of the
+body reports that it could not see, instead of reporting a low number.
+
+### MeasurePenetrationDepth
+
+The same measurement reduced to the deepest overlap in centimetres — "the one
+number a gate can test".
+
+Returns `UnmeasurableCm` (9999) when nothing could be measured, **so an
+unreadable clip fails a `less than` threshold** rather than passing it.
+
+### ListMotionClips
+
+Every animation in a content folder, one row each — path, name, skeleton —
+read from the asset registry rather than from motion definitions, **so it
+finds clips nothing generated**.
+
+### CorrectPenetration
+
+Implemented, writes a new corrected clip, and **refuses outright rather than
+writing anything when the correction does not improve the measurement**.
+
+<Callout type="warn">
+  **Parked, deliberately.**
+
+  On the clips it was built for it reaches 11.6 cm → 10.1 cm and 12.5 cm →
+  8.5 cm. Even a 40-degree turn only reaches 7.2 cm.
+
+  The limiting factor is the *method* — swinging a limb — not the budget. The
+  defect being corrected is a provider's fixed relaxed hand pose intersecting
+  the thighs on every frame, which no limb-swing solution actually fixes.
+
+  This is recorded as a decision, not a finding. Do not pick it up expecting
+  the remaining distance to be tuning.
+</Callout>
+
+A correction stamps `physics.depenetrate` in the clip's MotionForge
+provenance record with the before and after numbers, so a corrected clip is
+distinguishable from the clip it was corrected from.
+
+## As pipeline nodes
+
+Four of the five appear in the
+[pipeline graph](/docs/automation-forge/pipelines) with no extra
+registration, through the
+[node library](/docs/automation-forge/concepts#the-node-library):
+
+| Function | Node category |
+|---|---|
+| `ListMotionClips` | `Source/Motion` |
+| `MeasurePenetration` | `Report/Motion` |
+| `MeasurePenetrationDepth` | `Report/Motion` |
+| `CorrectPenetration` | `Refine/Motion` |
+
+The proxy generator has no node.
+
+## Surfaces
+
+**No dedicated panel.** The pipeline nodes are the only editor surface, and
+all five functions are reachable from Blueprint and Python. There is no
+bespoke window, menu entry, console command or details customisation.
+
+The [toolset](/docs/automation-forge/motionforge/toolset) exposes three of the
+five as MCP tools: `MeasureMotionPenetration`, `CorrectMotionPenetration` and
+`CreateMotionMeasurementProxy`. `ListMotionClips` and
+`MeasurePenetrationDepth` have no tool — an agent reaches them through Python
+or a pipeline.
+
+## Validating the oracle
+
+One practice worth stealing: **validate a measurement by running it on
+something you already know the answer for.**
+
+Running the penetration measure on a hand-authored idle — content a human
+made, approved and shipped — is what surfaced the need for rest-pose
+calibration. An oracle that fails known-good content is not detecting a
+defect; it is a defect.

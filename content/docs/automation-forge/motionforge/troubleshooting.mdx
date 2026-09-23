@@ -1,0 +1,188 @@
+---
+title: Troubleshooting
+description: The MotionForge failures that come up most, and what they actually mean.
+status: shipped
+plugins: [MotionForge]
+icon: LifeBuoy
+---
+
+<Accordions type="multiple">
+
+<Accordion title="The clip imported but the character stands in its reference pose">
+
+Almost always an [IK Retargeter with no
+ops](/docs/automation-forge/motionforge/retargeting#a-retargeter-with-no-ops-does-nothing--and-does-not-error).
+
+A retargeter created programmatically starts with an empty op stack. Nothing
+errors — the asset opens, both rigs are assigned, chains map — and every clip
+retargets to the target's reference pose, which looks identical to an import
+that failed.
+
+Open the retargeter and check it has ops.
+
+</Accordion>
+
+<Accordion title="Arms look right, torso and head are twisted 90 degrees">
+
+Auto Align was run on the target rig instead of the source.
+
+On arms the A-pose-to-T-pose swing dominates and hides the problem. On spine
+and neck both chains already point nearly straight up, so the swing is about
+zero and pure unconstrained twist survives.
+
+[Run Auto Align on the source rig.](/docs/automation-forge/motionforge/retargeting#auto-align-runs-on-the-source-rig-never-on-your-games)
+
+</Accordion>
+
+<Accordion title="The hands are clawed">
+
+Untracked bones — fingers, in-between spine — are posed from the hand-pose
+clip, and that is only valid when the clip is **on the same skeleton**.
+
+MotionForge restricts it to the same skeleton for exactly this reason. If you
+are seeing it, check the hand-pose clip's skeleton matches.
+
+Separately: the local Kimodo provider **has no finger joints at all** and
+fills hands from one fixed relaxed pose for the whole clip. That is not a bug
+and no setting fixes it — see
+[providers](/docs/automation-forge/motionforge/providers#limits).
+
+</Accordion>
+
+<Accordion title="The character stands slightly too tall, or a constraint is subtly off">
+
+The rest pose being cancelled through is not the one the pose was sampled in.
+
+A mesh and its skeleton can hold **different** rest poses — on one of our
+characters, 166 bones against 361, with hips 2.9 cm apart. It shows up as a
+few degrees on the chest and a couple of centimetres of height: mild enough to
+pass every check, wrong enough to degrade a constraint.
+
+[The full explanation.](/docs/automation-forge/motionforge/retargeting#a-mesh-and-its-skeleton-can-hold-different-rest-poses)
+
+</Accordion>
+
+<Accordion title="The clip plays at the wrong speed">
+
+Check the clip's **Motion Take Provenance**. It carries a `bLooksMisRated`
+self-check comparing frames ÷ duration against the provider's native rate.
+
+Providers differ: one is 30 fps native, another 60. The frame rate comes from
+the provider and nowhere else — there is no project-wide target frame rate
+setting to get wrong, because that setting was removed for causing exactly
+this.
+
+`ReportProvenance` sweeps the whole library if you want to find every
+mis-rated clip at once.
+
+</Accordion>
+
+<Accordion title="Generation refuses, and the provider needs a key I have set">
+
+A key that exists is not a key that works.
+
+- The hub's Keys page reaching the vault proves a **row exists**, not that the
+  value authenticates. Use the provider's own **Test connection**.
+- A **gated model needs access, not just a token.** Kimodo measures whether
+  your Hugging Face token can actually read the gated Llama 3 model and shows
+  the answer with the link to request access. Granted access can take days.
+- Check the entry name. Account-level keys live under
+  `AutomationForge/Runpod` and `AutomationForge/HuggingFace`, shared by every
+  plugin. A token written under a plugin-specific name before the shared name
+  existed is invisible to everything else — that cost us an afternoon.
+
+See [keys](/docs/automation-forge/keys).
+
+</Accordion>
+
+<Accordion title="Generation refuses with a character problem after switching provider">
+
+**Switching a definition's provider keeps the old character.**
+
+The definition still points at the character prepared for the previous
+provider, which either does not suit the new one or carries the wrong rig.
+Change the character when you change the provider.
+
+Suitability is per provider, and the character window says which providers a
+character suits before you generate.
+
+</Accordion>
+
+<Accordion title="A job has been running far too long">
+
+It is probably marked **late** rather than lost. A job past its timeout is
+kept and polled less often, not dropped.
+
+`GetActivities` shows what is running per definition, including a runner being
+started. **Cancel** settles the definition: it goes to review if any take
+finished, or fails with the reason.
+
+</Accordion>
+
+<Accordion title="The local runner will not start">
+
+Generate starts a stopped local runner by itself — Docker Desktop first if it
+is closed, then the container, then a wait for the text encoder.
+
+If it still fails, open the **Kimodo Runner** panel (`Kimodo.Panel`) and check
+the measured setup rows. The common causes, in order:
+
+1. Docker Desktop is not installed, rather than not started.
+2. **Image-signature drift** — the installed image does not match what the
+   plugin expects. The panel flags a rebuild as needed rather than leaving a
+   mismatched runner silently wrong. `Kimodo.Rebuild`.
+3. No Hugging Face token, or no access to the gated model.
+
+`Kimodo.Logs` for the container's own output.
+
+</Accordion>
+
+<Accordion title="A rented GPU is costing more than expected">
+
+**It bills while the pod is up, whether or not anything is generating.**
+
+Stop it from [the hub's Runners tab](/docs/automation-forge/hub#runners) —
+which works with no editor open, and is the point of putting it there.
+
+Weights persist on a network volume, so stopping and restarting costs about 76
+seconds rather than a 15-minute rebuild. There is no reason to leave one
+running between sessions.
+
+</Accordion>
+
+<Accordion title="A price is shown without saying where the rate came from">
+
+Known gap. The library's selection price and the definition window's button
+label do not carry the "this is the provider's published price" note, though
+the cost line, the confirmations, the prompt timeline and Get started all do.
+
+Fixed on the development branch; it ships with the next MotionForge release.
+Until then: an unedited Uthana rate is Uthana's list price of $0.10 per
+generated second.
+
+</Accordion>
+
+<Accordion title="A generated clip looks wrong but I cannot say how">
+
+Two things help more than watching it again:
+
+**Subtract the root.** A clip that translates correctly but rotates wrongly,
+and one that does the reverse, look similar in a viewport at speed and
+completely different in a game.
+
+**Measure it.** [MotionForgeQuality](/docs/automation-forge/motionforge/quality)
+gives you penetration depth as one number. Build a measurement proxy first —
+measuring against a gameplay ragdoll measures almost nothing and reports it as
+clean.
+
+</Accordion>
+
+</Accordions>
+
+## Still stuck
+
+- `MotionForge.TestConnection` and `MotionForge.CredentialStatus` for the
+  provider side.
+- The clip's provenance record for what was actually sent.
+- [Report an issue](https://github.com/AutomationForgeHQ/kovati-docs/issues)
+  if this page should have covered it.
