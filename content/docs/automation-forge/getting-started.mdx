@@ -99,11 +99,16 @@ Each set's panels are then in the **Tools** menu, grouped under an
 
 <Shot
   src="/shots/keys/tools-menu.png"
-  width={300}
-  height={883}
-  alt="The Unreal Tools menu scrolled to its Automation Forge section. Beneath the heading are MotionForge, Keys, an Automation Forge submenu, Kimodo Runner, Face Bank, Audio2Face Runner, Performance Capture, Speech Library and SurfaceForge. Other engine sections such as Revision Control, Data Validation and Python sit above it."
-  caption="One entry per installed set, plus the shared Keys page. The list grows and shrinks with what is installed — nothing here is hard-coded, so a set you have not bought simply is not in the menu."
+  width={1498}
+  height={892}
+  alt="The Unreal editor with the Tools menu open and scrolled to its Automation Forge section. Beneath that heading are MotionForge, Keys, an Automation Forge submenu, Kimodo Runner, Face Bank, Audio2Face Runner, Performance Capture, Speech Library and SurfaceForge; engine sections such as Revision Control, Data Validation and Python sit above it. The Content Browser below shows the project's _Generated tree with Face, Mesh, Motion, Performance, Pipelines, Speech and SurfaceForge folders, with Mesh open on Definitions, Images, Imported, Meshes, References and Tests."
+  caption="One entry per installed set, plus the shared Keys page. The list grows and shrinks with what is installed — a set you have not bought is simply not in the menu. Note the Automation Forge button in the toolbar above too: that one is the hub."
 />
+
+The Content Browser in that shot shows the other half of the convention:
+generated work lands under `_Generated`, one folder per set, and each set
+subdivides by kind. See
+[generated content is organised](/docs/automation-forge/meshforge/concepts#where-things-land).
 
 </Step>
 
@@ -130,6 +135,31 @@ The hub's **Keys** and **Runners** drawers cover both. Keys go straight into
 the Windows Credential Manager; a runner can be started or stopped there
 **before** you open the editor — which is usually what you want, since an
 editor that opens against a stopped runner just reports a dead route.
+
+There is no "hub copy" and "editor copy" of a key. The two surfaces read and
+write the same vault entries, and each says so:
+
+<Shot
+  src="/shots/hub/keys.png"
+  width={1008}
+  height={761}
+  alt="The hub's Keys drawer, open over the Runners tab. It reads '2 of 4 set, 1 still needed. One vault, shared with the editor. A key set here is set for every project on this machine.' A General section lists Hugging Face, used by MotionForge Kimodo, explaining it downloads the gated text encoder the runner needs and that without one the container builds, starts, reports a device mode and then fails every generation. In amber: 'A token is not access. You must also be granted: meta-llama/Meta-Llama-3-8B-Instruct', with a Request access link and a note that Meta review these by hand, so start it early. The key is Not set, with a paste field and Save. Runpod follows."
+  caption="In the hub, before the editor is open: 'One vault, shared with the editor. A key set here is set for every project on this machine.'"
+/>
+
+<Shot
+  src="/shots/keys/keys-panel.png"
+  width={1038}
+  height={634}
+  alt="The Automation Forge Keys window inside the Unreal editor. Its header reads: kept in this computer's credential vault, never in the project, so a key does not travel with a copied folder or a commit; each plugin can also set its own key in Editor Preferences, and this is the same store gathered in one place. Hugging Face is marked Configured (OS credential vault), used by MotionForge Kimodo and FaceForge ACE, with the same amber note that a token is not access and the grants it needs listed beneath. Runpod follows, noting it needs write access."
+  caption="The same entries inside the editor — 'this is the same store, gathered in one place' — now reading Configured, because the key was set in the hub. Note it is also used by FaceForge ACE here: one account, every plugin that needs it."
+/>
+
+<Callout type="info">
+  Both panels carry the same warning, because it is the mistake that costs
+  most: **a token is not access.** Meta review the Llama 3 grant by hand, so
+  request it on the day you install, not on the day you first generate.
+</Callout>
 
 See [keys and runners](/docs/automation-forge/keys).
 

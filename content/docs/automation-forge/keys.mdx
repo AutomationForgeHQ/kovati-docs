@@ -136,6 +136,21 @@ itself, and Start and Stop act on it.
 a stopped container can only report a dead route, and the fix is a restart you
 did not need.
 
+<Shot
+  src="/shots/hub/runners.png"
+  width={1008}
+  height={761}
+  alt="The hub's Runners tab, subtitled 'What this machine can run, and what it is doing'. A THIS MACHINE section shows one runner, Kimodo, from MotionForgeKimodo, reporting the Docker version and 'Runner: Stopped. Starting it builds nothing and downloads nothing.' with Re-check, Stop and Start buttons. Below: 'The editor can drive the same containers, and either can start or stop one while the other is watching — so both ask Docker rather than trusting what they last did.' A RENTED GPU section notes Kimodo can also run on a GPU rented by the hour, which needs a Runpod key, with a Set the Runpod key button, and explains that renting is done in the editor where the card, region and price ceiling are chosen against what the model needs, while stopping and releasing need none of that, so they are here."
+  caption="'Starting it builds nothing and downloads nothing' — the row tells you the cost of the button before you press it. And the panel exists at all only because MotionForgeKimodo is installed; the hub is reading what plugins declare, not a list it ships."
+/>
+
+<Callout type="info">
+  The line under the runner is the whole concurrency design in one sentence:
+  *"either can start or stop one while the other is watching — so both ask
+  Docker rather than trusting what they last did."* Two processes, one
+  container, and no cached belief about its state.
+</Callout>
+
 ### Why the editor still creates the container
 
 The hub can start and stop a container by id, because compose stamps labels on
@@ -147,6 +162,28 @@ Likewise, **renting** a GPU stays in the editor: which card, in which region,
 under what price ceiling is a decision made against what a specific model
 needs. The hub lists what is rented, says what it costs, and stops or releases
 it.
+
+The hub's own wording for the split is the clearest statement of it:
+*"Renting one is done in the editor, where the card, the region and the price
+ceiling are chosen against what the model needs. Stopping and releasing need
+none of that, so they are here."*
+
+Here is the editor half of the same runner:
+
+<Shot
+  src="/shots/motionforge/kimodo-runner.png"
+  width={1008}
+  height={608}
+  alt="The Kimodo Runner panel inside the editor, on its This machine target. It reports 'Not answering' for http://127.0.0.1:8757 with a Re-check button. Measured rows follow: Docker running with its version but the runner container stopped; the runner image up to date with its digest; a Hugging Face token stored in the system credential vault; and Llama 3 access 'not checked yet — a token alone installs fine and fails later', with Model page and Check links. Start is enabled, Stop is disabled, and Rebuild is offered. A footer reads 'The hub can manage this too' with an Open the hub link."
+  caption="The same container, from the editor — which adds what the hub cannot: the image digest, the gated-model check, and Rebuild. Its footer points back at the hub, because stopping one does not need any of that."
+/>
+
+<Callout type="info">
+  Note the two panels disagree about nothing while describing different
+  things. The hub reports *what is running*; the editor reports *whether this
+  route can work* — the image, the token, the grant. Both read Docker for the
+  container's state rather than remembering it.
+</Callout>
 
 <Callout type="warn">
   A rented GPU bills while it exists, not while it is busy. The hub showing it
