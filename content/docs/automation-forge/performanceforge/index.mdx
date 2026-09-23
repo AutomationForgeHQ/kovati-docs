@@ -49,6 +49,26 @@ Two pages: **Record**, the teleprompter, and **Session**, the ledger.
   exactly why the solve that consumes them stays in sync.
 </Callout>
 
+### Recording
+
+<Shot
+  src="/shots/performanceforge/recording.png"
+  width={1635}
+  height={766}
+  alt="The Performance Capture panel mid-take. The header reads 'Line 1 of 2 - Player' with the line 'I'll leave you now, it's been a pleasure!' in large type and '0 finished'. Microphone is set to 'Microphone Array (Realtek(R) Audio)' and Camera to 'Integrated Camera' with Camera on ticked. A large webcam preview shows a man mid-delivery, mouth open and hand raised. The Level meter shows a blue bar about a fifth across, and to its right 'REC 0:02.71' beside the Mirror tick-box. The status line reads 'Recording. Stop files the take: audio master, frames, manifest.' and the button beside it has changed from Record to a blue Stop. The Takes list below still reads 'No takes yet. The first Record files one here, and every take keeps its own folder: the audio master, the frames, and a manifest of what actually happened.'"
+  caption="Two seconds into a take. The button is Stop, the clock is counting, the level meter is live — and the status line names the three things stopping will write, in the order it writes them."
+/>
+
+<Callout type="info">
+  **"Stop files the take: audio master, frames, manifest."** That order is the
+  completeness protocol stated in the interface. The manifest is written last,
+  so a take folder without one is an interrupted recording and nothing
+  downstream has to guess.
+
+  The take list still reads "No takes yet" during the recording, because a take
+  that has not been filed does not exist yet.
+</Callout>
+
 ### Every control on it
 
 | Control | What it does |

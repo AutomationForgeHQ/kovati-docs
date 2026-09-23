@@ -56,6 +56,53 @@ drives over HTTP.
   the editor needs nothing but the ability to make a request.
 </Callout>
 
+### The Audio2Face Runner panel
+
+Everything about hosting the model yourself lives on one page, and it answers
+*"why is it not working"* before you have to ask.
+
+<Shot
+  src="/shots/faceforge/ace-runner-local.png"
+  width={1015}
+  height={615}
+  alt="The Audio2Face Runner panel on its This machine tab. A status strip reads 'Not answering yet (0s)' with the note 'The runner container exists but is not running. Start it - there is nothing to build and nothing to download.', beside a Refresh button. Under a heading WHERE IT RUNS, a two-way switch offers This machine and Rented GPU, with This machine selected. A panel reports Docker: 'the runner container is stopped' and Image: 'built from different files (unknown, expected 496c2a9c047f)', followed in amber by 'The image was built from different runner files than the ones this plugin ships. It will start, answer and solve - in the way an older version did, which is the confusing kind of wrong. Rebuild fixes it.' Buttons: Start, a greyed Stop, and Rebuild the image. Below, WHAT THE CONTAINER SAID with a Fetch the log button, and a footer noting Runpod and Hugging Face are shared accounts across every Automation Forge plugin, with a Keys link."
+  caption="A status line that names the state and the fix in the same sentence, and two facts under it — whether the container is running, and whether the image matches the plugin. Neither is a thing you would think to check."
+/>
+
+<Callout type="warn">
+  **"It will start, answer and solve — in the way an older version did, which
+  is the confusing kind of wrong."**
+
+  This is the failure worth knowing about, because it does not look like a
+  failure. A stale image runs, responds and produces curves; they are simply
+  the previous version's curves. The panel compares the built image against the
+  runner files this plugin ships and says so, with *Rebuild the image* beside
+  it.
+</Callout>
+
+### Renting, and when not to
+
+The second tab is the rented route, and it opens by talking you out of it:
+
+<Shot
+  src="/shots/faceforge/ace-runner-rented.png"
+  width={1015}
+  height={616}
+  alt="The Audio2Face Runner panel on its Rented GPU tab, status reading 'Not answering yet (10s)'. The panel says: 'Nothing rented. A face solve is a fraction of a second, so an hour of finished dialogue is about four GPU-minutes while a cold pod is five to fifteen - renting is for a machine with no NVIDIA card, or a whole-game batch, and never a way to make one solve faster.' A 'Rent a GPU...' button sits below, above WHAT THE CONTAINER SAID with Fetch the log, and the same shared-accounts footer with a Keys link."
+  caption="The arithmetic, stated where the money would be spent: about four GPU-minutes for an hour of finished dialogue, against five to fifteen minutes of cold start. Renting is for a machine with no card, or a whole-game batch — never for making one solve faster."
+/>
+
+<Callout type="info">
+  **The cold pod costs more than the work.** That is the unusual shape of this
+  particular provider, and it is the opposite of the mesh and speech routes,
+  where renting is often the sensible answer. A face solve is fast enough that
+  the machine spends nearly all its life idle.
+
+  The same footer appears on both tabs: **Runpod and Hugging Face are accounts
+  a person has**, shared across every Automation Forge plugin, so a key entered
+  once is entered for all. See [keys](/docs/automation-forge/keys).
+</Callout>
+
 ### ARKit-52 natively
 
 No mapping at all for authored, CC5, Reallusion, Daz or Ready Player Me heads.

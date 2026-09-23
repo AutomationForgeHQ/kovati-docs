@@ -113,6 +113,45 @@ upstairs, the facts downstairs.
 | **Upstairs** | **Recorded takes** — the takes of the selected line | The take under review, playing |
 | **Downstairs** | **Planned lines** — the job | **Details**, with a Session tab and a Line tab |
 
+<Shot
+  src="/shots/performanceforge/session-ledger.png"
+  width={1108}
+  height={733}
+  alt="The Performance Capture panel on its Session page. A Session picker reads PS_20260908_235921 (loaded) with browse and Load buttons, and a line beneath: 'Queued 2 line(s) from PS_20260908_235921.' Under 'Recorded takes' with an Import take button sit two takes: T_20260909_000006, Recorded, 6.45s; and the selected T_20260909_000327, Recorded, 6.70s, marked IN USE in blue and expanded to show two voice rows - 'Original 6.70s' with a Make primary button, and 'Lily - Velvety Actress 6.73s' in blue marked PRIMARY with a drop cross. Four buttons sit under them: Re-voice, Open, Re-solve, Remove. To the right, a 'Hear with' picker reads Lily - Velvety Actress above a video pane showing a man mid-performance, with a transport reading 3.63s and 'frame 110/201'. Below left, 'Planned lines' with a Record This Line button lists DLG_Generato... Player 'I'll leave you now, it's been...' Pending, and GEN_Doric_Rule Astronaut 'Not alone, you are not. The...' Pending. Below right, a Session/Line switch with Line selected shows 'Line details': the line text, Speaker Player, Voice 'T_20260909_000327, re-voiced as Lily - Velvety Actress', Face 'not solved yet', and five navigation buttons - Show Dialogue Line, Find Speech Bank in Content Browser, Find Face Bank in Content Browser, Show in Speech Bank, Show in Face Bank."
+  caption="One take expanded, and the model is visible: the performance on the outside, the voices it can be heard in inside it. Original keeps its Make primary button; the re-voiced Lily is PRIMARY and is the only one that can be dropped. IN USE, on the take, is a separate badge from PRIMARY, on the voice."
+/>
+
+<Callout type="info">
+  **Read the transport: `3.63s  frame 110/201`.** The review pane plays the
+  take's own frames on their own measured timing, counted rather than
+  interpolated from a nominal frame rate — which is what
+  [the manifest](/docs/automation-forge/performanceforge#the-manifest-records-what-was-measured-never-what-was-requested)
+  exists to make possible.
+</Callout>
+
+<Callout type="warn">
+  **The two pages list takes from different places, and the ids show it.** The
+  Session page's *Recorded takes* are `T_20260909_000327`; the Record page's
+  *Takes* are folders like `PF_Player_DLG_GeneratorBriefing_Player_IllLeaveYouNow_20260909_000321`.
+
+  They are not the same list. The Record page lists **the capture library on
+  disk** — folders this panel wrote. The Session page asks SpeechForge for
+  **the line's take ledger**, by reflection, and comes back empty without it.
+
+  That split is the design stated in the session asset's own header: *take
+  truth lives on the speech lines themselves; this asset is the plan and the
+  fixtures, not a second copy of the takes.* It is also why
+  [your takes survive not paying for this plugin](/docs/automation-forge/performanceforge#your-takes-stay-yours).
+</Callout>
+
+<Callout type="warn">
+  **Face reads `not solved yet` in that capture even though the voice is
+  settled.** That is the state the Line tab exists to surface: a take chosen
+  and re-voiced, with no face solved from the audio that resulted. It is not an
+  error — it is work outstanding, and it is legible at a glance instead of
+  being discovered when the mouth does not move.
+</Callout>
+
 Above all four sits the session picker: every `PS_` asset, with the loaded one
 marked **(loaded)** in blue *in the list as well as in the closed box* —
 because picking from a column of near-identical date-stamped names with no
@@ -129,6 +168,11 @@ sits one row per voice that take can be heard in:
 |---|---|
 | **Original** | The take's own recording. Always first, and it *is* the take — it cannot be dropped |
 | Any others | Re-voicings of that same performance, added by **Re-voice** |
+
+In the capture above that reads: the performer's own 6.70s recording, and
+*Lily - Velvety Actress* at 6.73s — the same delivery in the line's cast voice,
+**30 milliseconds longer**, which is the conversion preserving pacing rather
+than re-speaking the words.
 
 Each voice row carries four controls, and the split between them is the whole
 design:

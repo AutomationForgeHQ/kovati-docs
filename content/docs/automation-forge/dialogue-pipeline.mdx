@@ -153,6 +153,26 @@ This is the page that makes them one pipeline.
 A sixth page, **Localize**, is a sibling of the whole scene rather than a step
 in it — see [localisation](/docs/automation-forge/speechforge/localisation).
 
+## What it looks like when it has worked
+
+Everything above is a panel. This is the only thing that matters:
+
+<Shot
+  src="/shots/faceforge/dialogue-in-game.png"
+  width={1090}
+  height={549}
+  alt="An in-game dialogue in the Colony demo, letterboxed. Ivo Renk fills the frame in close-up, a bald man with a beard in a white and red collared uniform, eyes wide and mouth open mid-word. A subtitle reads 'Ivo Renk: It's not the grid. I walked the relays twice this morning. Clean as a whistle. But I don't know!' with the speaker name in orange. Prompts at the bottom left offer Skip Line and Exit Dialogue."
+  caption="One of the seven lines, playing. The words came from a Narrative Pro dialogue, the voice from ElevenLabs as Callum, the mouth from a face bank solved against that voice, and the montage was bound to the node by one button on the Perform page."
+/>
+
+<Callout type="info">
+  **Nothing in that frame was assembled by hand.** The subtitle is the line's
+  text, the audio is its take, and the face is the clip whose id *is* the line
+  id — which is why they cannot drift apart. *Apply Voice and Faces to
+  Dialogue* put all three onto the dialogue node in one press, and it is safe
+  to press again as more lines finish.
+</Callout>
+
 ## What each plugin actually owns
 
 The division is sharper than the panels suggest, because the panels

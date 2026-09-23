@@ -157,21 +157,27 @@ the price of the request that would go.
 > *M* current line(s) are skipped and cost nothing. Recorded and hand-edited
 > lines are never touched.
 
-*Re-generate Selected*, which adds a paragraph per thing you should know:
+*Re-generate Selected* adds a paragraph per thing you should know, and the
+whole scene selected looks like this:
 
-> Force re-generate *N* line(s), ~*X.XXX* USD?
->
-> *N* of them are current — **this re-pays for audio that did not need it.**
->
-> *N* recorded, edited or accepted line(s) stay untouched — the pipeline never
-> overwrites audio it no longer owns. Re-record or run a pickup session for
-> those.
+<Shot
+  src="/shots/speechforge/regenerate-dialog.png"
+  width={907}
+  height={469}
+  alt="A modal Unreal Message dialog with a warning triangle. It reads: 'Force re-generate 7 line(s), ~0.041 USD?' Then: '5 of them are current - this re-pays for audio that did not need it.' Then: '2 recorded, edited or accepted line(s) stay untouched - the pipeline never overwrites audio it no longer owns. Re-record or run a pickup session for those.' A copy icon sits bottom left; Yes and No buttons bottom right, with Yes highlighted blue."
+  caption="Seven lines, four cents, and two sentences that between them describe the whole graduation model. Five are current and would be re-paid for; two are recorded and cannot be overwritten at any price."
+/>
 
 <Callout type="info">
   **The second paragraph exists to talk you out of it.** Force is for the case
   where a line looks current and is not; the dialog counts how many of your
   selection are in fact current and says plainly that you are about to pay for
   them again.
+
+  The third is the one that cannot be overridden. *"The pipeline never
+  overwrites audio it no longer owns"* is not a warning about this press — it
+  is a statement that those two lines are outside force's reach entirely, and
+  the only routes to them are a re-record or a pickup session.
 </Callout>
 
 On a bank where there is nothing to do, *Generate All* does not open a dialog
@@ -179,11 +185,10 @@ at all — it answers **"Everything is current — nothing to generate."**
 
 <Callout type="info">
   For scale: the seven-line scene these captures come from is **411
-  characters**, and the estimator prices a full forced re-generation of all
-  seven at **about $0.04**. Character-billed synthesis is cheap per line; the
-  dialogs exist because a bank is not seven lines, and because a forced
-  re-generation of a thousand current lines is a real way to waste a real
-  amount of money.
+  characters**, which is the **~0.041 USD** in the dialog above. Character-billed
+  synthesis is cheap per line; the dialogs exist because a bank is not seven
+  lines, and because a forced re-generation of a thousand current lines is a
+  real way to waste a real amount of money.
 </Callout>
 
 **Generated audio is never discarded when a line graduates to `Recorded`**,
