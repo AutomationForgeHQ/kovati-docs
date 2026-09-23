@@ -6,10 +6,37 @@ plugins: [MotionForge]
 icon: Shapes
 ---
 
+## The two assets
+
+MotionForge adds exactly two asset types, and both are made the same way:
+**Content Browser ▸ right-click ▸ Automation Forge ▸ MotionForge ▸ Motion
+Character** or **Motion Definition**. Every other set has its own branch of
+that same menu.
+
+<Shot
+  src="/shots/motionforge/content-browser-characters.png"
+  width={1942}
+  height={1054}
+  alt="The Colony project in the Unreal editor, with the Content Browser open on Content/_Generated/Motion/Characters. Three assets are shown — MC_NarrativeBiped, MC_Quinn_Direct and MC_Quinn_Kimodo — each labelled Motion Character beneath its tile. The folder tree on the left shows _Generated containing Face, Mesh, Motion, Performance, Pipelines and Speech, with Motion expanded into Characters, Definitions, Montages, Poses, Rigs, Sequences and Takes."
+  caption="Three Motion Characters for one project, and the folder tree that holds everything MotionForge writes. Two of them point at the same skeleton and differ only in how clips reach it — which is the distinction the rest of this page is about."
+/>
+
+They live under `_Generated/Motion`, subdivided by kind: `Characters`,
+`Definitions`, `Takes`, and the `Rigs`, `Poses` and `Sequences` a provider
+needs along the way. Nothing MotionForge writes lands outside that tree.
+
 ## Motion Character
 
 A **Motion Character** pairs a skeletal mesh with what each provider needs to
 reach it.
+
+<Shot
+  src="/shots/motionforge/character-retargeted.png"
+  width={1200}
+  height={1000}
+  alt="The MC_Quinn_Kimodo Motion Character window. A Pairing block summarises it in sentences: Provider Kimodo (local); Target skeleton SK_Mannequin_Narrative; Preview mesh SKM_Quinn; Pipeline 'retargeted — clips arrive on SK_KimodoSOMA'; Retargeter RTG_KimodoSOMA_To_SKM_Quinn_FK; and 'Ready to generate with Kimodo (local)'. A 'With Kimodo (local)' section offers Rebuild Kimodo rig and Import directly instead. Below, ordinary details categories: Character, Retargeting and Provenance."
+  caption="The window leads with a plain-language summary — provider, skeleton, mesh, route, readiness — and puts the editable fields underneath. You read the Pairing block; you only scroll to the fields when you want to change one."
+/>
 
 - `CreateCharacterFromMesh` makes one from a mesh you already have.
 - Suitability is **per provider**. A character prepared for one provider never
@@ -31,6 +58,17 @@ provider, and that provider's settings.
 
 A definition is authored, committed and re-runnable. It is not a record of a
 run — the takes are.
+
+Its window is two halves: the **Takes** stage on the left, where you watch
+results, and **Generate** on the right, where you set up the next one.
+
+<Shot
+  src="/shots/motionforge/uthana-definition.png"
+  width={1200}
+  height={1000}
+  alt="A Motion Definition window. The left half shows a Takes tab with a character playing on a preview stage, In place, Floor and Orbit checkboxes, playback scrubber, and a table of takes with When, Made by, Seed, Length, Cost and State columns. The right half shows a Generate tab with numbered sections: Prompt, headed '5 s, 1 beat'; Character, warning that this one has a provider rig but no Retargeter; and Generate, with a provider dropdown reading 'Uthana — pay as you go, $0.10 a generated second'. A toolbar above offers Show Animation, Prompt Timeline and Motion Library."
+  caption="Watching and generating sit side by side on purpose: the take you are judging stays on screen while you adjust what the next one will be. The numbered sections on the right are the same three steps Get started walks you through, kept for every generation after the first."
+/>
 
 ### Each provider brings its own settings
 
