@@ -32,7 +32,10 @@ export const baseOptions: BaseLayoutProps = {
    * product line on screen twice, three rows apart. They belong in the header,
    * where they are the only navigation a non-docs page has.
    *
-   * Releases is `'all'`: it is not a docs root, so nothing else offers it.
+   * Changelogs is left off `'nav'` for the opposite reason: it *is* a docs
+   * root, so the sidebar switcher already offers it, and a header link as well
+   * would put it on screen twice. It stays here so the non-docs pages have a
+   * way in.
    */
   links: [
     {
@@ -57,10 +60,10 @@ export const baseOptions: BaseLayoutProps = {
       on: 'nav',
     },
     {
-      text: 'Releases',
-      url: '/releases',
+      text: 'Changelogs',
+      url: '/docs/releases',
       active: 'nested-url',
-      description: 'Every published version, from the manifest',
+      description: 'Every released version, one page per plugin',
     },
   ],
   /** Renders its own icon button. Adding a second GitHub link duplicates it. */

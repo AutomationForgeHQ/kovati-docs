@@ -198,9 +198,17 @@ as part of `build`, `verify` and `sync:manifest`. The pages are generated, so
 hand edits are lost — which is the point: they carry hundreds of version
 numbers, and this wiki's rule is that no page types one.
 
-`/releases` is now a **window** on the last 25, not the history. It was
-rendering every version of every plugin with full notes, which was already long
-and would have been unusable at a thousand.
+**`/releases` is gone.** It rendered every version of every plugin with full
+notes on one page, which was already long at 121 and unusable at a thousand.
+Capping it to a window was the first attempt and made it worse: the home page
+still advertised it as *"All 121 published versions"* while it showed 25.
+
+Everything it had is now somewhere better. The per-plugin pages carry each
+version's download link, size and GitHub release — which is where somebody
+after a particular build actually looks. The changelogs index is the
+cross-plugin view: every plugin, its latest version and its date, in one table.
+The home page keeps the six most recent as activity. Nothing lost, one
+destination instead of two both called Releases.
 
 **Search cannot be tested against `next dev` over `127.0.0.1`.** The dev
 server blocks cross-origin access to `/_next/` resources, the dialog's chunk is

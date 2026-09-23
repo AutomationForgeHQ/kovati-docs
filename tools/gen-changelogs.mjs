@@ -75,6 +75,34 @@ const DISTRIBUTION = {
   paid: 'Paid',
 }
 
+const size = (bytes) => {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+/**
+ * What a reader can do with this version, beside its date.
+ *
+ * A paid plugin publishes to a private repository, so its download URL would
+ * 404 for everyone but us. Its existence and its notes are public facts and
+ * belong on the page; the link does not, and the account app is offered
+ * instead.
+ *
+ * A version with a changelog entry and no row in the manifest's public list is
+ * normal rather than missing — the paid plugins carry their whole history here
+ * and publish only their current build publicly.
+ */
+function actions(p, version, row) {
+  if (p.distribution === 'paid') {
+    return 'Installed through [the account app](https://app.kovati.dev)'
+  }
+  if (!row) return ''
+  const parts = [`[Download (${size(row.size)})](${row.url})`]
+  if (row.notes) parts.push(`[Release on GitHub](${row.notes})`)
+  return parts.join(' · ')
+}
+
 const setsById = new Map(manifest.sets.map((s) => [s.id, s]))
 const byId = new Map(manifest.plugins.map((p) => [p.id, p]))
 
@@ -88,6 +116,7 @@ function pluginPage(p) {
   const set = setsById.get(p.set)
   const releases = stable(p)
   const dates = new Map(releases.map((v) => [v.version, v.releasedAt]))
+  const rows = new Map(releases.map((v) => [v.version, v]))
   const entries = [...p.changelog].sort((a, b) => compare(b.version, a.version))
   const newest = latestOf(p)
 
@@ -110,7 +139,7 @@ function pluginPage(p) {
     `| **Set** | ${set ? set.name : p.set} |`,
     `| **Role** | ${p.role} |`,
     `| **Latest** | ${newest ? `\`${newest.version}\` — ${date(newest.releasedAt)}` : 'unreleased'} |`,
-    `| **Releases** | ${releases.length} |`,
+    `| **Versions here** | ${entries.length} |`,
   ]
 
   if (p.dependencies?.length) {
@@ -138,7 +167,8 @@ function pluginPage(p) {
       lines.push(`## ${minor}`, '')
     }
     const when = dates.get(e.version) ?? e.date
-    lines.push(`### ${e.version}`, '', `*${date(when)}*`, '')
+    const act = actions(p, e.version, rows.get(e.version))
+    lines.push(`### ${e.version}`, '', `*${date(when)}*${act ? ` · ${act}` : ''}`, '')
     const body = demote(mdxSafe(e.body)).trim()
     if (body) lines.push(body, '')
   }
@@ -170,8 +200,9 @@ function indexPage() {
     '  the git tags, the plugin descriptors and the published releases. Nothing',
     '  here is transcribed, so nothing here can disagree with what shipped.',
     '',
-    '  For what happened recently across everything at once, the',
-    '  [release log](/releases) is the same data as one feed.',
+    '  Each version carries its own download where there is a public one. The',
+    '  paid plugins keep their whole history here and publish only their current',
+    '  build, so their older versions have notes and no link.',
     '</Callout>',
     '',
   ]

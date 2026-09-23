@@ -89,10 +89,10 @@ export default function Home() {
             Recently released
           </h2>
           <Link
-            href="/releases"
+            href="/docs/releases"
             className="text-sm text-fd-muted-foreground underline decoration-dotted underline-offset-4 hover:text-fd-primary"
           >
-            All {versionCount} published versions
+            All {versionCount} versions, per plugin
           </Link>
         </div>
 
