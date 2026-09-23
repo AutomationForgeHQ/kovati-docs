@@ -82,6 +82,59 @@ Not published, but read constantly while writing:
 `forge-inventory` is private and records paid-plugin internals. It is a source
 to write *from*, never a source to copy.
 
+## Screenshots and video
+
+### Capturing a window
+
+`tools/capture-window.ps1` renders a window **from its own handle**
+(`PrintWindow` with `PW_RENDERFULLCONTENT`), never by copying the screen.
+
+```powershell
+.\tools\capture-window.ps1 -ProcessName AutomationForgeHub -Out public/shots/hub/plugins.png
+.\tools\capture-window.ps1 -ProcessName UnrealEditor -TitleLike "MotionForge*" -Out shot.png
+```
+
+That distinction is not pedantry. A screen copy captures whatever is in front,
+and on 2026-08-28 that captured a private messaging window instead of the
+intended one. The script refuses on an ambiguous match rather than guessing,
+because **the wrong capture is not a failed capture, it is a leak.** Check
+every shot before committing it.
+
+The hub lives in the tray. Running `AutomationForgeHub.exe` again surfaces the
+existing instance's window rather than starting a second one.
+
+### Driving the editor to reach a panel: don't
+
+`SlateInspectorToolset` offers Playwright-style control of the editor UI, and
+it is genuinely useful for *reading* the widget tree. But on 2026-09-23 its
+clicks returned success and changed nothing, most likely because the editor
+was not the foreground application.
+
+**The escalation from there — forcing focus, or sending OS-level input — is
+the thing that wiped 788 map actors here once.** It is not worth it for a
+screenshot. Ask whoever is at the machine to open the panel, then capture it.
+That takes them five seconds and carries no risk.
+
+### Using them
+
+`<Shot>` and `<YouTube>` are available in any MDX page:
+
+```mdx
+<Shot src="/shots/hub/plugins.png" width={1008} height={761}
+      alt="What the picture shows, for someone who cannot see it."
+      caption="What to look at, and why it is here." />
+
+<YouTube id="qROAvFtDoBw" title="..." caption="..." />
+```
+
+Two rules, both in the components' own comments: a caption says **what to look
+at**, not what the picture obviously is; and a screenshot is **a claim with a
+date on it** — prose can be corrected in a sentence, a shot has to be retaken.
+Prefer one good shot of what a page is about over a gallery that rots.
+
+`<YouTube>` loads nothing until clicked and uses `youtube-nocookie.com`, so a
+reader who never presses play is never tracked.
+
 ## Known issues, to settle before deploying
 
 ### ~~RSC segment prefetch 404s~~ — fixed 2026-09-23

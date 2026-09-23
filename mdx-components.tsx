@@ -11,6 +11,8 @@ import { SetMembers } from '@/components/SetMembers'
 import { PluginVersion } from '@/components/PluginVersion'
 import { ReleaseNotes } from '@/components/ReleaseNotes'
 import { DistributionTable } from '@/components/DistributionTable'
+import { Shot } from '@/components/Shot'
+import { YouTube } from '@/components/YouTube'
 
 /**
  * Components every page can use without importing them.
@@ -42,6 +44,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     PluginVersion,
     ReleaseNotes,
     DistributionTable,
+    Shot,
+    YouTube,
     ...components,
   }
 }
