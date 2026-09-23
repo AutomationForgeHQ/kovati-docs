@@ -125,6 +125,30 @@ Four pipelines:
 - **Retexture** (a post step) — style from a description, one picture or
   several; 2K / 4K / 8K.
 
+<Shot
+  src="/shots/meshforge/meshy-standard.png"
+  width={1918}
+  height={1000}
+  alt="A Mesh Definition for a nuclear battery prop, shown in the viewer at 2,320,764 triangles, 1,239,651 vertices, 1 material, 152 by 107 by 190 cm, with Nanite. The Stages panel shows Concept image unticked while References, Mesh, Post-processing and Import are ticked. The References stage, marked 'not run', warns in amber: '3 extra view(s) chosen and this generator will read 0. The other 3 will NOT be sent — it reconstructs from what it is given, so the result is made from 1 picture(s). Change the generator, or remove the extra views.' The Mesh stage is stale, on the 'Meshy — Standard (high quality)' pipeline, showing one main image in its Input group with multi-image-to-3d unticked, and a Model group setting ai_model to meshy-7.1 (current), geometry_resolution to standard, image_enhancement ticked and auto_size unticked."
+  caption="Meshy's own fields, and a warning worth reading twice: three extra views are chosen and this generator will read none of them, because multi-image-to-3d is off. The stage says so before the run rather than producing a mesh built from one picture and leaving you to wonder."
+/>
+
+<Callout type="warn">
+  **How many pictures a generator reads is a property of the generator, not of
+  the definition.** Tripo's image stage says *"it can read up to 3"*; Meshy's
+  Standard pipeline reads the extras only when `multi-image-to-3d` is on, and
+  zero when it is off.
+
+  So choosing extra views in the Images tab is not the same as sending them.
+  The References stage reconciles the two and names both numbers — *"3 chosen
+  and this generator will read 0"* — with both ways out: change the generator,
+  or remove the views.
+</Callout>
+
+Note also the **Concept image** stage unticked in that capture. This
+definition starts from a picture somebody already had, so the stage that
+draws one is switched off and does not appear in the list below.
+
 A definition driven by *quality alone*, with no pipeline, keeps the older
 ladder on purpose: Draft and Standard go to smart topology, High and Ultra to
 the standard model.
