@@ -1,4 +1,5 @@
 import { plugin, membersOf, formatDate, compareVersions } from '@/lib/manifest'
+import { NoteBody } from '@/lib/notes'
 
 /**
  * A plugin's or a set's release history, rendered from the manifest's
@@ -9,10 +10,8 @@ import { plugin, membersOf, formatDate, compareVersions } from '@/lib/manifest'
  * publisher posts to `#releases`. One source, three destinations, no
  * transcription.
  *
- * The rendering here is deliberately shallow: bullets and inline code, which
- * is all release notes have ever used in this family. It is not a Markdown
- * engine and should not become one. If notes ever need headings or tables, the
- * right fix is to render them through MDX at build, not to grow this function.
+ * Rendering lives in `lib/notes` so this and the releases page cannot drift
+ * apart about what a `### Changed` line means.
  */
 export function ReleaseNotes({
   plugin: id,
@@ -45,11 +44,7 @@ export function ReleaseNotes({
   const shown = limit ? entries.slice(0, limit) : entries
 
   if (shown.length === 0) {
-    return (
-      <p className="text-fd-muted-foreground">
-        Nothing has been released yet.
-      </p>
-    )
+    return <p className="text-fd-muted-foreground">Nothing has been released yet.</p>
   }
 
   return (
@@ -63,43 +58,9 @@ export function ReleaseNotes({
               {formatDate(e.date)}
             </span>
           </h3>
-          <ul className="mt-2 space-y-1 text-sm text-fd-muted-foreground">
-            {bullets(e.body).map((line, i) => (
-              <li key={i} className="flex gap-2">
-                <span aria-hidden="true" className="text-fd-primary">
-                  ·
-                </span>
-                <span>{inlineCode(line)}</span>
-              </li>
-            ))}
-          </ul>
+          <NoteBody body={e.body} />
         </section>
       ))}
     </div>
-  )
-}
-
-/** Release bodies are bullet lists; anything else is passed through as a line. */
-function bullets(body: string): string[] {
-  return body
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => l.replace(/^[-*]\s+/, ''))
-}
-
-/** `backticks` become <code>, which is the only inline markup notes ever use. */
-function inlineCode(line: string): React.ReactNode[] {
-  return line.split(/(`[^`]+`)/g).map((part, i) =>
-    part.startsWith('`') && part.endsWith('`') && part.length > 1 ? (
-      <code
-        key={i}
-        className="rounded bg-fd-muted px-1 py-0.5 font-mono text-[0.9em] text-fd-foreground"
-      >
-        {part.slice(1, -1)}
-      </code>
-    ) : (
-      <span key={i}>{part}</span>
-    ),
   )
 }

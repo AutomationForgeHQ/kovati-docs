@@ -3,7 +3,6 @@
   "description": "Solve faces from audio, and correct the result",
   "icon": "Smile",
   "pages": [
-    "index",
     "concepts",
     "vocabularies",
     "providers",

@@ -1,5 +1,6 @@
 import './global.css'
 import { RootProvider } from 'fumadocs-ui/provider/next'
+import KovatiSearchDialog from '@/components/SearchDialog'
 import { Archivo, IBM_Plex_Mono } from 'next/font/google'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
@@ -45,13 +46,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col font-sans antialiased">
-        <RootProvider
-          search={{
-            options: {
-              type: 'static',
-            },
-          }}
-        >
+        {/*
+          The dialog is ours because the index is static — see
+          components/SearchDialog.tsx for why the built-in one cannot serve it.
+        */}
+        <RootProvider search={{ SearchDialog: KovatiSearchDialog }}>
           {children}
         </RootProvider>
       </body>

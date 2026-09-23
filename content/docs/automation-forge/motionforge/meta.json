@@ -3,7 +3,6 @@
   "description": "Generate, judge and retarget character motion",
   "icon": "PersonStanding",
   "pages": [
-    "index",
     "concepts",
     "providers",
     "retargeting",

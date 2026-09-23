@@ -3,7 +3,6 @@
   "description": "Cast speakers, write lines, generate takes, localise",
   "icon": "AudioLines",
   "pages": [
-    "index",
     "concepts",
     "casting",
     "providers",

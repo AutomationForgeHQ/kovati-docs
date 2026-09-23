@@ -1,0 +1,96 @@
+---
+title: Integrations
+description: Every provider and runner the family speaks to, what it needs from you, and what it costs.
+status: shipped
+icon: Network
+---
+
+Providers are [infrastructure, not the product](/docs/company/providers). This
+page is the current list; the principle is on that page.
+
+## Motion
+
+| Provider | Where it runs | Cost | Needs |
+|---|---|---|---|
+| **Kimodo** (NVIDIA) | Docker on your GPU, another machine, or a rented one | Free locally · per hour rented | Docker, a Hugging Face token, **and granted access to a gated Llama 3 model** |
+| **Uthana** | Hosted, your account | Metered — per generated or downloaded second | An API key |
+
+Detail: [MotionForge providers](/docs/automation-forge/motionforge/providers).
+
+## Speech
+
+| Provider | Where it runs | Cost | Needs |
+|---|---|---|---|
+| **ElevenLabs** | Hosted, your account | Metered | An API key |
+| **DeepL** (translation) | Hosted, your account | Metered | An API key. **Paid plugin** |
+| **Pseudo** (translation) | Locally | Free | Nothing — it exists so the pipeline is exercisable with no account |
+
+Detail: [SpeechForge providers](/docs/automation-forge/speechforge/providers).
+
+## Face
+
+| Provider | Where it runs | Cost | Needs |
+|---|---|---|---|
+| **The engine's own solver** | In-process, CPU | Free | Nothing. Models ship with UE 5.8 |
+| **NVIDIA Audio2Face-3D** | A container on your GPU, or a rented one | Free beyond hardware | Docker. **The lip-sync models are ungated**; only the optional emotion detector is gated |
+
+Detail: [FaceForge providers](/docs/automation-forge/faceforge/providers).
+
+## Mesh
+
+| Provider | Where it runs | Cost | Needs |
+|---|---|---|---|
+| **TRELLIS.2** (Microsoft) | Docker on your GPU, or a rented one | Free beyond hardware | Docker, **and granted access to a gated Meta model** |
+| **Meshy** | Hosted, your account | Metered, credits | An API key |
+| **Tripo** | Hosted, your account | Metered, credits | An API key |
+
+Detail: [MeshForge providers](/docs/automation-forge/meshforge/providers).
+
+## Compute
+
+| | What it is |
+|---|---|
+| **Docker Desktop** | How every local runner runs. The hub detects it, and can start it |
+| **Runpod** | Renting a GPU by the hour. Ranked by real per-datacenter stock against a price ceiling; weights persist on a network volume |
+| **Another machine** | Point a project at a runner on a studio workstation. Its token lives in your machine's vault |
+| **Hugging Face** | Where gated model weights come from. One family-wide token |
+
+## Engines and frameworks
+
+| | |
+|---|---|
+| **Unreal Engine 5.8** | The only supported version today |
+| **Blender** | Optional. The garment solver, the mesh round trip, and a parked motion normalisation pass |
+| **Narrative Pro** | Bridged by separate add-ons — see [Narrative Pro add-ons](/docs/tools/narrative-pro-addons) |
+| **MetaHuman** | Supported as a face and body target. No MetaHuman asset is required by the face solver itself |
+| **Model Context Protocol** | Every core plugin ships a toolset |
+
+## Two rules about keys
+
+<Callout type="warn">
+  **A gated model needs access, not just a token.** Two routes here depend on
+  a grant a human at the vendor has to approve, which can take days: the local
+  motion provider's Llama 3, and the local mesh provider's DINOv3.
+
+  The motion provider *measures* whether your token can read its gated model
+  and tells you. The mesh provider does not yet surface its grant on the Keys
+  page — a known gap.
+</Callout>
+
+<Callout type="info">
+  **Account-level keys are shared across the family.** A Runpod key and a
+  Hugging Face token belong to you, not to a plugin, so they live at
+  `AutomationForge/Runpod` and `AutomationForge/HuggingFace` and every plugin
+  reads them. Set once.
+</Callout>
+
+See [keys](/docs/automation-forge/keys).
+
+## Adding your own
+
+A provider registers a capability, declares its inputs, says whether it is
+metered, and reports its readiness. Core plugins never name a vendor, so
+adding a route is a plugin — not a change to anything above the provider line.
+
+The contract is neutral; **the options are the vendor's own**, declared by the
+provider and shown as the vendor names them.

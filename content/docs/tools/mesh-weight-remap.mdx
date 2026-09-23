@@ -1,0 +1,87 @@
+---
+title: MeshWeightRemap
+description: Make a skeletal mesh safe to leader-pose off another one.
+status: overview
+plugins: [MeshWeightRemap, MeshWeightRemapToolset]
+icon: Bone
+---
+
+<SetMembers set="tools" />
+
+## The problem it solves
+
+`SetLeaderPoseComponent` does not copy a pose.
+
+The follower reads bone transforms **straight from the leader's
+component-space array**, and the leader only ever writes the entries it
+actually evaluates — leaving every other bone frozen at its reference pose.
+
+So a follower vertex weighted to one of those un-evaluated bones is **pinned
+at the reference pose while everything around it moves.**
+
+That is the bug where a garment's collar stays put while the character walks,
+and it looks like a skinning mistake rather than what it is.
+
+## What it does
+
+Moves skin weights off every bone the leader will never drive, onto the
+**nearest ancestor it does drive**. Weights on already-driven bones are left
+untouched.
+
+It knows nothing about MetaHumans, Narrative Pro or any other character
+system. **Two meshes, one posing the other, is the whole precondition** —
+which is why it is a standalone tool rather than part of MeshForge.
+
+## Three definitions of "driven", reported side by side
+
+The choice is made on evidence rather than by a default nobody understands:
+
+| Definition | Breadth | Trade-off |
+|---|---|---|
+| **LOD Required Bones** | The default | Smallest honest answer. Errs toward moving weight unnecessarily rather than pinning anything |
+| **LOD Active Bones** | Narrower | Only bones with actual skin weight |
+| **+ Physics Asset** | Widest | Adds bones with a physics body |
+
+All three are reported together, so you pick after seeing what each would do.
+
+## Measure, then remap
+
+Two explicit steps.
+
+- **Measure is read-only.**
+- **Remap edits in place with no undo** — removing a bone rebuilds the LOD
+  model.
+
+The report is verification-first:
+
+- **Total weight before and after must match exactly.** Weight is moved, never
+  created or destroyed.
+- Which bones were emptied, and where their weight went.
+- Which bones a **previous run** already removed — because removal accumulates
+  on the asset rather than resetting.
+
+## How to run it
+
+Content Browser right-click ▸ **Remap Weights to Leader…** → pick the leader →
+Measure → read the report → Remap.
+
+Also available from Blueprint, C++ and its own toolset.
+
+## What it actually contributes
+
+The redistribution uses the engine's own bone-reduction call — the same one
+MetaHuman's assembly pipeline uses when optimising a body.
+
+This plugin's only real contribution is building the **inverse list**: the
+bones that have weight and should not. The engine's own list-builder only ever
+removes bones with *no* weight, which is the opposite problem.
+
+<Callout type="info">
+  Worth stating plainly because it sets expectations: this is a small,
+  well-scoped tool wrapping an engine facility correctly. It is not a skinning
+  solver, and it will not improve weights that are simply bad.
+</Callout>
+
+## Release notes
+
+<ReleaseNotes set="tools" limit={4} />

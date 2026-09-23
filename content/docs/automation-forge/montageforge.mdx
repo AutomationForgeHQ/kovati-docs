@@ -1,0 +1,88 @@
+---
+title: MontageForge
+description: Build a montage from a recipe — slot, notifies, layering curves, blends.
+status: overview
+plugins: [MontageForge, MontageForgeToolset]
+icon: Layers2
+---
+
+<Callout type="info">
+  **Overview.** MontageForge is small, stable and does one thing, so this page
+  is its shape and its rules rather than a walkthrough. The plugin's own
+  README goes further.
+</Callout>
+
+Turns an animation sequence into a **playable** montage: creates the montage
+asset, places it in a named slot, stamps gameplay-event notifies at authored
+times, stamps the layering curves that let it play over locomotion, and
+applies its blend settings.
+
+All driven from an authored **Montage Recipe** asset, which is the source of
+truth for a later rebuild.
+
+<SetMembers set="montageforge" />
+
+## What it does
+
+- **Recipe to montage** — creates the asset, adds the source animation as its
+  only segment in the requested slot, places one notify per recipe entry,
+  stamps layering curves flat across the clip, and applies blend-in/out time
+  and blend option.
+- **A gameplay-event notify** — sends a gameplay tag to the animating actor at
+  its point in the montage, so an ability has a real event to wait on instead
+  of a timer.
+- **A play style** (`Free` / `BlockMovement`) as an engine-level
+  movement-blocking helper with no game knowledge.
+- **Curve presets** — a data asset holding a rig's named body-mask curves; a
+  recipe points at one, and per-recipe overrides adjust individual values
+  without copying the whole preset.
+
+## Three rules worth knowing
+
+<Callout type="warn">
+
+### Timings are a fraction of the clip, not seconds
+
+A regenerated, differently-timed animation underneath does **not** silently
+invalidate authored notify positions.
+
+This is the rule that makes a montage survive its clip being replaced — which
+is the entire point of
+[replace it safely](/docs/company/two-speed-content#three-honest-futures).
+
+</Callout>
+
+<Callout type="warn">
+
+### A rebuild edits in place
+
+It edits the existing montage asset rather than deleting and recreating it, so
+references from abilities, items and dialogue lines **keep working**.
+
+</Callout>
+
+<Callout type="warn">
+
+### Nothing rebuilds automatically
+
+No build-on-save, no watching. A rebuild of an existing montage is refused
+unless overwrite is explicit.
+
+Deliberately one-shot: a montage that silently rebuilt itself would be a
+montage nobody could hand-tune.
+
+</Callout>
+
+## What it knows nothing about
+
+Which gameplay tag a notify carries, what the layering curves mean on a given
+rig, and which ability, item or dialogue line ends up playing the finished
+montage.
+
+Its only game-framework dependency is GameplayAbilities, **and only because**
+it ships the one notify class that turns an authored moment into a gameplay
+event. Nothing native does that.
+
+## Release notes
+
+<ReleaseNotes set="montageforge" limit={4} />

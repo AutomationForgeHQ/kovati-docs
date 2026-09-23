@@ -12,7 +12,11 @@ import { KovatiMark } from '@/components/KovatiMark'
  */
 
 export const metadata = {
-  title: 'Kovati Docs',
+  /**
+   * Absolute, or the root layout's `%s · Kovati Docs` template renders this
+   * page as "Kovati Docs · Kovati Docs".
+   */
+  title: { absolute: 'Kovati Docs' },
   description:
     'Documentation for Automation Forge, the Kovati tools, and the PlayableOps discipline behind them.',
 }

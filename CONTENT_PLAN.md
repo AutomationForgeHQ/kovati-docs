@@ -82,6 +82,44 @@ Not published, but read constantly while writing:
 `forge-inventory` is private and records paid-plugin internals. It is a source
 to write *from*, never a source to copy.
 
+## Known issues, to settle before deploying
+
+### RSC segment prefetch 404s
+
+Next 16 prefetches route segments. On a static export the client requests a
+**flat** filename and the export writes a **nested** path:
+
+```
+requested   /docs/company/manifesto/__next.docs.$oc$slug.__PAGE__.txt?_rsc=…
+on disk     out/docs/company/manifesto/__next.docs/$oc$slug/__PAGE__.txt
+```
+
+Every one 404s. **Navigation still works** — Next falls back to a full
+navigation, verified by clicking through the served export — so the cost is a
+lost prefetch optimisation and console noise on hover, not a broken site.
+
+There is no `experimental` flag in Next 16.3.6 to turn segment prefetching
+off. Untested possibilities, in order of preference: whether Firebase Hosting's
+`cleanUrls` changes the resolution, whether dropping `trailingSlash: true`
+makes the two agree, and a hosting rewrite mapping the flat name onto the
+nested path (fragile, and last).
+
+**Check this on the real host before announcing the site**, since the
+behaviour may differ from `npx serve`.
+
+### The search index is ~3 MB
+
+Uncompressed; it gzips far smaller, and it is fetched on first *open* rather
+than on page load. Worth watching as the wiki grows. If it becomes noticeable,
+the answer is a hosted index (Orama Cloud or Algolia), not a server — the site
+should stay static.
+
+**Search cannot be tested against `next dev` over `127.0.0.1`.** The dev
+server blocks cross-origin access to `/_next/` resources, the dialog's chunk is
+one, and it fails silently with nothing in the console. Build and serve the
+export instead. This cost an hour; it is written down so it costs nobody else
+one.
+
 ## Drift
 
 This wiki is now one more place a claim about a plugin can be stale. That is

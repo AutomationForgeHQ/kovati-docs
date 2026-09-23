@@ -8,6 +8,7 @@ import {
   releasesRepo,
   type ReleaseEvent,
 } from '@/lib/manifest'
+import { NoteBody } from '@/lib/notes'
 
 /**
  * Every published version of every plugin, newest first.
@@ -115,20 +116,7 @@ export default function Releases() {
                   </div>
 
                   {e.body ? (
-                    <ul className="mt-3 space-y-1 text-sm text-fd-muted-foreground">
-                      {e.body
-                        .split('\n')
-                        .map((l) => l.trim().replace(/^[-*]\s+/, ''))
-                        .filter(Boolean)
-                        .map((line, i) => (
-                          <li key={i} className="flex gap-2">
-                            <span aria-hidden="true" className="text-fd-primary">
-                              ·
-                            </span>
-                            <span>{line}</span>
-                          </li>
-                        ))}
-                    </ul>
+                    <NoteBody body={e.body} />
                   ) : (
                     <p className="mt-3 text-sm italic text-fd-muted-foreground">
                       No notes were recorded for this version.

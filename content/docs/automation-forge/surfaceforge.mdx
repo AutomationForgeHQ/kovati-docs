@@ -1,0 +1,76 @@
+---
+title: SurfaceForge
+description: A prompt or a photograph becomes a tiling PBR material.
+status: overview
+plugins: [SurfaceForge, SurfaceForgeLocal, SurfaceForgePatina]
+icon: Palette
+---
+
+<Callout type="info">
+  **Overview.** SurfaceForge is the newest set and the least proven — we have
+  not taken it through a production the way the other five have been taken.
+  What is here is accurate; it is not deep, and it does not pretend to be.
+</Callout>
+
+Turns a text prompt or a reference image into reviewable material candidates,
+replays a chosen one's seed into a full PBR map set, and creates the Unreal
+material assets from it.
+
+<SetMembers set="surfaceforge" />
+
+## The loop
+
+**Describe it → generate previews → choose one → graduate → get a material.**
+
+Previews are **cheap and plural**: base colour only, at generation resolution,
+one per requested variant — each returned with **its own resolved seed**.
+
+Graduation replays that exact seed at full quality and fetches every map the
+provider offers.
+
+<Callout type="info">
+  That split is the design. Judging a material needs base colour at low
+  resolution; *using* one needs six maps at full. Paying for the second to do
+  the first is the mistake this avoids.
+</Callout>
+
+## The master material is chosen by what came back
+
+Three master materials ship: a metalness workflow, a specular (no-metallic)
+workflow, and a decal.
+
+Which one a graduation instances is decided by **which maps actually came
+back** — not by which provider was asked. A definition's own override always
+wins if set.
+
+Maps a provider does not return fall back to sane defaults: white for ambient
+occlusion and opacity, black for metallic and height.
+
+## One surface, many scales
+
+A physical width in centimetres scales the UVs, so **one generated surface can
+be a floor plate or a wall panel without regenerating**.
+
+On the metalness master, the height map drives a bump offset scaled by its own
+ratio.
+
+## Outputs are owned
+
+Every graduated map is copied to `Forge/Library/SurfaceForge/<definition>/<take>/`
+as a PNG and **never auto-deleted**.
+
+A definition owns its outputs, so re-importing overwrites rather than
+producing a second copy beside the first.
+
+## Local first
+
+Built around local generation, so an iteration loop costs nothing by default.
+A metered cloud provider is opt-in.
+
+The core owns definitions, the provider interface, job state, downloads and
+import — and **deliberately owns no vendor HTTP or model code at all.** That
+lives in the provider plugins.
+
+## Release notes
+
+<ReleaseNotes set="surfaceforge" limit={4} />

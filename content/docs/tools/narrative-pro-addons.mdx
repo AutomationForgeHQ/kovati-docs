@@ -1,0 +1,128 @@
+---
+title: Narrative Pro add-ons
+description: The NP_ plugins that extend Narrative Pro and bridge Automation Forge into it.
+status: overview
+icon: Puzzle
+---
+
+<Callout type="warn">
+  **Not distributed yet.** These are built and used daily in Colony Origins,
+  and each ships a public README, but none is on
+  [the account app](https://app.kovati.dev) or in the release manifest. They
+  are listed here because people ask what they are, not because you can
+  install one today.
+</Callout>
+
+Narrative Pro is a gameplay framework for Unreal — dialogue, quests,
+inventory, NPCs, abilities. These add-ons extend it, and two of them bridge
+Automation Forge into it.
+
+## The bridges
+
+| Add-on | What it does |
+|---|---|
+| **NP_VoiceOver** | Binds [SpeechForge](/docs/automation-forge/speechforge) to Narrative Pro's dialogue system — casts speakers to voices, reads a dialogue's script into a speech bank, and puts the generated audio back onto the dialogue |
+| **NP_Wardrobe** | Bakes the difference between two fitted versions of a garment into a morph target, so one mesh reshapes to any body between them. Sits downstream of [the garment pipeline](/docs/automation-forge/meshforge/garment) |
+| **NP_Clothing** | Fixes Narrative Pro's clothing equip path, and registers a MeshForge post step from outside the Forge monorepo entirely |
+
+## Gameplay add-ons
+
+| Add-on | What it does |
+|---|---|
+| **NP_Barks** | Barks that fire because something happened, not because you pressed a key on somebody |
+| **NP_Cinematics** | Staged dialogue — cameras that actually change, and faces that stop moving |
+| **NP_Consumables** | Items a character visibly uses: a stimpack taken out, jabbed in and thrown away |
+| **NP_ItemResources** | A consumable resource belonging to *that item* rather than its class — an oxygen tank, a battery, a canteen, each remembering how full it is |
+| **NP_LifeSupport** | Oxygen, suit oxygen and suit power as attributes, with no setup |
+| **NP_Navigation** | Points of interest — naming a place, resolving that name at runtime, and sending an NPC to a *place* rather than a transform |
+| **NP_Quests** | Authors Narrative Pro quests from outside NarrativePro — states, branches, tasks, and the wiring to the dialogue that gives and takes them |
+| **NP_QuickSlots** | A use wheel whose slots hold an **item type**, not one stack |
+| **NP_SlottedInventory** | Numbered, addressable slots, so a container's contents have positions |
+| **NP_Validate** | A linter for Narrative Pro content, and a record of everything that has gone wrong here |
+
+Six of them ship a matching toolset — the same subsystem as MCP tools,
+**adapter only**, adding nothing of its own. Same rule as
+[the Forge toolsets](/docs/company/humans-and-agents#why-every-core-plugin-ships-a-toolset).
+
+## Things learned the hard way
+
+These are Narrative Pro facts rather than add-on features, and they cost real
+time. Collected here because nothing else documents them.
+
+<Accordions type="multiple">
+
+<Accordion title="Narrative tags are not safe in constructors">
+
+A gameplay tag read at class-default time is **empty**. Anything depending on
+one has to happen later than the constructor.
+
+Related: Narrative Pro 2.4 reverts project settings, so settings you changed
+can come back on an engine or plugin update.
+
+</Accordion>
+
+<Accordion title="An NPC caches its bark at spawn">
+
+Change a bark and the NPCs already in the level never hear it. Whether that is
+what you want is a design question — so the rule for a bark change is
+**ask, do not decide**.
+
+</Accordion>
+
+<Accordion title="The interacted NPC is speaker 0">
+
+In a dialogue, the NPC you interacted with is always the first speaker. Clips
+resolve by speaker id, and the speaker sheet is the character source.
+
+Separately: **edit dialogues, never rebuild them.** Rebuilding discards the
+voice and motion already attached.
+
+</Accordion>
+
+<Accordion title="An unbaked point of interest is silent">
+
+A point of interest that has not been baked does not resolve, and nothing
+reports it — the NPC simply does not go. Goals match by **exact class**, which
+is the other half of the same surprise.
+
+</Accordion>
+
+<Accordion title="Item transfer moves by class and loses instance state">
+
+Moving an item between containers moves the *class*, so per-instance state —
+how full the canteen is — does not travel. That is what NP_ItemResources
+exists around.
+
+</Accordion>
+
+<Accordion title="An interaction prompt that never appears is a collision problem">
+
+The prompt is **trace-only**. "No prompt" means the trace is not hitting
+anything, not that the interaction is misconfigured.
+
+</Accordion>
+
+<Accordion title="Only Success ends a quest">
+
+A quest branch that reaches any other terminal state leaves the quest running.
+
+</Accordion>
+
+<Accordion title="A bought map can steal Player 0">
+
+A marketplace map with its own player start and game mode overrides will take
+Player 0 and leave your character unspawned.
+
+</Accordion>
+
+</Accordions>
+
+## Documentation policy
+
+Every `NP_` add-on carries a README at its plugin root, **written as public
+documentation for a buyer** — what it does, its classes, setup, extension
+points, and how to verify it works, for someone who has never seen the
+project.
+
+Project-internal knowledge stays out of them, in root-level documents that are
+never shipped.

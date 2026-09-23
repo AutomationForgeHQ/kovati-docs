@@ -3,7 +3,6 @@
   "description": "Generate meshes, finish them, and fit garments",
   "icon": "Box",
   "pages": [
-    "index",
     "concepts",
     "providers",
     "post-processing",

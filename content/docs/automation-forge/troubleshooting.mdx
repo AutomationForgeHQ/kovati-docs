@@ -1,0 +1,244 @@
+---
+title: Troubleshooting
+description: Install, account, key and runner problems across the whole family.
+status: shipped
+icon: LifeBuoy
+---
+
+Set-specific problems live on each set's own page — start with
+[MotionForge troubleshooting](/docs/automation-forge/motionforge/troubleshooting)
+if the symptom is a clip. This page is everything below that.
+
+## Install and account
+
+<Accordions type="multiple">
+
+<Accordion title="Windows will not run the installer">
+
+The installer is **unsigned** until the code-signing certificate arrives.
+Windows asks you to confirm the first run.
+
+Separately: **Smart App Control blocks unsigned plugin DLLs.** If plugins
+install but the editor refuses to load them, that is usually why.
+
+</Accordion>
+
+<Accordion title="A plugin installed but does not appear in my project">
+
+Two different things, in order:
+
+1. **It is installed, not enabled.** Under *Automation Forge ▸ Installed* in
+   the toolbar, tick the plugins this project should use. The editor applies
+   them on restart. Or `forge enable <Plugin> --project <path>`.
+2. **`EnabledByDefault` is stripped at build time.** A packaged plugin does
+   not enable itself, so **every engine install is off per project** until you
+   turn it on. This is the engine's behaviour, not a bug in the package.
+
+</Accordion>
+
+<Accordion title="The hub's Keys and Runners pages are empty">
+
+If the plugin was installed from a release published before 8 September 2026,
+its machine-configuration file **is not in the package**.
+
+The engine's own `BuildPlugin` filter does not include `Config/`, so those
+packages left it behind. Plugins now name it in a filter file, and CI fails a
+build that drops it.
+
+**Update the plugin.**
+
+</Accordion>
+
+<Accordion title="forge exited with code 5">
+
+That is a **partial success**, not a failure. Something in the request is paid
+and not on your account; everything free was installed.
+
+The output names which ones. Buy them on
+[the account app](https://app.kovati.dev), or install the rest and carry on.
+
+| Code | Meaning |
+|---|---|
+| `2` | Not found — a mistyped project path, an engine that is not installed, an unknown plugin |
+| `4` | Not signed in, or the account service could not answer |
+| `5` | Paid content skipped; the rest installed |
+
+</Accordion>
+
+<Accordion title="I bought a plugin on Fab and it is not on my account">
+
+**The Fab link is designed and not built yet.** There is no seller-side Fab
+API, so Epic's launcher check is the only sanctioned route and it has not been
+implemented.
+
+Until it is: send the Fab order id to `bojan@blackcode.ch` and it is added by
+hand.
+
+</Accordion>
+
+<Accordion title="Signing in on a machine with no browser">
+
+```powershell
+forge login --no-browser
+```
+
+prints the link instead of opening one. Open it anywhere you are signed in.
+
+The session is kept under DPAPI for the Windows user that ran the command, so
+it is not transferable by copying the file.
+
+</Accordion>
+
+</Accordions>
+
+## Keys and providers
+
+<Accordions type="multiple">
+
+<Accordion title="The key is set, and the provider still refuses">
+
+In order of likelihood:
+
+1. **A row exists but the value is wrong.** The Keys page reaching the vault
+   proves only that a row is there. Use the provider's own *Test connection*,
+   which makes one authenticated call — and reports remaining credits, not
+   just validity.
+2. **A gated model needs access, not a token.** Two routes depend on a grant
+   a human at the vendor approves, which can take days. See
+   [integrations](/docs/automation-forge/integrations#two-rules-about-keys).
+3. **The key is under the wrong name.** Account-level keys are family-wide:
+   `AutomationForge/Runpod`, `AutomationForge/HuggingFace`. A token written
+   under a plugin-specific name before the shared name existed is invisible to
+   every other plugin.
+4. **You are out of credit.** Which is why *Test connection* reports the
+   balance.
+
+</Accordion>
+
+<Accordion title="A key reads as mojibake">
+
+The credential blobs are **UTF-8 and not null-terminated**, sized to the exact
+byte count.
+
+Anything else writing that row must match. If you wrote it with a tool of your
+own, that is the cause.
+
+</Accordion>
+
+<Accordion title="Where does a key actually get read from?">
+
+The vault entry the plugin declares, and then — if the vault has nothing —
+the environment variable the plugin declares.
+
+That fallback is what makes a build machine or a container workable without a
+human typing a secret into a GUI.
+
+`<Set>.CredentialStatus` says which answered.
+
+</Accordion>
+
+</Accordions>
+
+## Runners and rented GPUs
+
+<Accordions type="multiple">
+
+<Accordion title="A container will not start">
+
+Start it from [the hub's Runners tab](/docs/automation-forge/hub#runners)
+**before** opening the editor. An editor that opens against a stopped
+container can only report a dead route.
+
+The common causes, in order:
+
+1. Docker Desktop is not installed, rather than not started.
+2. **Image-signature drift** — the installed image does not match what the
+   plugin expects. The panel flags a rebuild rather than leaving a mismatched
+   runner silently wrong.
+3. A missing token, or a missing grant on a gated model.
+
+</Accordion>
+
+<Accordion title="Why can the hub not create the container?">
+
+The compose file interpolates a model cache, a token and a signature **only
+the plugin knows**.
+
+The hub finds containers by the labels compose stamps on them, and starts and
+stops them by id — which needs none of that. Creating one needs all of it.
+
+Same reasoning for renting a GPU: which card, in which region, under what
+price ceiling is a decision made against what a model needs. The hub lists
+what is rented, says what it costs, and stops or releases it.
+
+</Accordion>
+
+<Accordion title="A rented GPU is costing more than expected">
+
+**It bills while the pod is up, whether or not anything is generating.**
+
+Stop it from the hub, which works with no editor open. Weights persist on a
+network volume, so stopping and restarting costs about 76 seconds rather than
+a 15-minute rebuild.
+
+</Accordion>
+
+<Accordion title="Two local runners are fighting over the GPU">
+
+They will. A high-quality mesh generation measured at 251 seconds with the
+card to itself **did not finish in 45 minutes** beside a resident image model.
+
+The mesh set ships a helper that decides from measured VRAM whether two
+runners may share the card or must take it in turn.
+
+</Accordion>
+
+</Accordions>
+
+## Builds and the editor
+
+<Accordions type="multiple">
+
+<Accordion title="Live Coding will not pick up my change">
+
+**Live Coding cannot add module dependencies.** If your change adds one, close
+the editor and build properly.
+
+</Accordion>
+
+<Accordion title="A settings-page button does nothing">
+
+`CallInEditor` buttons **do not render on a developer-settings page**. That is
+an engine limitation, which is why several plugins expose console commands
+instead of buttons.
+
+</Accordion>
+
+<Accordion title="A setting I saved did not persist">
+
+If the property is marked `config` against a default-config file, `SaveConfig`
+writes nowhere useful. Check which tier the setting belongs to —
+[project, per-user, or the vault](/docs/automation-forge/keys#who-owns-it-decides-where-it-lives).
+
+</Accordion>
+
+<Accordion title="A generated asset looks unchanged after I edited its definition">
+
+Check the asset in play is the one you edited. A bake or an import writes a new
+asset; whatever references the old one still references the old one.
+
+For montages specifically: a rebuild edits **in place** precisely so that
+references keep working — but that only applies to a rebuild, not to a fresh
+build under a new name.
+
+</Accordion>
+
+</Accordions>
+
+## Reporting something
+
+If a page here should have covered your problem,
+[open an issue](https://github.com/AutomationForgeHQ/kovati-docs/issues).
+
+If the wiki and the plugin disagree, **the plugin is right** — report it
+rather than working around it, because the prose is what is wrong.
