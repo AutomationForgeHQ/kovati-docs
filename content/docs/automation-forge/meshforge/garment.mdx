@@ -134,6 +134,24 @@ sculpt — so an unattended chain still runs.
 
 Makes a skeletal asset using Unreal's own weight transfer.
 
+<Shot
+  src="/shots/meshforge/neonvanguard-on-character.png"
+  width={1918}
+  height={1002}
+  alt="A Mesh Definition for a Neon Vanguard chest plate. The viewer shows the plate worn by a grey MetaHuman body, with the Character picker set to MH_Demo_Pla and the output picker on post-processed; the status bar reads 4,120 triangles, 6,524 vertices, 1 material, 34 by 36 by 49 cm. On the right, Post-processing is marked 'failed — TransferBoneWeightsFromMesh: Failed to transfer the weights'. Its two steps are listed separately: Garment fit, ticked, with a last-run date, and Wardrobe skinning, marked 'not run yet' — each with its own Run this step and Remove buttons, above an Add a step picker. A note reads that Run chain executes enabled steps, Run this step uses an existing input without running earlier steps, every completed step creates a separate output, and this one costs local Unreal skin-weight inpainting, no credits. The Import stage below is stale and reads 'Nothing generated to import yet.'"
+  caption="Set the Character picker and the garment is drawn on the body it was fitted to, which is the only way to judge a fit. Here the fit succeeded and the skinning did not — the chain reports which step failed and with what error, and leaves the successful step's output alone."
+/>
+
+<Callout type="info">
+  **Each step runs on its own.** *Run chain* executes the enabled steps in
+  order; *Run this step* uses an existing input without re-running anything
+  before it. That distinction is what makes a failed skinning step cheap to
+  retry — the garment fit above it does not run again.
+
+  Note the cost line too: *"Costs Local Unreal skin-weight inpainting; no
+  credits."* A step that spends nothing still says so.
+</Callout>
+
 **It binds to the body mesh, not to the shared skeleton.** That is the whole
 trick: the reference skeleton comes from the body mesh, so the garment matches
 the character it was fitted to rather than an idealised skeleton asset that
