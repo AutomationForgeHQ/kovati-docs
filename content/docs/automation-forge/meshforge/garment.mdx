@@ -305,6 +305,24 @@ A data asset choosing which body bones a garment follows.
 The **nearest listed ancestor decides**, and *Drop Corrective Bones* folds
 shape helpers into their main bones.
 
+`GBP_ArmsOnly` is the whole idea in four entries:
+
+<Shot
+  src="/shots/meshforge/bone-profile-armsonly.png"
+  width={1014}
+  height={634}
+  alt="The GBP_ArmsOnly asset open in its editor, marked Asset Type: Garment Bone Profile. Its Profile group sets Display Name to 'Arms only' and Description to 'Arm armour, pauldrons, sleeves on their own. Follows the shoulders and arms down to the wrist.' A Bones group lists Follow Bones with two entries, clavicle_l and clavicle_r, and Stop at Bones with two entries, hand_l and hand_r. Drop Corrective Bones is unticked, and a greyed Corrective Bone Patterns array holds 26 elements."
+  caption="Follow the two clavicles and stop at the two hands: everything from the collarbone down is kept, and the hands and fingers below are dropped. Four bone names describe a sleeve — which is why writing a new profile is usually a two-minute job."
+/>
+
+<Callout type="info">
+  The 26 **Corrective Bone Patterns** are greyed out because *Drop Corrective
+  Bones* is off. They are name patterns for the helper bones a rig uses to fix
+  deformation at joints — real bones a garment will happily bind to, and
+  almost never ones it should follow. Turn the option on and those bones'
+  influence folds into the joint they correct.
+</Callout>
+
 The profile acts on the body **before** the transfer. An excluded bone's
 weight goes to the nearest kept ancestor. After the transfer, the step fails
 if any garment vertex still carries an excluded bone.
@@ -314,9 +332,18 @@ Pants, Pants and feet, Shorts, Full bodysuit, Full bodysuit and head,
 Backpack, Belt.
 
 They are ordinary assets named `GBP_*`, picked in the step's **Bone Profile**
-slot — `GBP_Vest` in the capture above. Make your own the same way:
-Content Browser ▸ right-click ▸ Automation Forge ▸ MeshForge ▸ **Garment Bone
-Profile**.
+slot — `GBP_Vest` in the capture above.
+
+<Shot
+  src="/shots/meshforge/bone-profiles.png"
+  width={534}
+  height={526}
+  alt="Thirteen Garment Bone Profile assets in the Content Browser, each showing the default data-asset icon: GBP_ArmsOnly, GBP_Backpack, GBP_Belt, GBP_Bodysuit, GBP_BodysuitHead, GBP_HandsFeet, GBP_Head, GBP_Pants, GBP_PantsFeet, GBP_ShirtJacket, GBP_Shorts, GBP_TShirt and GBP_Vest."
+  caption="The thirteen that ship, named after what they cover rather than after bones. Start from the nearest one and duplicate it — a profile is a short list of rules, so editing a copy is faster than authoring one from nothing."
+/>
+
+Make your own the same way as any other asset: Content Browser ▸ right-click ▸
+Automation Forge ▸ MeshForge ▸ **Garment Bone Profile**.
 
 <Callout type="warn">
   **Chest armour is a vest, not a shirt.** The profile decides which bones the
