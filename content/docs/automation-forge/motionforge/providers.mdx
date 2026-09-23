@@ -153,6 +153,30 @@ selection is ranked by **real per-datacenter stock** and a price ceiling
 Weights persist on a network volume, so a stopped pod restarts in roughly 76
 seconds instead of a 15-minute rebuild.
 
+<Shot
+  src="/shots/motionforge/runner-rented-gpu.png"
+  width={1018}
+  height={615}
+  alt="The Kimodo Runner panel on its Rented GPU target. Three rows report readiness: Runpod 'API key set', Hugging Face token 'stored, and passed to the pod', and in amber Llama 3 access 'not checked yet — a token alone installs fine and fails later', with Model page and Check links. Below: 'Nothing rented. Renting creates storage for the weights and a GPU to run them on, and points this project at the pod — which is what makes Kimodo say it is billed rather than free.' Four buttons follow: Rent storage and a GPU, highlighted, with Release the GPU, Refresh and Delete everything all greyed out."
+  caption="The sentence under the rows is the billing mechanism stated plainly: renting points this project at the pod, and that is what makes Kimodo report itself as billed rather than free. The cost line elsewhere in MotionForge changes because of this switch, not because of a setting you type."
+/>
+
+<Callout type="warn">
+  **Storage and the GPU are two things, and only one of them stops.**
+  *Release the GPU* ends the hourly charge; the network volume holding the
+  weights stays, which is what makes the next start take about 76 seconds
+  instead of fifteen minutes. **Delete everything** is the one that removes
+  the storage too.
+
+  Both are greyed out above because nothing is rented yet — the panel will not
+  offer you a release for something that does not exist.
+</Callout>
+
+Note the middle row: the Hugging Face token is *"stored, and passed to the
+pod"*. Your token travels to the rented machine, because the pod downloads the
+gated weights itself. That is also why
+[Llama 3 access](#setup) is checked here and not only on this machine.
+
 ### Constraints — pinning a pose
 
 Kimodo takes poses as generation constraints. You can:
