@@ -46,7 +46,7 @@ conversion is not, and adjusting one would only ever make it wrong.
 
 ## Coverage, before you bake
 
-`DescribeBankCoverage` reports four things, and each one is a different
+`DescribeFaceCoverage` reports four things, and each one is a different
 problem:
 
 | Finding | What it means |
@@ -60,6 +60,18 @@ problem:
 is registered on the target skeleton. That is the last line of defence against
 the silent-zero failure — it will not write an animation that could not
 possibly play.
+
+<Callout type="warn">
+  **An empty coverage report can mean "no problems" or "nothing was checked",
+  and one field tells you which.** The mesh half of the report only runs when
+  the bank names a **Target Face Mesh**, which is optional and easy not to set.
+  Without it the tool returns every list empty and `bMeshWasChecked` false.
+
+  Both banks in the scene these pages are written from are in exactly that
+  state, so their coverage reports say nothing at all. Set the face mesh on a
+  bank before trusting a clean report — it is the one setting whose entire
+  purpose is to make this check possible.
+</Callout>
 
 ## Driving a MetaHuman
 

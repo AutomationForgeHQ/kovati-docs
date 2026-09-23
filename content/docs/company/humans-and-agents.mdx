@@ -24,6 +24,36 @@ with no core capability written for a person and adapted for a machine later.
 
 > **Different clients. Equal reach. One source of truth.**
 
+## The agent route, end to end
+
+The argument above is a design claim. This is the claim being used: a quest
+authored, narrated, cast, voiced and given faces — driven by agents through
+the same toolsets a person's panels sit on.
+
+<YouTube
+  id="6RGHBIHZcnY"
+  title="Authoring a quest with agents: narration, voices and faces"
+  caption="The long version. Quest structure, narration, casting, speech and facial animation, assembled through the toolsets rather than the panels."
+/>
+
+Worth watching for what it does *not* show as much as what it does. There is
+no agent mode, no separate endpoint and no skipped estimate — every step is an
+operation the
+[Speech Library](/docs/automation-forge/speechforge/concepts#the-speech-library),
+[Face Bank](/docs/automation-forge/faceforge/concepts#the-face-bank-panel) and
+[NP_Quests](/docs/tools/narrative-pro-addons) expose to both callers.
+
+<Callout type="info">
+  **The panel is still where judgement happens**, and that does not change
+  because a run was agent-driven. An agent assembled the quest; a person
+  decided whether the performance was any good. Those are different jobs, and
+  the [two-speed](/docs/company/two-speed-content) model exists precisely so
+  the second one can overrule the first without losing the work.
+</Callout>
+
+For a shorter version aimed at what the Narrative Pro side is actually doing,
+see [the add-ons page](/docs/tools/narrative-pro-addons).
+
 ## Why every core plugin ships a toolset
 
 Every core plugin has a matching `*Toolset` plugin: the same subsystem exposed

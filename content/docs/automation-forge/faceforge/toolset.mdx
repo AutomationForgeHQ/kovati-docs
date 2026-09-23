@@ -13,11 +13,36 @@ tools in the core. The sibling plugin exposes it.
 
 ## What is covered
 
-Solving to a layer, snapshotting, merging, removing a layer, baking, bank
-coverage, the line-to-face lookups, graduation, and the correction round trip.
+Everything the panel does, grouped by what it is for.
+
+| Group | Tools |
+|---|---|
+| **Banks** | `CreateFaceBank`, `ConfigureFaceBank`, `ListFaceBanks`, `GetFaceBankStatus`, `SetFaceBankSource`, `CloneFaceBankForLanguage` |
+| **Clips** | `UpsertFaceClips`, `EnsureFaceClip`, `SetFaceClipAudio`, `RemoveFaceClips`, `GetFaceClipAudio` |
+| **Solving** | `SolveFaceBank`, `SolveFaceClipToLayer`, `EstimateFaceSolve`, `CancelFaceSolve` |
+| **Layers** | `SnapshotFaceSolveToLayer`, `MergeFaceClipLayers`, `RemoveFaceClipLayer` |
+| **Correction** | `CreateFaceCorrectionSequence`, `SnapshotFaceCorrection` |
+| **Baking** | `BakeFaceBank` |
+| **Vocabularies** | `DescribeFaceCoverage`, `CreateDefaultARKitMapping`, `CreateMappingFromPoseAsset` |
+| **Lookups** | `GetFaceMontagesInBank`, `GetFaceMontagesForSpeechBank`, `GetFaceBankForSpeechBank`, `GetSpeechBankForFaceBank` |
+| **Graduation** | `SetFaceClipOrigin` |
+| **Providers and paths** | `ListFaceProviders`, `GetFaceProviderCapabilities`, `GetFaceOutputPaths`, `SetFaceOutputRoot` |
+| **Navigation** | `OpenFaceBank`, `PrepareFaceBankForLines` |
 
 The ACE toolset covers its provider's own surface — the container lifecycle
-and the emotion inputs.
+and the emotion inputs — and deliberately does **not** expose solving, because
+a bank pointed at Audio2Face goes through the tools above like any other.
+
+<Callout type="info">
+  **Use the scene-level lookup, not the per-bank one, whenever the subject is a
+  scene.** `GetFaceMontagesForSpeechBank` crosses every face bank that serves a
+  speech bank; `GetFaceMontagesInBank` sees one. A scene with two character
+  standards in it has two banks and neither one covers it.
+
+  It matches on **language first and clip ids second**, because a localised
+  sibling shares every line id on purpose — matching on ids alone offers an
+  English mouth for German words.
+</Callout>
 
 ## The useful agent jobs here
 
@@ -27,7 +52,7 @@ countable:
 - **Which clips in this bank are stale, and why?**
 - **Which clips have no solve at all?**
 - **Does this character's face actually support the curves this mapping
-  drives?** — `DescribeBankCoverage` answers it in one call instead of a
+  drives?** — `DescribeFaceCoverage` answers it in one call instead of a
   manual comparison of two lists.
 - **Re-bake every clip for a second character** — a re-bake, not a re-solve,
   so it is milliseconds per clip.
@@ -40,6 +65,17 @@ and it is a loop nobody would run by hand.
 
 - Overwrite a clip whose origin is not `Generated`.
 - Write a credential.
+- **Delete the assets a clip produced.** `RemoveFaceClips` removes the entry,
+  never the animations and montages — deleting generated animation is a human
+  act, because an agent that can delete assets at this speed converts a small
+  mistake into an irreversible one.
+
+<Callout type="warn">
+  **`SetFaceClipOrigin` back to `Generated` is the one call here that can throw
+  away work nobody can regenerate.** It hands a hand-tuned or captured clip
+  back to the pipeline, which is the only way out of graduation — and the
+  reason the tool's own description says to ask the user first.
+</Callout>
 
 ## One tool carries extra metadata
 

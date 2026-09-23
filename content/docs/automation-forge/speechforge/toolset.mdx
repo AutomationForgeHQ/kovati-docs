@@ -9,9 +9,29 @@ icon: Bot
 SpeechForge has no toolset of its own. The sibling plugin exposes **the whole
 pipeline**, and adds nothing.
 
-Coverage: discovery, output paths, drift status, navigation, cost estimation,
-authoring, casting, localisation, takes, the generate/convert/graduate
-pipeline, and graduation itself.
+Coverage, grouped by what it is for — and it is the whole panel, not a subset.
+
+| Group | Tools |
+|---|---|
+| **Discovery** | `ListSpeechAssets`, `ListSpeakers`, `ListVoiceProfiles`, `ListSpeechProviders`, `ListSpeechTranslationProviders`, `ListProviderVoices` |
+| **Status** | `GetSpeechLineStatus`, `GetSpeechBankSource`, `CheckSpeechSourceDrift`, `DetectEditedSpeechAudio`, `GetSpeechLocalizationStatus` |
+| **Authoring** | `CreateOrUpdateSpeechBank`, `UpdateSpeechLine`, `RemoveSpeechLines`, `ClearSpeechBank` |
+| **Casting** | `CreateOrUpdateSpeaker`, `CreateVoiceProfile`, `SetSpeechLineVoiceOverride`, `ResolveSpeechVoice` |
+| **Cost** | `EstimateSpeechCost`, `EstimateSpeechConversionCost` |
+| **Generation** | `GenerateSpeech`, `GenerateSpeechTake`, `ProduceSpeechBank`, `RefetchSpeechLine` |
+| **Conversion** | `ConvertSpeechLine`, `ConvertSpeechTake` |
+| **Takes** | `ListSpeechTakes`, `ApplySpeechTake`, `MarkSpeechTakeChosen`, `SetSpeechTakeVariant`, `RemoveSpeechTake`, `RemoveSpeechTakeVariant` |
+| **Graduation** | `MarkSpeechLineRecorded`, `RegisterRecordedSpeechTake`, `ApplyRecordedAudio`, `AcceptCurrentSpeechAudio` |
+| **Localisation** | `LocalizeSpeechBank`, `DubSpeechLine` |
+| **Providers and paths** | `GetSpeechProviderCapabilities`, `GetSpeechCredentialStatus`, `TestSpeechProviderConnection`, `GetSpeechOutputPaths`, `SetSpeechOutputRoot` |
+| **Navigation** | `OpenSpeechLibrary` |
+
+<Callout type="info">
+  **`ResolveSpeechVoice` is the one to reach for when a voice is wrong.** It
+  reports which voice a line would actually be spoken in **and why** — which of
+  [the four resolution steps](/docs/automation-forge/speechforge#voice-resolution-walks-four-steps)
+  answered. Without it, a wrong voice is an archaeology expedition.
+</Callout>
 
 <SetMembers set="speechforge" />
 
@@ -45,10 +65,21 @@ that happened months ago is carrying a liability nobody remembers.
   was read from.
 - **Overwrite a recording.** A forced regeneration refuses anything whose
   origin is not `Generated`, and the refusal says which.
+- **Create or delete a voice on the provider.** A key that can create one can
+  generally delete one, and deleting a voice loses every line it ever spoke,
+  unrecoverably. There is no tool for it at all.
 
 The second one is the whole point of
 [the two-axis graduation model](/docs/automation-forge/speechforge#graduation-has-two-axes).
 An agent asked to "regenerate everything stale" must not be able to destroy a
 line an actor recorded.
+
+<Callout type="info">
+  **Two estimate tools, because two things bill differently.**
+  `EstimateSpeechCost` prices synthesis per character and can quote a figure.
+  `EstimateSpeechConversionCost` prices re-voicing, which bills by the second of
+  audio that does not exist yet. The panel's own estimate line says both halves
+  separately for the same reason.
+</Callout>
 
 <ReleaseNotes plugin="SpeechForgeToolset" limit={3} />
