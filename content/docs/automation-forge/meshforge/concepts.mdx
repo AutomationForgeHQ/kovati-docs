@@ -124,6 +124,20 @@ The one exception: a provider-free import of a file already on disk
 A definition's tile shows its newest mesh — skinned or static — or its main
 image, stored in the asset so it survives a restart.
 
+<Shot
+  src="/shots/meshforge/definition-thumbnails.png"
+  width={1356}
+  height={696}
+  alt="A grid of Mesh Definition tiles in the Content Browser, each rendering its own generated result: battery packs, trousers, shirts and a wardrobe shirt, a cryo suit, two dress jackets on bodies, bodysuits, a jacket and a T-shirt, chest and leg armour, a pistol, a toolbox, backpacks, ammunition crates, canisters and retextured shirts. Four tiles named MSD_Q_Draft, MSD_Q_High, MSD_Q_Standard and MSD_Q_Ultra show the plain default asset icon instead. Every tile is labelled Mesh Definition."
+  caption="Every definition renders what it actually made, so a folder of them is browsable by eye rather than by name. The four plain icons are drafts that have generated nothing yet — an empty tile means an empty definition, not a missing thumbnail."
+/>
+
+<Callout type="warn">
+  Custom thumbnails in Unreal can save empty. If a tile goes blank on an
+  asset you know has a mesh, rebuild rather than assuming the definition
+  broke: `MeshForge.RebuildThumbnails [folder]`.
+</Callout>
+
 `MeshForge.RebuildThumbnails [folder]` regenerates them.
 
 <Callout type="warn">

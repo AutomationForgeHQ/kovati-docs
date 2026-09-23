@@ -26,6 +26,21 @@ state rather than a fault.
 
 The unit of work is a **Mesh Definition**, and it has five stages:
 
+<Shot
+  src="/shots/meshforge/stages-panel.png"
+  width={609}
+  height={391}
+  alt="The Stages panel of a Mesh Definition. A Workflow picker reads 'Custom — set up by hand' beside a Save as Workflow button, above five stage tick-boxes: Concept image, References, Mesh, Post-processing and Import. Below, the five stages are listed collapsed and numbered: Concept image 'not run', References 'not run', Mesh in amber 'stale — inputs changed since this ran', Post-processing 'not run', and Import in amber 'stale — inputs changed since this ran'."
+  caption="Each stage keeps its own state, and they need not agree. Here Mesh and Import are stale while the three between them have never run — the chain does not pretend to be a single progress bar."
+/>
+
+<Callout type="info">
+  The tick-boxes above the list are per definition, not global. Turning one
+  off hides that stage, excludes it from staleness, and makes every tool
+  refuse it — which is how a definition that starts from a mesh you already
+  have simply has no Concept or References stage to answer for.
+</Callout>
+
 <Steps>
 
 <Step>
@@ -37,8 +52,8 @@ get the reference right and the mesh follows it.
 
 <Shot
   src="/shots/meshforge/concept-image-stage.png"
-  width={565}
-  height={610}
+  width={588}
+  height={634}
   alt="The Concept image stage, marked 'not run', using the 'Image — Tripo API v3' pipeline. A Prompt field carries placeholder guidance: describe the object, not the picture — 'a dented steel ammunition crate with rope handles' is a prop, 'a photo of a crate on white, studio lighting' is a photograph of one, and the second puts the studio in the mesh. A Model group sets model to gemini-3.1-flash, template to none and Takes to 1. Framing offers t_pose and a greyed-out sketch_to_render marked v2 legacy. Input offers Use Existing Pictures, and Pipeline holds a Description and an Enabled tick. A note at the foot reads: write what to draw in the prompt below first, and it costs about 20 Tripo credits."
   caption="The image generator is a pipeline like any other — chosen from a dropdown, with that vendor's own fields under it. The greyed 'sketch_to_render (v2 legacy)' is a setting the selected model does not take: shown, so you know it exists, disabled, so you cannot send it."
 />
@@ -57,9 +72,18 @@ views.
 
 <Step>
 ### Mesh
+
 The generation itself. A generator declares whether it builds from **words, a
 picture, or either**, and the settings, the refusal, the quoted price and the
 take record all follow that.
+
+<Shot
+  src="/shots/meshforge/mesh-stage.png"
+  width={705}
+  height={760}
+  alt="The Mesh stage, marked 'stale — inputs changed since this ran', on the 'Meshy — Standard (high quality)' pipeline. It offers to start from an existing mesh instead. A Prompt field explains it is what to build in words for a generator that reads text — alone when there is no picture, or beside one where the generator takes both. An Input group shows four picture slots labelled main image, view 1, view 2 and view 3, with a note that they can be dragged here from the Images tab or dragged onto each other to reorder, and a ticked multi-image-to-3d option. A Model group sets ai_model to meshy-7.1 (current), geometry_resolution to standard, image_enhancement ticked and auto_size unticked, above collapsed Textures, Shape and Pipeline groups. A note at the foot reads: sends the pictures shown above to the generator and files what comes back as a new take; nothing appears in the project until a take is imported; costs about 30 Meshy credits."
+  caption="The pictures that will be sent, shown as slots you can reorder, beside the vendor's own model fields. And the sentence that separates this stage from the next: nothing appears in the project until a take is imported."
+/>
 </Step>
 
 <Step>
