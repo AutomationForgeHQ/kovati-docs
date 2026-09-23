@@ -1,7 +1,7 @@
 {
   "title": "Company",
   "description": "PlayableOps, the vision, and who we are",
-  "icon": "Building2",
+  "icon": "Building",
   "root": true,
   "pages": [
     "index",

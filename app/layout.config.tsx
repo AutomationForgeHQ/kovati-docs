@@ -32,10 +32,10 @@ export const baseOptions: BaseLayoutProps = {
    * product line on screen twice, three rows apart. They belong in the header,
    * where they are the only navigation a non-docs page has.
    *
-   * Changelogs is left off `'nav'` for the opposite reason: it *is* a docs
-   * root, so the sidebar switcher already offers it, and a header link as well
-   * would put it on screen twice. It stays here so the non-docs pages have a
-   * way in.
+   * Changelogs needs it for exactly the same reason, and did not get it when
+   * it moved from `/releases` into the docs: a link without `on: 'nav'`
+   * renders in the header *and* the sidebar menu, so the section appeared
+   * three times — the root switcher, this link, and its own index page.
    */
   links: [
     {
@@ -64,6 +64,7 @@ export const baseOptions: BaseLayoutProps = {
       url: '/docs/releases',
       active: 'nested-url',
       description: 'Every released version, one page per plugin',
+      on: 'nav',
     },
   ],
   /** Renders its own icon button. Adding a second GitHub link duplicates it. */
