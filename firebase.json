@@ -3,12 +3,16 @@
     {
       "target": "docs",
       "public": "out",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "cleanUrls": true,
       "trailingSlash": true,
       "headers": [
         {
-          "source": "**/*.@(js|css|woff2|png|jpg|svg)",
+          "source": "/_next/static/**",
           "headers": [
             {
               "key": "Cache-Control",
@@ -17,11 +21,20 @@
           ]
         },
         {
-          "source": "/api/search/**",
+          "source": "/shots/**",
           "headers": [
             {
               "key": "Cache-Control",
-              "value": "public, max-age=3600"
+              "value": "public, max-age=3600, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/api/**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=0, must-revalidate"
             }
           ]
         }

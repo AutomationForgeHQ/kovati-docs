@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "automation-forge-hq"
+  },
+  "targets": {
+    "automation-forge-hq": {
+      "hosting": {
+        "docs": ["kovati-docs"]
+      }
+    }
+  }
+}

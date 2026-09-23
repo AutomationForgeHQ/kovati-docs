@@ -135,6 +135,38 @@ Prefer one good shot of what a page is about over a gallery that rots.
 `<YouTube>` loads nothing until clicked and uses `youtube-nocookie.com`, so a
 reader who never presses play is never tracked.
 
+## Deployment
+
+Live at **https://kovati-docs.web.app**, Firebase Hosting site `kovati-docs`
+in project `automation-forge-hq` — the same project as kovati.dev (`www`) and
+app.kovati.dev (`app`). `docs.kovati.dev` is **not attached yet**; that is a
+deliberate second step, so the site can be looked at before anything points at
+it.
+
+| Workflow | When | What |
+|---|---|---|
+| `deploy.yml` | push to main, manual, `repository_dispatch: manifest-updated` | Build, check links, publish |
+| `deploy.yml` | pull request | Build and check links, publish nothing |
+| `refresh-manifest.yml` | every six hours, manual | Sync the manifest, regenerate changelogs, commit and publish **if a version moved** |
+| `publish.yml` | called by both | The build-and-deploy recipe, in one place |
+
+Two things worth knowing before editing these:
+
+- **A push made with `GITHUB_TOKEN` does not trigger other workflows.** That is
+  why the refresh publishes from its own run instead of leaving it to
+  `deploy.yml`, and why its publish job checks out `main` rather than the
+  commit the run started from — the manifest landed after that commit.
+- **`FIREBASE_SERVICE_ACCOUNT` is a repository secret and a human adds it.**
+  Without it the deploy step fails loudly rather than going green having
+  published nothing, which is the failure the website repo actually had for six
+  weeks.
+
+The cache headers are scoped rather than blanket: a year and `immutable` only
+under `/_next/static/**`, where Next puts a content hash in every filename.
+The screenshots under `/shots/**` keep their names when the picture behind them
+is replaced, so they revalidate hourly — a corrected screenshot that nobody
+could see for a year is a worse outcome than a request.
+
 ## Known issues, to settle before deploying
 
 ### ~~RSC segment prefetch 404s~~ — fixed 2026-09-23

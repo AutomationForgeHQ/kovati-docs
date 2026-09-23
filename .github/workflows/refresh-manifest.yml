@@ -1,0 +1,112 @@
+# Pull the release manifest, and publish if a plugin shipped.
+#
+# `data/manifest.json` is a committed copy of a file another repository's CI
+# generates. Committing it is deliberate — a build stays reproducible offline
+# and a release shows up as a reviewable diff rather than silently changing a
+# published page — and the cost of that choice is that it goes stale. This is
+# what pays it.
+#
+# Every six hours, because a plugin release should be on the wiki the same day
+# and nobody should have to remember. `sync:manifest` also regenerates the
+# per-plugin changelog pages, so a new version becomes a page here without a
+# person involved.
+#
+# The publish runs from this workflow rather than relying on the push to
+# trigger `deploy.yml`: a push made with `GITHUB_TOKEN` deliberately does not
+# start other workflows, so waiting for one would wait forever.
+name: Refresh manifest
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-manifest
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.sync.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Sync the manifest and regenerate changelogs
+        id: sync
+        run: |
+          set -euo pipefail
+          npm run sync:manifest
+
+          if git diff --quiet -- data/manifest.json content/docs/releases; then
+            echo "Manifest unchanged - nothing shipped since the last check."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Name what moved, so the commit says which plugin released rather
+          # than "update manifest" for the hundredth time.
+          SUMMARY=$(node -e '
+            const fs = require("node:fs");
+            const now = JSON.parse(fs.readFileSync("data/manifest.json", "utf8"));
+            const was = JSON.parse(
+              require("node:child_process")
+                .execSync("git show HEAD:data/manifest.json", { encoding: "utf8" }),
+            );
+            // Newest by version, not by array order: the manifest does not
+            // promise an order and "the last one" quietly means the wrong one.
+            const cmp = (a, b) => {
+              const pa = a.split(".").map(Number), pb = b.split(".").map(Number);
+              for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+                const d = (pa[i] ?? 0) - (pb[i] ?? 0);
+                if (d !== 0) return d;
+              }
+              return 0;
+            };
+            const latest = (m) =>
+              Object.fromEntries(
+                m.plugins.map((p) => [
+                  p.id,
+                  p.versions
+                    .filter((v) => v.channel === "stable")
+                    .map((v) => v.version)
+                    .sort(cmp)
+                    .at(-1) ?? "-",
+                ]),
+              );
+            const a = latest(was), b = latest(now);
+            const moved = Object.keys(b).filter((k) => a[k] !== b[k]);
+            process.stdout.write(
+              moved.length
+                ? moved.map((k) => `${k} ${a[k] ?? "-"} -> ${b[k]}`).join(", ")
+                : "manifest changed without a version moving",
+            );
+          ')
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/manifest.json content/docs/releases
+          git commit -m "Sync manifest: ${SUMMARY}"
+          git push
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    uses: ./.github/workflows/publish.yml
+    with:
+      deploy: true
+      # main, not the commit this run started from — the manifest landed after.
+      ref: main
+    secrets: inherit

@@ -1,0 +1,31 @@
+# Every change to the wiki, published.
+#
+# A push to main deploys. A pull request builds and checks links and publishes
+# nothing — which is also what a fork gets, since a fork has no secrets and
+# there is nothing here it could deploy with.
+#
+# `repository_dispatch` is the hook for the other half of the question: a
+# plugin release changes `manifest.json` in the automation-forge repository,
+# and that repository can send `manifest-updated` here to publish immediately
+# rather than waiting for the scheduled refresh. Nothing sends it yet; the
+# schedule covers it until something does.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [manifest-updated]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    uses: ./.github/workflows/publish.yml
+    with:
+      deploy: ${{ github.event_name != 'pull_request' }}
+    secrets: inherit

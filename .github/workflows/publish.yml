@@ -1,0 +1,72 @@
+# Build the wiki, check it, and optionally publish it.
+#
+# Reusable rather than copied, because two workflows need it — an ordinary push
+# and the scheduled manifest refresh — and a build recipe kept in two files is
+# a build recipe that will one day differ between them. This family has lost
+# days to exactly that shape of mistake.
+#
+# The link check is a gate, not a report. A wiki whose internal links rot is
+# worse than one that is a day out of date, and this is the only thing that
+# would notice.
+name: Publish
+
+on:
+  workflow_call:
+    inputs:
+      deploy:
+        description: Publish to Firebase Hosting, rather than only building.
+        type: boolean
+        default: false
+      ref:
+        description: What to build. Empty means whatever triggered the run.
+        type: string
+        default: ''
+    secrets:
+      FIREBASE_SERVICE_ACCOUNT:
+        required: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The scheduled refresh commits to main and then publishes, so it has
+          # to ask for main rather than the commit that started the run — which
+          # is the one *before* the manifest landed.
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # `build` regenerates the per-plugin changelog pages from the manifest
+      # first, so a manifest change becomes pages without anyone remembering.
+      - run: npm run build
+
+      - name: Check internal links
+        run: node tools/check-links.mjs
+
+      - name: Deploy to Firebase Hosting
+        if: inputs.deploy
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SERVICE_ACCOUNT:-}" ]; then
+            # Silence here is how the website repo published nothing for six
+            # weeks while every run went green. A run that reports success for
+            # work it did not do is worse than a red one.
+            echo "::error::No FIREBASE_SERVICE_ACCOUNT secret, so nothing was published."
+            echo "Add the service-account JSON as a repository secret named FIREBASE_SERVICE_ACCOUNT."
+            exit 1
+          fi
+
+          echo "$SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx --yes firebase-tools@latest deploy --only hosting:docs \
+            --project automation-forge-hq --non-interactive --force
