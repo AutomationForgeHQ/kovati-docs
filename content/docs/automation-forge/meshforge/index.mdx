@@ -88,8 +88,20 @@ take record all follow that.
 
 <Step>
 ### Post
+
 A chain of steps on the result: retexture, edit in Blender, garment fit,
-sculpt. See [post-processing](/docs/automation-forge/meshforge/post-processing).
+sculpt.
+
+<Shot
+  src="/shots/meshforge/post-chain.png"
+  width={715}
+  height={334}
+  alt="The Post-processing stage, headed in red 'failed — TransferBoneWeightsFromMesh: Failed to transfer the weights'. The chain is summarised as 'Garment fit — wrap around a character → Wardrobe skinning — Unreal inpainting'. Its two steps are listed separately: the first ticked green with a last-run date, the second numbered and marked 'not run yet'. Each has up and down reorder arrows and its own Run this step and Remove buttons, above an 'Add a step' picker and a Run chain button."
+  caption="Steps run in order and report separately. Here the fit succeeded and the skinning failed, so only the skinning needs running again — the arrow between them is the chain, not a single operation."
+/>
+
+See [post-processing](/docs/automation-forge/meshforge/post-processing) for
+input sources, reordering rules and the steps that ship.
 </Step>
 
 <Step>
@@ -106,14 +118,6 @@ stage marks everything after it stale **without discarding what it made**.
 
 **Any stage can be switched off per definition.** A switched-off stage is
 hidden from the tabs, refused by every tool, and left out of staleness.
-
-<Shot
-  src="/shots/meshforge/stages-cryosuit.png"
-  width={1200}
-  height={1000}
-  alt="A Mesh Definition for a cryo suit. The left half is the Mesh viewer showing the suit, with Compare A/B, an output picker reading 'post-processed', a Character dropdown set to none, and a Floor toggle; the status bar reads 22,079 triangles, 21,448 vertices, 1 material, 85 by 29 by 136 cm, 342 bones. The right half is the Stages tab: a Workflow picker reading 'Custom — set up by hand', four stage checkboxes, then numbered sections. Concept image and References are marked 'not run', Mesh is green and 'done', and Post-processing is amber and marked 'stale — inputs changed since this ran', listing two steps: Garment fit — wrap around a character, and Wardrobe skinning — Unreal inpainting, each with reorder arrows and a Run button."
-  caption="Four stages, each carrying its own state: not run, done, or stale. The post chain went further than the others and is the part marked stale — editing something earlier did not throw away the 342-bone skinned result it had already produced."
-/>
 
 <Callout type="info">
   Read the status words rather than the tick marks. **"Not run" and "stale" are
