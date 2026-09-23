@@ -167,6 +167,56 @@ The screenshots under `/shots/**` keep their names when the picture behind them
 is replaced, so they revalidate hourly — a corrected screenshot that nobody
 could see for a year is a worse outcome than a request.
 
+## Making it the destination
+
+The wiki exists and is published. Nothing points at it yet except the website
+and the organisation profile, which means the people most likely to want it —
+somebody who has just installed a plugin, or an agent holding its toolset —
+still have no route in. Four pieces of work, in the order they are worth doing.
+
+### 1. `DocsURL` in every descriptor
+
+Unreal shows a plugin's `DocsURL` in the Plugins browser, so it is the one link
+a person already has. Today it is the GitHub mirror for `open` plugins and
+`kovati.dev/plugins/<set>/` for the rest — both from before a wiki existed.
+Each should point at that set's page.
+
+**Generate it, do not type it.** 37 descriptors is 37 chances to drift, and
+`forge/tools/sync.ps1` already writes generated facts into marked regions. This
+belongs as one entry in its `$Generators` table, not as a sweep.
+
+### 2. Every plugin README
+
+Same rule and the same mechanism: a marked region carrying the set's wiki link,
+so a README that is regenerated stays right and nobody edits 37 files. The
+mirrors pick it up on the next `Mirror sources` run.
+
+### 3. A surface in the editor
+
+The hub is the obvious host — it already has pages a person opens without a
+project. Somewhere between a *Documentation* entry on the Automation Forge
+menu and a per-panel link that lands on the page for the panel you are looking
+at. The second is much better and costs more; the first is worth having while
+the second is decided.
+
+### 4. Point agents at it
+
+Less obvious and possibly the most valuable. An agent holding `MeshForgeToolset`
+can list the tools but has nothing that explains *why* a stale stage is not a
+failed one. The toolsets already carry `UAgentSkill` — four of them do not,
+which `forge-inventory` records as an open item — and a skill is the natural
+place to name the page.
+
+Worth deciding first: whether an agent should be handed a **URL** (cheap, needs
+network) or the **page's text** (costly in context, always available). The
+answer is probably a URL plus the one paragraph that matters, which is an
+argument for the wiki carrying short canonical summaries an agent can be given
+verbatim.
+
+None of this is started. It is written down because "add a link everywhere"
+is the kind of task that sounds small, touches 37 repositories, and is done
+badly exactly once.
+
 ## Known issues, to settle before deploying
 
 ### ~~RSC segment prefetch 404s~~ — fixed 2026-09-23
