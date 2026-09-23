@@ -132,6 +132,60 @@ They are two columns in the panel for the same reason:
   caption="Every line here has Status 'Generated' — that is how far down the pipeline it got. Two have Origin 'Recorded' — that is where the audio came from. One column could not have said both, and the pipeline needs the second to know what it may overwrite."
 />
 
+## The four buttons on Produce
+
+They look like variations on one action. They are four different promises
+about money.
+
+| Button | What it does |
+|---|---|
+| **Generate Selected** | The selection, skipping what is current |
+| **Generate All** | *"Generate every line in this bank that is missing audio or stale. Current lines cost nothing and are skipped; recorded lines are never touched. **Safe to press twice** — the second press finds nothing to do."* |
+| **Dub from Source** | Only on a localised bank. See [localisation](/docs/automation-forge/speechforge/localisation) |
+| **Re-generate Selected** | *"**Force**: re-generate the selected lines whether they are current, stale or missing, after a confirmation with the cost. The one thing force never does is overwrite a recorded performance — those lines are skipped."* |
+
+### Nothing spends without a priced question first
+
+Every one of them raises a confirmation naming the count and the figure, and
+the figures come from **the same resolver that submits** — so the estimate is
+the price of the request that would go.
+
+*Generate All*, on a bank with work to do:
+
+> Generate *N* line(s) that are missing audio or stale, ~*X.XXX* USD?
+>
+> *M* current line(s) are skipped and cost nothing. Recorded and hand-edited
+> lines are never touched.
+
+*Re-generate Selected*, which adds a paragraph per thing you should know:
+
+> Force re-generate *N* line(s), ~*X.XXX* USD?
+>
+> *N* of them are current — **this re-pays for audio that did not need it.**
+>
+> *N* recorded, edited or accepted line(s) stay untouched — the pipeline never
+> overwrites audio it no longer owns. Re-record or run a pickup session for
+> those.
+
+<Callout type="info">
+  **The second paragraph exists to talk you out of it.** Force is for the case
+  where a line looks current and is not; the dialog counts how many of your
+  selection are in fact current and says plainly that you are about to pay for
+  them again.
+</Callout>
+
+On a bank where there is nothing to do, *Generate All* does not open a dialog
+at all — it answers **"Everything is current — nothing to generate."**
+
+<Callout type="info">
+  For scale: the seven-line scene these captures come from is **411
+  characters**, and the estimator prices a full forced re-generation of all
+  seven at **about $0.04**. Character-billed synthesis is cheap per line; the
+  dialogs exist because a bank is not seven lines, and because a forced
+  re-generation of a thousand current lines is a real way to waste a real
+  amount of money.
+</Callout>
+
 **Generated audio is never discarded when a line graduates to `Recorded`**,
 and a forced regeneration explicitly refuses to touch anything that is not
 `Generated`.

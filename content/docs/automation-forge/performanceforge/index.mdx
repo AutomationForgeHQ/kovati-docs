@@ -49,6 +49,34 @@ Two pages: **Record**, the teleprompter, and **Session**, the ledger.
   exactly why the solve that consumes them stays in sync.
 </Callout>
 
+### Every control on it
+
+| Control | What it does |
+|---|---|
+| **Session / Record** | *Session* is the ledger: the job's lines, every take and retake, and the choose. *Record* is devices, preview, teleprompter, record bar |
+| **Skip Line** | Move past this line without recording it |
+| **End Session** | Drop the queue. The session asset and its takes stay |
+| **Microphone** | Input device, listed as *name (channels, sample rate)* |
+| **Camera** | Video device, or none — **which is what decides the mode** |
+| **Camera on** | *"Whether the camera is open. Off closes the device and the capture light goes out; recording video needs it on. Closing this window closes it too."* |
+| **Refresh** | *"Re-read the device lists. Plug a headset in and the indices shift; this is the fix."* |
+| **Level** | Live input meter |
+| **Mirror** | *"Flip the preview like a mirror, so moving left looks left. **Preview only** — the recording always keeps the true orientation, because the solver needs the performer's real left and right."* |
+| **Slate** | *"What this take is — a line id, a scene, a name."* It becomes part of the take folder name |
+| **Record** | Starts and stops. The line above it says which mode is armed |
+| **Takes / Open Folder** | *"Open the selected take's folder in Explorer."* |
+
+<Callout type="info">
+  **Mirror is the one that has to be explained rather than guessed.** A
+  performer frames themselves in a mirrored preview because an unmirrored one
+  is unusable; a solver needs the performer's real left and right. Both are
+  true at once, so the preview mirrors and the recording does not.
+</Callout>
+
+An empty take list says so in full rather than sitting blank: *"No takes yet.
+The first Record files one here, and every take keeps its own folder: the audio
+master, the frames, and a manifest of what actually happened."*
+
 ## The asset
 
 A session is an asset, made from **Content Browser ▸ right-click ▸ Automation

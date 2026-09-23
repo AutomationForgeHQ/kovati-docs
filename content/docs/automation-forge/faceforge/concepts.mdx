@@ -80,6 +80,73 @@ camera.
   there is a fallback here that this page does not describe.
 </Callout>
 
+### Every control on it
+
+| Control | What it does |
+|---|---|
+| **Face bank** | The bank. The arrow and folder icons open and locate the asset |
+| **Preview mesh** | Which head the stage draws. Follows the selected clip |
+| **Voice** | *"Play the clip's audio with the face, so lipsync is judged as lipsync. Silent when the clip has no audio linked."* |
+| **Orbit** | *"Orbit the face: left drag turns, wheel zooms, right drag dollies. Off, the viewport uses the ordinary Unreal camera."* |
+| ⏸ / ■ / scrub | *"Stop, back to the first frame."* Scrubbing pauses playback and resumes where you let go |
+| **Clip details** | Read-only. *"for when something is broken"* |
+| **Solve Bank** | *"Solve every clip that needs it. **Minutes**; clips run one at a time."* |
+| **Merge Layers** | *"Re-merge the selected clips' layers. **Milliseconds**; nothing re-solves."* |
+| **Correct in Sequencer** | Opens the hand-correction round trip. Needs the board vocabulary |
+| **Snapshot Correction** | *"Read the hand keys off the correction sequence into an additive 'Corrective' layer on the selected clip."* Needs the board vocabulary |
+| **Bake Bank** | *"Bake solved curves to animations and montages. **Milliseconds a clip.**"* |
+| **To the game** | Buttons a framework adapter contributed — here *Apply Faces to Dialogue* and *Apply Voice and Faces to Dialogue* |
+
+<Callout type="info">
+  **Read the time units in those four tooltips as a map of the pipeline.**
+  Solve is minutes and runs one clip at a time; merge and bake are
+  milliseconds. That asymmetry is why solving and baking are separate stages at
+  all, and why re-baking the same solve onto a second character is nearly free.
+</Callout>
+
+A clip whose inputs have moved says so on hover: *"The audio or solve settings
+changed after this clip was solved. Solve Bank brings it back in step."*
+
+### What a clip actually holds
+
+The details panel is read-only in the panel — these are set when the clip is
+made, or through the toolset — but it is the complete list of what a solve is
+a function of.
+
+<Shot
+  src="/shots/faceforge/clip-details.png"
+  width={660}
+  height={700}
+  alt="The Clip details panel for GEN_Renk_Relays, headed 'Clip details - read-only, for when something is broken', with a search box. Fields: Clip Id 'GEN_Renk_Relays'; Audio, showing a waveform thumbnail and the sound wave SW_GEN_Renk_Relays with browse and play buttons; an empty Source Audio Hash; Speaker Id 'Renk'; Mood set to Auto Detect; Mood Intensity 1.0; Mask set to Full Face; Generate Blinks ticked; Include Head Pose unticked; Provider Override 'None'; Fps Override 0.0."
+  caption="Eleven fields, and the four in the middle are the performance decisions. Everything above them identifies the clip; everything below overrides a project default for this clip alone."
+/>
+
+| Field | What it decides |
+|---|---|
+| **Audio** | The sound the face is solved from. The one fact that decides whether the face and the voice agree |
+| **Source Audio Hash** | The content hash from whatever made the audio. **Without it, a re-generated line of the same length is not recognised as changed**, and the face silently stays in sync with audio that no longer exists |
+| **Mood** | `Auto Detect` reads the mood out of the audio and is right far more often than a guess. Twelve named moods besides |
+| **Mood Intensity** | 0 to 1 |
+| **Mask** | `Full Face` invents an emotional performance from the audio. `Mouth Only` when something else already owns the expression |
+| **Generate Blinks** | Whether the solver invents blinks rather than leaving the eyes static |
+| **Include Head Pose** | **Off by default on purpose.** A solved head moves the neck, and so does any body montage on the same line |
+| **Provider Override** | Which solver, for this clip |
+| **Fps Override** | Sample rate for the curves. 30 is plenty for a face |
+
+<Callout type="warn">
+  **`Mask` is the field that causes arguments.** A full-face solve invents an
+  emotional performance from the audio, which is usually what you want — but it
+  will **fight** an authored expression or a body montage that is already
+  carrying the emotion. Mouth Only is the answer when something else owns the
+  acting.
+</Callout>
+
+<Callout type="warn">
+  **Turn Include Head Pose on for a line where the head *is* the performance,
+  not as a matter of course.** Two things driving the neck at once is a fight
+  you will lose in Sequencer rather than here.
+</Callout>
+
 ### One bank is one character standard
 
 A second character in the same scene means a second bank over the same audio

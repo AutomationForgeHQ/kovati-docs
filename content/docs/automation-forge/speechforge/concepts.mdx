@@ -74,6 +74,46 @@ The bank picker at the top is the only global state. Every page below it is
 about the bank named there — which is why switching to a localised sibling
 changes what the pages offer rather than opening a second window.
 
+## The Write page's line editor
+
+Selecting a line opens an editor under the table. It is where a line's text
+and direction are changed, and it is where the pipeline does its shouting.
+
+<Shot
+  src="/shots/speechforge/line-editor.png"
+  width={1760}
+  height={900}
+  alt="The Write page with GEN_Doric_Rule selected and highlighted. Below the table, a panel headed 'Edit line - GEN_Doric_Rule' notes: 'Harvested from DLG_GeneratorBriefing via NarrativePro. An edit kept only here is overwritten by the next harvest - write it back to stay in step.' Two amber warnings follow: the script this bank came from has changed, DLG_GeneratorBriefing was written 2026.09.08-21.51.50 after this bank last read it; and 'A recorded performance is behind this line. Rewriting the text puts the subtitle and the performance out of step - fixing that is a re-record or a pickup session, never a regeneration.' Under them a text field reads 'Not alone, you are not. The suit rule stands.' and an empty Direction field hints 'Direction - whispers, exhausted, shouting. Never spoken, never in the subtitle.' Two buttons sit at the foot: Apply to bank and Apply to dialogue."
+  caption="One line, three separate things the editor knows: where the words came from, that the source has moved since, and that a human performance is behind this particular line. The last one is in the panel before the edit, not after it."
+/>
+
+| Field | What it is |
+|---|---|
+| **Text** | *"What the player reads and what is spoken."* |
+| **Direction** | *"Direction — whispers, exhausted, shouting. **Never spoken, never in the subtitle.**"* |
+| **Apply to bank** | *"Save onto the bank line. Changed text reads as stale in Produce — a priced report, never a silent regeneration."* |
+| **Apply to dialogue** | The write-back, when the bank has a source that supports one |
+
+<Callout type="warn">
+  **The loud warning is the one about a recorded line.** A generated line going
+  stale is a re-read for a fraction of a cent. A recorded line going stale means
+  the subtitle and a human performance now disagree, and the only fixes are a
+  re-record or a pickup session.
+
+  That difference is shouted **before** the edit rather than reported after it.
+  Once the text has moved, the panel escalates to
+  *"OUT OF STEP: this text no longer matches the recorded performance behind
+  it. Regeneration will not touch a recorded line — re-record it or book a
+  pickup."*
+</Callout>
+
+<Callout type="info">
+  **"An edit kept only here is overwritten by the next harvest."** A bank that
+  reads from a dialogue is downstream of it. *Apply to dialogue* is the other
+  half of the contract — it pushes the change back up, so the next harvest
+  agrees with you instead of undoing you.
+</Callout>
+
 ### Sibling plugins add buttons without editing this
 
 The pages have a reflection-based discovery seam. A sibling plugin marks a
@@ -84,9 +124,37 @@ That is how the face and performance sets put their own actions on the Perform
 page — and how a dialogue framework puts *Apply Voice and Faces to Dialogue*
 there without SpeechForge knowing what a dialogue is.
 
-[The Perform page](/docs/automation-forge/dialogue-pipeline#perform--where-the-three-plugins-meet)
-is the seam made visible: every panel on it arrived from a different plugin,
-and a project missing one of them simply sees fewer.
+There are **three kinds of tag**, and they land in different places:
+
+| Tag on a toolset function | Becomes |
+|---|---|
+| `SpeechLibraryAction = "Label"` | A button, on the page named by `SpeechLibraryPage` |
+| `SpeechIngest = "Label"` | An ingest method, with the asset class it reads |
+| `SpeechLineSync = "Label"` | A write-back button **in the line editor**, shown only on banks whose source stamp carries that adapter's key |
+
+In the project these captures come from, every button below is contributed:
+
+| Button | Page | From |
+|---|---|---|
+| Harvest from Dialogue | Ingest | the Narrative Pro adapter |
+| Harvest Characters… | Ingest | the Narrative Pro adapter |
+| Re-harvest from Dialogue | Ingest | the Narrative Pro adapter |
+| Apply to dialogue | the line editor | the Narrative Pro adapter |
+| Apply Voice to Dialogue | Perform | the Narrative Pro adapter |
+| Apply Voice and Faces to Dialogue | Perform | the Narrative Pro adapter |
+| Create/Update Face Bank | Perform | `FaceForgeToolset` |
+| Record Selected… | Perform | `PerformanceForgeToolset` |
+| Plan Session… | Perform | `PerformanceForgeToolset` |
+
+<Callout type="info">
+  **The Ingest page exists exactly when at least one ingest method is found.**
+  It is not a page that can be empty — a project with no adapter installed does
+  not have one, and the Library opens on Cast instead.
+
+  [The Perform page](/docs/automation-forge/dialogue-pipeline#perform--where-the-three-plugins-meet)
+  is the seam made visible: almost every button on it arrived from a different
+  plugin, and a project missing one simply sees fewer.
+</Callout>
 
 ## Console commands
 

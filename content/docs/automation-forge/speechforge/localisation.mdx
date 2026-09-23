@@ -21,6 +21,8 @@ Localisation is a sibling bank per language — `SB_Scene_DE` beside
 
 ## The Localize page
 
+Four controls and a list, and the page states its own contract above them.
+
 <Shot
   src="/shots/speechforge/localize-page.png"
   width={1760}
@@ -47,6 +49,14 @@ translated but the English moved underneath it, never translated at all, and
 has a voice. A single percentage would collapse all four into a number you
 could not act on.
 
+| Control | What it does |
+|---|---|
+| **Service** | Which translation provider. Reports whether a key is present and how it bills |
+| **The tick list** | *"Translate this bank into every ticked language — a speech bank each, its face banks cloned — then generate, solve and bake them like any other bank."* |
+| **Other code** | *"A language the list does not offer. **The translator decides whether it can.**"* |
+| **Re-translate everything** | *"Re-translate every line, current ones included. **Bills every character again.**"* |
+| **Open**, per localised bank | *"Show this language's bank here — generate it, then solve its faces from Perform."* |
+
 ## A translated bank is the same seven lines
 
 <Shot
@@ -66,6 +76,48 @@ could not act on.
 
   *Generate All* on this bank splits the two automatically, per line, according
   to what the English source actually was.
+</Callout>
+
+### Dub from Source, in its own words
+
+> Carry the source language's recording into this one: the actor's own voice,
+> their pacing, the new words. Keeps a captured face usable underneath, because
+> the timing survives. **Costs by the minute of source audio, well above
+> synthesis, and takes about twenty seconds a line.**
+
+Pressing it asks first, and the question is the one worth reading:
+
+> Dub *N* line(s) from the source language?
+>
+> Each one sends its source recording to be re-spoken in this language, keeping
+> the actor's voice and pacing. This bills dubbing minutes — well above
+> synthesis — and takes about twenty seconds a line.
+>
+> *N* selected line(s) have a generated source and are left alone. Generate
+> those.
+
+<Callout type="warn">
+  **No dollar figure is offered here, deliberately.** Dubbing bills by the
+  minute of source audio at a rate the panel has never measured, and a made-up
+  number about money is worse than none. Compare
+  [Generate All](/docs/automation-forge/speechforge#nothing-spends-without-a-priced-question-first),
+  which quotes a figure because it can.
+</Callout>
+
+Select a line with no recording behind it and the button declines rather than
+charging you for the wrong thing: *"None of the selected lines has a recording
+behind it in the source language. Generate those instead — it is cheaper and
+says the right words."*
+
+Dubs run **one at a time**, on purpose: the service renders a whole clip per
+request, and running a selection in parallel would spend the whole bill before
+the first failure could stop it.
+
+<Callout type="info">
+  **Dub sits beside Generate on Produce rather than on the Localize page**, and
+  that placement is the model. Localize is about *banks and languages*; dubbing
+  is a **per-line choice**. In a real localised bank most lines are generated
+  and the performed few are dubbed.
 </Callout>
 
 ## A translated line keeps its id
