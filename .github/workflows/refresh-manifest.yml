@@ -105,8 +105,10 @@ jobs:
     needs: refresh
     if: needs.refresh.outputs.changed == 'true'
     uses: ./.github/workflows/publish.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       deploy: true
       # main, not the commit this run started from — the manifest landed after.
       ref: main
-    secrets: inherit
