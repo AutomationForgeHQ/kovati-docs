@@ -21,13 +21,15 @@ on:
         description: What to build. Empty means whatever triggered the run.
         type: string
         default: ''
-    secrets:
-      FIREBASE_SERVICE_ACCOUNT:
-        required: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # The run's OIDC token is what the deploy signs in to Google with. A caller
+    # must grant id-token: write too; a called workflow cannot exceed it.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,23 +52,33 @@ jobs:
       - name: Check internal links
         run: node tools/check-links.mjs
 
-      - name: Deploy to Firebase Hosting
+      # No key exists: the deploy trades this run's OIDC token for short-lived
+      # Google credentials as github-deploy@kovatidev (website repo,
+      # tools/setup-ci.sh). Google accepts the token only from main.
+      - name: Google credentials configured
         if: inputs.deploy
         env:
-          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
         run: |
-          set -euo pipefail
-
-          if [ -z "${SERVICE_ACCOUNT:-}" ]; then
-            # Silence here is how the website repo published nothing for six
-            # weeks while every run went green. A run that reports success for
-            # work it did not do is worse than a red one.
-            echo "::error::No FIREBASE_SERVICE_ACCOUNT secret, so nothing was published."
-            echo "Add the service-account JSON as a repository secret named FIREBASE_SERVICE_ACCOUNT."
+          # Silence here is how the website repo published nothing for six
+          # weeks while every run went green. A run that reports success for
+          # work it did not do is worse than a red one.
+          if [ -z "$PROVIDER" ] || [ -z "$ACCOUNT" ]; then
+            echo "::error::GCP_WORKLOAD_IDENTITY_PROVIDER or GCP_SERVICE_ACCOUNT is not set, so nothing was published."
+            echo "Set both as repository variables; the website repo's tools/setup-ci.sh prints their values."
             exit 1
           fi
 
-          echo "$SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
-          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
-          npx --yes firebase-tools@latest deploy --only hosting:docs \
-            --project automation-forge-hq --non-interactive --force
+      - uses: google-github-actions/auth@v3
+        if: inputs.deploy
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Firebase Hosting
+        if: inputs.deploy
+        run: |
+          set -euo pipefail
+          # The auth step exported GOOGLE_APPLICATION_CREDENTIALS for this.
+          npx --yes firebase-tools@latest deploy --only hosting:docs             --project kovatidev --non-interactive --force

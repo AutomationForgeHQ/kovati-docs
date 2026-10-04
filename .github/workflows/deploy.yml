@@ -26,6 +26,10 @@ concurrency:
 jobs:
   publish:
     uses: ./.github/workflows/publish.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
-      deploy: ${{ github.event_name != 'pull_request' }}
-    secrets: inherit
+      # Only main can sign in to Google, so only main publishes; a manual run
+      # on another branch builds and checks links.
+      deploy: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}

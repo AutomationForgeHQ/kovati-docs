@@ -1,11 +1,11 @@
 {
   "projects": {
-    "default": "automation-forge-hq"
+    "default": "kovatidev"
   },
   "targets": {
-    "automation-forge-hq": {
+    "kovatidev": {
       "hosting": {
-        "docs": ["kovati-docs"]
+        "docs": ["kovatidev-docs"]
       }
     }
   }

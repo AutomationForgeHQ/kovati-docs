@@ -137,9 +137,11 @@ reader who never presses play is never tracked.
 
 ## Deployment
 
-Live at **https://kovati-docs.web.app**, Firebase Hosting site `kovati-docs`
-in project `automation-forge-hq` — the same project as kovati.dev (`www`) and
-app.kovati.dev (`app`). `docs.kovati.dev` is **not attached yet**; that is a
+Moving (2026-10-04) to **https://kovatidev-docs.web.app**, Firebase Hosting
+site `kovatidev-docs` in project `kovatidev` — the same project as kovati.dev
+(`www`) and app.kovati.dev (`app`). Until the switchover the old copy stays at
+https://kovati-docs.web.app in `automation-forge-hq`, which CI no longer
+reaches. CI signs in without a key, as `github-deploy@kovatidev`. `docs.kovati.dev` is **not attached yet**; that is a
 deliberate second step, so the site can be looked at before anything points at
 it.
 
