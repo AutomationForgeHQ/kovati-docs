@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-22T13:03:17Z",
+  "generatedAt": "2026-10-04T23:08:54Z",
   "releases": "https://github.com/AutomationForgeHQ/releases",
   "channels": [
     "stable",
@@ -155,6 +155,18 @@
       "source": "https://github.com/AutomationForgeHQ/AutomationForgeHub",
       "versions": [
         {
+          "version": "0.2.5",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/automationforgehub-v0.2.5/AutomationForgeHub-0.2.5-UE5.8-Win64.zip",
+          "size": 333527,
+          "sha256": "7b32badf66dcbaa82b5e07f2640686b13fa0b8f2958358b7edd462d5f9c45c2e",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/automationforgehub-v0.2.5/AutomationForgeHub-0.2.5-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:38:23Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/automationforgehub-v0.2.5"
+        },
+        {
           "version": "0.2.4",
           "engine": "5.8",
           "platform": "Win64",
@@ -240,6 +252,11 @@
         }
       ],
       "changelog": [
+        {
+          "version": "0.2.5",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
         {
           "version": "0.2.4",
           "date": "2026-09-22",
@@ -337,6 +354,18 @@
       "source": "https://github.com/AutomationForgeHQ/AutomationForgeToolset",
       "versions": [
         {
+          "version": "0.1.2",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/automationforgetoolset-v0.1.2/AutomationForgeToolset-0.1.2-UE5.8-Win64.zip",
+          "size": 144740,
+          "sha256": "c69adec7fbdc9f28408b03d0c73d3d961e4e270ea74ceb35d026bd065ce57288",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/automationforgetoolset-v0.1.2/AutomationForgeToolset-0.1.2-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:09:26Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/automationforgetoolset-v0.1.2"
+        },
+        {
           "version": "0.1.1",
           "engine": "5.8",
           "platform": "Win64",
@@ -363,6 +392,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.1.1",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them.\n- The package now carries its Apache-2.0 LICENSE, which earlier zips omitted.\n- `GetToolsetVersion()` answers this plugin's real version; it had drifted from the descriptor."
@@ -382,6 +416,18 @@
       "dependencies": [],
       "source": "https://github.com/AutomationForgeHQ/FaceForge",
       "versions": [
+        {
+          "version": "0.2.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforge-v0.2.3/FaceForge-0.2.3-UE5.8-Win64.zip",
+          "size": 718255,
+          "sha256": "94d742f85ef2b4f4acd95fd74820a3a0873cf7de364cc43650a683496ee18e22",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforge-v0.2.3/FaceForge-0.2.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:59:09Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/faceforge-v0.2.3"
+        },
         {
           "version": "0.2.2",
           "engine": "5.8",
@@ -445,6 +491,11 @@
       ],
       "changelog": [
         {
+          "version": "0.2.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.2.2",
           "date": "2026-09-11",
           "body": "### Added\n- A cloned face bank now remembers the bank it was cloned from, and solving a clip whose sibling\n  there already carries layers **follows that performance** instead of solving from audio alone:\n  every layer is copied in order, the audio-driven ones re-solved from this clip's own audio, and\n  the result merged. A dubbed line keeps the acting that was captured under the new words.\n- A second solve on a following clip reports it already current rather than redoing the work.\n\n### Changed\n- A correction authored against the source clip rides across to the clip that follows it; one\n  authored on the localised clip is kept."
@@ -481,6 +532,18 @@
       ],
       "source": null,
       "versions": [
+        {
+          "version": "0.2.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforgeace-v0.2.3/FaceForgeACE-0.2.3-UE5.8-Win64.zip",
+          "size": 470961,
+          "sha256": "e23ddfbc565716c4af6af2c5eb98151f8fb9677265d6b0857a2af7b9793d9057",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforgeace-v0.2.3/FaceForgeACE-0.2.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:21:08Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/faceforgeace-v0.2.3"
+        },
         {
           "version": "0.2.2",
           "engine": "5.8",
@@ -532,6 +595,11 @@
       ],
       "changelog": [
         {
+          "version": "0.2.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright notices now name Bojan Andrejek / MetaWorx LLC."
+        },
+        {
           "version": "0.2.2",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them.\n- `Config/ForgeMachine.json` reaches an installed copy for the first time, so the hub's Keys and Runners pages are no longer empty for it.\n- The `Runner/` folder ships, so the container this plugin resolves from its own installed directory can finally be built from a release."
@@ -564,6 +632,18 @@
       "source": "https://github.com/AutomationForgeHQ/FaceForgeACEToolset",
       "versions": [
         {
+          "version": "0.1.2",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforgeacetoolset-v0.1.2/FaceForgeACEToolset-0.1.2-UE5.8-Win64.zip",
+          "size": 114400,
+          "sha256": "a78726f454b27c306618bb28efda7a34ccf214b47644e57f536e2de6a60b77e5",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforgeacetoolset-v0.1.2/FaceForgeACEToolset-0.1.2-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:13:10Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/faceforgeacetoolset-v0.1.2"
+        },
+        {
           "version": "0.1.1",
           "engine": "5.8",
           "platform": "Win64",
@@ -590,6 +670,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.1.1",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them.\n- `GetToolsetVersion()` answers this plugin's real version; it had drifted from the descriptor."
@@ -611,6 +696,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/FaceForgeMetaHuman",
       "versions": [
+        {
+          "version": "0.2.2",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforgemetahuman-v0.2.2/FaceForgeMetaHuman-0.2.2-UE5.8-Win64.zip",
+          "size": 208343,
+          "sha256": "fc260cddb8335c00c56b094911984853190bf1546ff87672f71ace88f8df6a10",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforgemetahuman-v0.2.2/FaceForgeMetaHuman-0.2.2-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:57:06Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/faceforgemetahuman-v0.2.2"
+        },
         {
           "version": "0.2.1",
           "engine": "5.8",
@@ -650,6 +747,11 @@
       ],
       "changelog": [
         {
+          "version": "0.2.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.2.1",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them."
@@ -676,6 +778,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/FaceForgeToolset",
       "versions": [
+        {
+          "version": "0.2.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforgetoolset-v0.2.3/FaceForgeToolset-0.2.3-UE5.8-Win64.zip",
+          "size": 195522,
+          "sha256": "678b2cb84c6e5bcc992ea6b578f25026e6082bd52190d04f06668f32071979bb",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/faceforgetoolset-v0.2.3/FaceForgeToolset-0.2.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T23:04:16Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/faceforgetoolset-v0.2.3"
+        },
         {
           "version": "0.2.2",
           "engine": "5.8",
@@ -739,6 +853,11 @@
       ],
       "changelog": [
         {
+          "version": "0.2.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.2.2",
           "date": "2026-09-11",
           "body": "### Changed\n- `CloneFaceBankForLanguage` records the source face bank on the clone. That is what lets the\n  clone's clips follow the source-language performance underneath a dub instead of guessing the\n  acting from audio.\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry."
@@ -773,6 +892,18 @@
       "dependencies": [],
       "source": "https://github.com/AutomationForgeHQ/MeshForge",
       "versions": [
+        {
+          "version": "0.3.1",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/meshforge-v0.3.1/MeshForge-0.3.1-UE5.8-Win64.zip",
+          "size": 1531523,
+          "sha256": "84759f2229016b90644bd0cbe805d332b3f31e9c7c9f84c3ee54ce4f2038cfe9",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/meshforge-v0.3.1/MeshForge-0.3.1-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:46:40Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/meshforge-v0.3.1"
+        },
         {
           "version": "0.3.0",
           "engine": "5.8",
@@ -823,6 +954,11 @@
         }
       ],
       "changelog": [
+        {
+          "version": "0.3.1",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
         {
           "version": "0.3.0",
           "date": "2026-09-21",
@@ -938,19 +1074,24 @@
       "source": null,
       "versions": [
         {
-          "version": "0.2.0",
+          "version": "0.2.1",
           "engine": "5.8",
           "platform": "Win64",
           "channel": "stable",
-          "sha256": "9eebd8bb9f543b13754c54be471402a806802da77918ba27463343fc169b67f2",
-          "size": 733129,
-          "releasedAt": "2026-09-21T19:30:27Z",
+          "sha256": "6cc3c2242a4017867bfdac6fab44eaa29c5f336634eb3fb8fcaa364fbcbc7c59",
+          "size": 732941,
+          "releasedAt": "2026-10-04T22:33:31Z",
           "url": null,
           "symbols": null,
           "notes": null
         }
       ],
       "changelog": [
+        {
+          "version": "0.2.1",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The licence now names Bojan Andrejek / MetaWorx LLC as the licensor, and questions about it go to bojan@kovati.dev. The terms are otherwise unchanged."
+        },
         {
           "version": "0.2.0",
           "date": "2026-09-21",
@@ -980,6 +1121,18 @@
       "source": "https://github.com/AutomationForgeHQ/MeshForgeGarmentToolset",
       "versions": [
         {
+          "version": "0.1.1",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/meshforgegarmenttoolset-v0.1.1/MeshForgeGarmentToolset-0.1.1-UE5.8-Win64.zip",
+          "size": 126871,
+          "sha256": "becdabf6ecca5490a4bff64abe1b8806293e4694cf1a2ed6400eab07a3980565",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/meshforgegarmenttoolset-v0.1.1/MeshForgeGarmentToolset-0.1.1-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T23:08:19Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/meshforgegarmenttoolset-v0.1.1"
+        },
+        {
           "version": "0.1.0",
           "engine": "5.8",
           "platform": "Win64",
@@ -993,6 +1146,11 @@
         }
       ],
       "changelog": [
+        {
+          "version": "0.1.1",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
         {
           "version": "0.1.0",
           "date": "2026-09-21",
@@ -1010,6 +1168,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/MeshForgeToolset",
       "versions": [
+        {
+          "version": "0.3.1",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/meshforgetoolset-v0.3.1/MeshForgeToolset-0.3.1-UE5.8-Win64.zip",
+          "size": 196936,
+          "sha256": "473c04d94093920cc061ab8a953111a2e0942220217dfd1e5ca591ad3ed01365",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/meshforgetoolset-v0.3.1/MeshForgeToolset-0.3.1-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:27:08Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/meshforgetoolset-v0.3.1"
+        },
         {
           "version": "0.3.0",
           "engine": "5.8",
@@ -1072,6 +1242,11 @@
         }
       ],
       "changelog": [
+        {
+          "version": "0.3.1",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
         {
           "version": "0.3.0",
           "date": "2026-09-21",
@@ -1175,6 +1350,18 @@
       "source": "https://github.com/AutomationForgeHQ/MeshForgeTrellisToolset",
       "versions": [
         {
+          "version": "0.0.4",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/meshforgetrellistoolset-v0.0.4/MeshForgeTrellisToolset-0.0.4-UE5.8-Win64.zip",
+          "size": 98458,
+          "sha256": "876aea5b06b9361f593241615f8367ccf44384f34ad5cba372f0500d9e13f5e2",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/meshforgetrellistoolset-v0.0.4/MeshForgeTrellisToolset-0.0.4-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T23:02:14Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/meshforgetrellistoolset-v0.0.4"
+        },
+        {
           "version": "0.0.3",
           "engine": "5.8",
           "platform": "Win64",
@@ -1213,6 +1400,11 @@
       ],
       "changelog": [
         {
+          "version": "0.0.4",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.0.3",
           "date": "2026-09-21",
           "body": "### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n\n### Compatibility\n- Rebuilt against MeshForge 0.3.0 and MeshForgeTrellis 0.0.3, which it needs."
@@ -1237,6 +1429,18 @@
       "dependencies": [],
       "source": "https://github.com/AutomationForgeHQ/MeshWeightRemap",
       "versions": [
+        {
+          "version": "0.1.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/meshweightremap-v0.1.3/MeshWeightRemap-0.1.3-UE5.8-Win64.zip",
+          "size": 164744,
+          "sha256": "e0bb4e1b3cc730b3cd1dc6e76fc3080f9dc0516e67dc32ee24b78d589420681d",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/meshweightremap-v0.1.3/MeshWeightRemap-0.1.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T23:06:08Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/meshweightremap-v0.1.3"
+        },
         {
           "version": "0.1.2",
           "engine": "5.8",
@@ -1276,6 +1480,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.1.2",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them."
@@ -1303,6 +1512,18 @@
       "source": "https://github.com/AutomationForgeHQ/MeshWeightRemapToolset",
       "versions": [
         {
+          "version": "0.1.2",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/meshweightremaptoolset-v0.1.2/MeshWeightRemapToolset-0.1.2-UE5.8-Win64.zip",
+          "size": 75899,
+          "sha256": "619927c900aeb95deadba988f9d5814f126b577b217d3b401e3f201cd56c6d55",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/meshweightremaptoolset-v0.1.2/MeshWeightRemapToolset-0.1.2-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:44:28Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/meshweightremaptoolset-v0.1.2"
+        },
+        {
           "version": "0.1.1",
           "engine": "5.8",
           "platform": "Win64",
@@ -1329,6 +1550,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.1.1",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them.\n- The package now carries its Apache-2.0 LICENSE, which earlier zips omitted.\n- `GetToolsetVersion()` answers this plugin's real version; it had drifted from the descriptor."
@@ -1348,6 +1574,18 @@
       "dependencies": [],
       "source": "https://github.com/AutomationForgeHQ/MontageForge",
       "versions": [
+        {
+          "version": "0.1.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/montageforge-v0.1.3/MontageForge-0.1.3-UE5.8-Win64.zip",
+          "size": 9132656,
+          "sha256": "eb3b9c7512b713c8e69dd613f0da6c2ca78d4ab44b6f8325fbb1f90b14639e6d",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/montageforge-v0.1.3/MontageForge-0.1.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:52:58Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/montageforge-v0.1.3"
+        },
         {
           "version": "0.1.2",
           "engine": "5.8",
@@ -1387,6 +1625,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.1.2",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them."
@@ -1413,6 +1656,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/MontageForgeToolset",
       "versions": [
+        {
+          "version": "0.1.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/montageforgetoolset-v0.1.3/MontageForgeToolset-0.1.3-UE5.8-Win64.zip",
+          "size": 74141,
+          "sha256": "3b3244612bacaba1707fe83a04b0e0bd7b158781e63d178e26c223bf85175d9f",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/montageforgetoolset-v0.1.3/MontageForgeToolset-0.1.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:17:07Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/montageforgetoolset-v0.1.3"
+        },
         {
           "version": "0.1.2",
           "engine": "5.8",
@@ -1452,6 +1707,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.1.2",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them.\n- `GetToolsetVersion()` answers this plugin's real version; it had drifted from the descriptor."
@@ -1476,6 +1736,18 @@
       "dependencies": [],
       "source": "https://github.com/AutomationForgeHQ/MotionForge",
       "versions": [
+        {
+          "version": "0.4.1",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforge-v0.4.1/MotionForge-0.4.1-UE5.8-Win64.zip",
+          "size": 1893650,
+          "sha256": "714cce5a54aaf755b255e32f35ad0fc1612acafd34ec24588c5be61c96cc69b7",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforge-v0.4.1/MotionForge-0.4.1-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:25:04Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/motionforge-v0.4.1"
+        },
         {
           "version": "0.4.0",
           "engine": "5.8",
@@ -1563,6 +1835,11 @@
       ],
       "changelog": [
         {
+          "version": "0.4.1",
+          "date": "2026-10-04",
+          "body": "### Fixed\n- The library's price for a selection, and the definition window's Generate button, now say when a\n  price is a provider's published rate rather than one you entered, as the cost lines already did. The\n  library's footer and its confirmation name the rate; the button reads \"at list price\" and its\n  tooltip says whose.\n\n### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.4.0",
           "date": "2026-09-22",
           "body": "### Added\n- **Get started.** *Tools ▸ Automation Forge ▸ MotionForge* walks a new user from nothing to a first motion: where motion is made (each provider's setup, measured, with the button that moves each step on, and what it costs), who it is for (a character prepared for that provider, or one made from any skeletal mesh), and a first prompt with examples. Finished steps fold to one line. The library is the other page of the same tab.\n- **Watch a take before choosing it.** The definition window opens on a stage that plays a take on the character it is for - fetched where that is free, built into a clip that is never saved. *Show as B* puts a second take beside it on the same clock; floor, in place and orbit are switches. It plays exactly as its import will: on a character with a provider rig, the preview is built on that rig and retargeted with the character's own retargeter.\n- Takes are numbered and listed with when, provider and model, seed, length, cost and state - in the game, ready on disk, or made from an older recipe. *Record* shows everything a take was sent.\n- **Each provider brings its own settings**, under its own names: model, seed, steps and guidance for Kimodo; prompt rewriting for Uthana. A definition keeps one set per provider, so switching and switching back restores both.\n- The Generate button says what it will do and what it costs, and asks before spending money. A stopped local runner is started rather than refused.\n- *Choose and import* names the montages and sequences that use the clip before replacing it.\n- The Motion Character window shows, per provider, whether the character suits it, the route its clips take, and that provider's own actions - build a Kimodo rig, upload to Uthana - with *Import directly* for a provider rig that has no retargeter. The route says when clips stop on the provider rig for want of a retargeter.\n- Get started and the definition window are built from boxed sections that open and close like a Details category. Numbered steps carry a badge - their number, a tick when done, orange when something needs you - and a one-line summary in the header, readable while closed.\n\n### Changed\n- **Every Generate a person presses stops for review** - the definition window, the library and the prompt timeline. Unattended generation stays available to pipelines and agents through Run Full Pipeline.\n- Billing belongs to each provider. Uthana's plan and rates moved to its own settings page, carried over automatically. A pay-as-you-go rate left at zero, which meant seconds only, now starts at Uthana's published price, and every price says it is that until you set your own.\n- The model and sampler settings moved from the definition into the provider's settings. Older definitions migrate when loaded; *Migrate Motion Definitions* resaves them.\n- The frame rate comes from the provider; the Target Frame Rate setting is gone.\n- The library prices a selection per definition, on each one's own provider, and asks before generating or importing anything that bills.\n- The prompt timeline's Generate gives its real price and asks before spending; Pull asks before replacing edited beats; pose actions are disabled, with the reason, on providers that take no poses.\n\n### Fixed\n- A take whose recorded file path is stale - a duplicated definition, a moved project - is found by name in the staging folder, so it previews and imports without fetching again.\n- The download estimate priced fetching a pay-as-you-go take, which is free, at the generation rate.\n- Cancel leaves its definitions in review if any take finished, or failed with the reason, instead of generating forever. A job past its timeout is kept and polled less often rather than dropped.\n- Poses keyed only on the prompt timeline are sent, read once per generation rather than once per take.\n- Generating new takes no longer takes the clip already in the game out of the record.\n- Adding or moving a pose marks earlier takes as an older recipe.\n- Setting one sampler setting through an update - Update Motion Definition, or any spec carrying the old `Control` fields - no longer resets the others (seed, postprocess, beat splitting, pose type) to their defaults. Only the settings the caller set are written.\n- A clip's untracked bones - fingers, in-between spine bones - are posed from the hand-pose clip only when that clip is on the same skeleton. Copied onto another skeleton, a Narrative idle stretched a CC5 character's fingers into claws and bent its spine.\n\n### Compatibility\n- Removed settings: Default Model Id, Billing Model, Rate Per Billed Second, Currency, Default Mode and Target Frame Rate. Their values were carried to where they now live.\n- A definition resaved by this version keeps its model and sampler settings in the provider's settings; an older MotionForge opens it with its own defaults for those.\n- Update the MotionForge add-ons with it: MotionForgeUthana 0.2.0, MotionForgeKimodo 0.5.0,\n  MotionForgeQuality 0.1.2 and the toolsets. Their earlier builds were compiled against the previous\n  MotionForge and are not compatible with this one.\n\n### Known issues\n- Fetched takes are still kept per project in `Saved/MotionForge`; the shared take vault is not built yet."
@@ -1609,6 +1886,18 @@
       ],
       "source": null,
       "versions": [
+        {
+          "version": "0.5.1",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgekimodo-v0.5.1/MotionForgeKimodo-0.5.1-UE5.8-Win64.zip",
+          "size": 751750,
+          "sha256": "0797dc94a88b4c40722795631f54fd03b7f07fc265fcf1d7ae32701cb1da65a3",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgekimodo-v0.5.1/MotionForgeKimodo-0.5.1-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T21:59:22Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/motionforgekimodo-v0.5.1"
+        },
         {
           "version": "0.5.0",
           "engine": "5.8",
@@ -1708,6 +1997,11 @@
       ],
       "changelog": [
         {
+          "version": "0.5.1",
+          "date": "2026-10-04",
+          "body": "### Fixed\n- Renting a GPU without a Runpod key or a Hugging Face token now says where to add one: the Keys page,\n  or Editor Preferences ▸ Automation Forge ▸ MotionForge Kimodo ▸ Credentials. It named a Project\n  Settings page that does not exist, and so did the README, SETUP and REMOTE_SETUP, which now point at\n  Project Settings ▸ Automation Forge ▸ MotionForge Kimodo for the runner, the bone map and the defaults.\n\n### Changed\n- Copyright notices now name Bojan Andrejek / MetaWorx LLC."
+        },
+        {
           "version": "0.5.0",
           "date": "2026-09-22",
           "body": "### Added\n- Kimodo's own settings on every definition: model, seed, diffusion steps, postprocess, beat splitting, and - under Advanced - separated guidance (`cfg_text`, `cfg_constraint`) and where poses come from.\n- **Direct**, in the definition window: a plain guide to beats, poses at moments, guidance and seeds, and actions beside it - *Pin a pose from an animation* at the start, the end, both or a moment; *Show what will be sent*; *Clear authored poses*; *Measure the imported clip*.\n- Generate starts a stopped local runner - Docker first if it is closed - and waits for the text encoder, instead of refusing.\n- The Kimodo Runner panel gains **Another machine**: point the project at a studio workstation's runner, with its token kept in this computer's vault and the commands to start it there.\n- **Llama 3 access is measured**, not assumed: Hugging Face is asked whether the stored token can read the gated model, and the answer - granted, not granted yet, token refused - is shown with the link to request it.\n- Setup steps for Get started: where it runs, Docker, the token, Llama 3 access, the image, the runner, and renting a GPU instead.\n\n### Changed\n- Cost follows where it runs: free on this machine or another, per hour on a rented GPU, which bills while the pod is up whether or not anything generates.\n- The character's route and actions come from Kimodo: *Build Kimodo rig* for IK on the feet, *Import directly instead* to skip it.\n- Building a Kimodo rig marks the character as Kimodo's. Left universal, it could be offered to another provider, which would then have retargeted its own clips through Kimodo's rig.\n\n### Fixed\n- Poses keyed only on the prompt timeline reach the runner.\n- A rotation a little off orthonormal no longer fires an engine ensure while a clip is read.\n- The README and the plugin's own messages name the real console commands: `Kimodo.PreviewConstraints`, `Kimodo.Measure`, `Kimodo.Diagnose`.\n\n### Compatibility\n- Needs MotionForge 0.4.0 or later.\n\n### Known issues\n- The runner's compose file publishes port 8757 on every network interface, while its comments describe a loopback-only desktop runner. Set `KIMODO_API_TOKEN` on any machine the network can reach."
@@ -1759,6 +2053,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/MotionForgeKimodoToolset",
       "versions": [
+        {
+          "version": "0.3.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgekimodotoolset-v0.3.3/MotionForgeKimodoToolset-0.3.3-UE5.8-Win64.zip",
+          "size": 124299,
+          "sha256": "9b693dd3a3170a2c32b9c6935a9e498f9450cc5afa6f70a97ec7ed9db09bcad0",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgekimodotoolset-v0.3.3/MotionForgeKimodoToolset-0.3.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:40:24Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/motionforgekimodotoolset-v0.3.3"
+        },
         {
           "version": "0.3.2",
           "engine": "5.8",
@@ -1833,6 +2139,11 @@
         }
       ],
       "changelog": [
+        {
+          "version": "0.3.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
         {
           "version": "0.3.2",
           "date": "2026-09-22",
@@ -1941,6 +2252,18 @@
       "source": "https://github.com/AutomationForgeHQ/MotionForgeQualityToolset",
       "versions": [
         {
+          "version": "0.1.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgequalitytoolset-v0.1.3/MotionForgeQualityToolset-0.1.3-UE5.8-Win64.zip",
+          "size": 67397,
+          "sha256": "39b552355166579a9052f7342ad4d5783e2c455a58610f2ffcaf1b7c880e0de5",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgequalitytoolset-v0.1.3/MotionForgeQualityToolset-0.1.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:19:03Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/motionforgequalitytoolset-v0.1.3"
+        },
+        {
           "version": "0.1.2",
           "engine": "5.8",
           "platform": "Win64",
@@ -1979,6 +2302,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.1.2",
           "date": "2026-09-22",
           "body": "### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n\n### Compatibility\n- Rebuilt against MotionForgeQuality 0.1.2, which it needs."
@@ -2005,6 +2333,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/MotionForgeToolset",
       "versions": [
+        {
+          "version": "0.3.1",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgetoolset-v0.3.1/MotionForgeToolset-0.3.1-UE5.8-Win64.zip",
+          "size": 175228,
+          "sha256": "9fa3b13e1edde6b2210c3cb7f83fe30c92bd64a405257173e06a6bbd8dac4f66",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgetoolset-v0.3.1/MotionForgeToolset-0.3.1-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:30:14Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/motionforgetoolset-v0.3.1"
+        },
         {
           "version": "0.3.0",
           "engine": "5.8",
@@ -2056,6 +2396,11 @@
       ],
       "changelog": [
         {
+          "version": "0.3.1",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.3.0",
           "date": "2026-09-22",
           "body": "### Added\n- Create Motion Definition, a draft without generating; Preview Motion Request, exactly what Generate would send, what it would cost and what would stop it.\n- Set Motion Provider, List Pipeline Options and Set Motion Pipeline Option: each provider's own settings by their own names.\n- Find Characters For Provider, Get Provider Setup Steps, and Open MotionForge Window, which shows a person Get started or the library.\n- Choose And Import Take, Hide Take, Get Clip Users, Cancel Motion Definition, Get Motion Activity and Migrate Motion Definitions.\n\n### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n- Generate Motions stops at review and its description says what it costs per provider; Update Motion Definition reports the settings it refused and changes only the sampler settings you set, where setting one used to reset the others; Estimate Download Cost prices fetching only.\n- A pipeline option's range is text, empty where there is no bound, instead of zero.\n- The skill states each provider's facts for that provider - it had presented Uthana's billing as\n  everyone's - and covers review, provider settings, poses and first-time setup.\n\n### Compatibility\n- Needs MotionForge 0.4.0 or later."
@@ -2087,6 +2432,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/MotionForgeUthana",
       "versions": [
+        {
+          "version": "0.2.1",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgeuthana-v0.2.1/MotionForgeUthana-0.2.1-UE5.8-Win64.zip",
+          "size": 163688,
+          "sha256": "1f8e2d66ab9aa7ce55d6388c448e34239cf15710e8f4f6847f2b72df2ee90a2b",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/motionforgeuthana-v0.2.1/MotionForgeUthana-0.2.1-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:42:31Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/motionforgeuthana-v0.2.1"
+        },
         {
           "version": "0.2.0",
           "engine": "5.8",
@@ -2126,6 +2483,11 @@
       ],
       "changelog": [
         {
+          "version": "0.2.1",
+          "date": "2026-10-04",
+          "body": "### Fixed\n- Moving billing settings over from MotionForge's old page no longer puts the old currency on Uthana's\n  published price. A project whose old rate was zero, in a currency other than USD, was shown 0.10 of\n  that currency a second - nobody's price, and without the note that marks the published one. The\n  currency now moves only with a rate. A project already moved by 0.2.0 keeps what it was given, so\n  check the rate and currency on Project Settings ▸ Automation Forge ▸ MotionForge Uthana.\n\n### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.2.0",
           "date": "2026-09-22",
           "body": "### Added\n- A settings page for the plan - pay as you go or subscription - its rates and currency, carried over from MotionForge's old billing settings. Every price in the editor comes from it. A pay-as-you-go rate starts at Uthana's published price, $0.10 a generated second, and every price says it is that until you enter your own - including on a project whose old rate was zero, which meant seconds only.\n- Uthana's own settings on every definition: the model and prompt rewriting.\n- Setup steps for Get started - the key, the plan, a character on Uthana, the connection - and the character's actions: *Upload*, with its options, and *Import Uthana's rig*.\n- On pay as you go, takes play in the editor before choosing, because fetching one is free. On a subscription the viewer link, and an import that says what quota it will use and asks.\n\n### Compatibility\n- Needs MotionForge 0.4.0 or later."
@@ -2151,19 +2513,24 @@
       "source": null,
       "versions": [
         {
-          "version": "0.1.1",
+          "version": "0.1.2",
           "engine": "5.8",
           "platform": "Win64",
           "channel": "stable",
-          "sha256": "a52b51373ef51cd11c19e0bb6d260a77db3bb05c80a9471c49114c59c2979913",
-          "size": 700006,
-          "releasedAt": "2026-09-11T13:55:22Z",
+          "sha256": "71cf7e9437318e1f24af98f4665c3aafc1e1b76b73003f92a7ed39ff744a5342",
+          "size": 701932,
+          "releasedAt": "2026-10-04T21:57:24Z",
           "url": null,
           "symbols": null,
           "notes": null
         }
       ],
       "changelog": [
+        {
+          "version": "0.1.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The licence now names Bojan Andrejek / MetaWorx LLC as the licensor, and questions about it go to bojan@kovati.dev. The terms are otherwise unchanged."
+        },
         {
           "version": "0.1.1",
           "date": "2026-09-08",
@@ -2186,6 +2553,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/PerformanceForgeToolset",
       "versions": [
+        {
+          "version": "0.1.2",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/performanceforgetoolset-v0.1.2/PerformanceForgeToolset-0.1.2-UE5.8-Win64.zip",
+          "size": 71396,
+          "sha256": "a472cb7678a4a3d62af0abf95249721985c15b5fd159f0004717ff47fc8f1801",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/performanceforgetoolset-v0.1.2/PerformanceForgeToolset-0.1.2-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:55:00Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/performanceforgetoolset-v0.1.2"
+        },
         {
           "version": "0.1.1",
           "engine": "5.8",
@@ -2213,6 +2592,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.1.1",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them.\n- `GetToolsetVersion()` answers this plugin's real version; it had drifted from the descriptor."
@@ -2232,6 +2616,18 @@
       "dependencies": [],
       "source": "https://github.com/AutomationForgeHQ/SpeechForge",
       "versions": [
+        {
+          "version": "0.2.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/speechforge-v0.2.3/SpeechForge-0.2.3-UE5.8-Win64.zip",
+          "size": 1278935,
+          "sha256": "97cfce55fa26785d6856b35c23abef63d99daa5eaf6dfc79119340a50041be32",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/speechforge-v0.2.3/SpeechForge-0.2.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:35:25Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/speechforge-v0.2.3"
+        },
         {
           "version": "0.2.2",
           "engine": "5.8",
@@ -2295,6 +2691,11 @@
       ],
       "changelog": [
         {
+          "version": "0.2.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.2.2",
           "date": "2026-09-11",
           "body": "### Added\n- **Authoring Language Code** (default `en`). A bank carries no language of its own, and leaving a\n  dub's source language to detection — which guesses from a few seconds of audio — dubbed fluent\n  nonsense whenever it guessed wrong. Every dub now states its source language explicitly.\n- Two seams a localisation add-on can fill: a bank can describe where each line's audio came from,\n  and can produce a whole bank its own way. The Speech Library's Origin column and its Generate All\n  button defer to them, so a specialised bank behaves correctly in the panel with no change here.\n\n### Fixed\n- Speech bank queries now search subclasses. Without that, a specialised bank was invisible to the\n  localisation status and to the line-home index — present in the project, absent from the UI."
@@ -2332,19 +2733,24 @@
       "source": null,
       "versions": [
         {
-          "version": "0.1.2",
+          "version": "0.1.3",
           "engine": "5.8",
           "platform": "Win64",
           "channel": "stable",
-          "sha256": "1412a2cb186cab236d931646e54d4219b5b1a29d36564bf66056ff1ad9b20df4",
-          "size": 134154,
-          "releasedAt": "2026-09-11T15:34:15Z",
+          "sha256": "dcb55ff253024b9d70b52119efa435cbd4c137b375d6fc009a7b644e1fe4ac09",
+          "size": 134201,
+          "releasedAt": "2026-10-04T22:11:31Z",
           "url": null,
           "symbols": null,
           "notes": null
         }
       ],
       "changelog": [
+        {
+          "version": "0.1.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The licence now names Bojan Andrejek / MetaWorx LLC as the licensor, and questions about it go to bojan@kovati.dev. The terms are otherwise unchanged."
+        },
         {
           "version": "0.1.2",
           "date": "2026-09-11",
@@ -2373,6 +2779,18 @@
       "source": "https://github.com/AutomationForgeHQ/SpeechForgeElevenLabs",
       "versions": [
         {
+          "version": "0.1.2",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/speechforgeelevenlabs-v0.1.2/SpeechForgeElevenLabs-0.1.2-UE5.8-Win64.zip",
+          "size": 154760,
+          "sha256": "e372a4a37891051852971239ded49e4d8b1e3ef76bf7563a408aa5a6c71fdb67",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/speechforgeelevenlabs-v0.1.2/SpeechForgeElevenLabs-0.1.2-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:48:49Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/speechforgeelevenlabs-v0.1.2"
+        },
+        {
           "version": "0.1.1",
           "engine": "5.8",
           "platform": "Win64",
@@ -2399,6 +2817,11 @@
       ],
       "changelog": [
         {
+          "version": "0.1.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed.\n- Dubbing a dry voice line now drops background audio, states the line's source language, and reads back what the dub says from its transcript."
+        },
+        {
           "version": "0.1.1",
           "date": "2026-09-08",
           "body": "- Packaging fix: the release now carries everything the register allows. `BuildPlugin`'s filter excludes `Config/` and every `public_extra` path, so earlier zips shipped without them.\n- `Config/ForgeMachine.json` reaches an installed copy for the first time, so the hub's Keys and Runners pages are no longer empty for it."
@@ -2420,6 +2843,18 @@
       ],
       "source": "https://github.com/AutomationForgeHQ/SpeechForgeToolset",
       "versions": [
+        {
+          "version": "0.2.3",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/speechforgetoolset-v0.2.3/SpeechForgeToolset-0.2.3-UE5.8-Win64.zip",
+          "size": 184886,
+          "sha256": "8b11a37f0a0aebcd106e1569ad5078a150f695676b19953ef8059de167692cc1",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/speechforgetoolset-v0.2.3/SpeechForgeToolset-0.2.3-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:15:13Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/speechforgetoolset-v0.2.3"
+        },
         {
           "version": "0.2.2",
           "engine": "5.8",
@@ -2471,6 +2906,11 @@
       ],
       "changelog": [
         {
+          "version": "0.2.3",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
+        {
           "version": "0.2.2",
           "date": "2026-09-11",
           "body": "### Added\n- `ProduceSpeechBank` — produce a whole bank the bank's own way, the agent-side twin of the Speech\n  Library's Generate All. On a plain bank that generates what is missing or stale; on a localised\n  bank it generates the synthesis-sourced lines, dubs the performed ones, and points the face banks\n  serving it at the new audio.\n\n### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry."
@@ -2501,6 +2941,18 @@
       "source": "https://github.com/AutomationForgeHQ/SurfaceForge",
       "versions": [
         {
+          "version": "0.1.2",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/surfaceforge-v0.1.2/SurfaceForge-0.1.2-UE5.8-Win64.zip",
+          "size": 483982,
+          "sha256": "26d00c48ebc3f506e93137ed186bee108fe5a273a98273c006f87e9874166977",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/surfaceforge-v0.1.2/SurfaceForge-0.1.2-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:22:51Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/surfaceforge-v0.1.2"
+        },
+        {
           "version": "0.1.1",
           "engine": "5.8",
           "platform": "Win64",
@@ -2526,6 +2978,11 @@
         }
       ],
       "changelog": [
+        {
+          "version": "0.1.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
         {
           "version": "0.1.1",
           "date": "2026-09-08",
@@ -2645,6 +3102,18 @@
       "source": "https://github.com/AutomationForgeHQ/SurfaceForgeToolset",
       "versions": [
         {
+          "version": "0.1.2",
+          "engine": "5.8",
+          "platform": "Win64",
+          "channel": "stable",
+          "url": "https://github.com/AutomationForgeHQ/releases/releases/download/surfaceforgetoolset-v0.1.2/SurfaceForgeToolset-0.1.2-UE5.8-Win64.zip",
+          "size": 87286,
+          "sha256": "17bc9d8d9c0fd9e179b8230cb5676683b411aebc4e7273b19a6fb7f600c8379b",
+          "symbols": "https://github.com/AutomationForgeHQ/releases/releases/download/surfaceforgetoolset-v0.1.2/SurfaceForgeToolset-0.1.2-UE5.8-Win64-symbols.zip",
+          "releasedAt": "2026-10-04T22:50:43Z",
+          "notes": "https://github.com/AutomationForgeHQ/releases/releases/tag/surfaceforgetoolset-v0.1.2"
+        },
+        {
           "version": "0.1.1",
           "engine": "5.8",
           "platform": "Win64",
@@ -2670,6 +3139,11 @@
         }
       ],
       "changelog": [
+        {
+          "version": "0.1.2",
+          "date": "2026-10-04",
+          "body": "### Changed\n- The version this toolset reports to an agent is now read from the plugin's own\n  descriptor rather than repeated in C++, so it can no longer answer a number the\n  installed package does not carry.\n- Copyright and licence notices now name Bojan Andrejek / MetaWorx LLC. It is still Apache 2.0, and nothing about how you may use it changed."
+        },
         {
           "version": "0.1.1",
           "date": "2026-09-08",
