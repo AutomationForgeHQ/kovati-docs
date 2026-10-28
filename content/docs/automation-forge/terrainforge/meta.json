@@ -1,0 +1,13 @@
+{
+  "title": "TerrainForge",
+  "description": "Node-based and real-world terrain, built inside the editor",
+  "icon": "Mountain",
+  "pages": [
+    "getting-started",
+    "nodes",
+    "gis",
+    "levels",
+    "agents",
+    "troubleshooting"
+  ]
+}

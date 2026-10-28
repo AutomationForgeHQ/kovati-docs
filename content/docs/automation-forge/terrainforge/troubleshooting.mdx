@@ -1,0 +1,306 @@
+---
+title: Troubleshooting
+description: TerrainForge's failure messages, quoted from the plugin, and what each one means.
+status: shipped
+plugins: [TerrainForge, TerrainForgeToolset]
+icon: LifeBuoy
+---
+
+Every message below is quoted from the plugin. Placeholders such as `<node>`
+stand for the part the message fills in. Start with the **Build monitor** tab:
+it shows each node's state, device, memory and warnings, and the last failure
+in full.
+
+## Modules and engine
+
+<Accordions type="multiple">
+
+<Accordion title="“TerrainForge GIS is not loaded.”">
+
+The `TerrainForgeGIS` module of the plugin is disabled or failed to start. The
+definition is not broken. The Output Log says why the module did not start.
+
+On the map the same cause reads *"TerrainForge GIS is not loaded, so no
+datasets can be listed. Search, tiles and Quick 3D work without it."* Those
+three are the map's own and keep working.
+
+</Accordion>
+
+<Accordion title="“The TerrainForge native engine is not loaded.”">
+
+The `TerrainForgeNative` module did not start, so nothing can be previewed or
+built. Check the Output Log, then restart the editor with the plugin enabled.
+
+In the node library it reads *"The native node catalog is not loaded. Refresh
+nodes in the toolbar loads it again."*
+
+</Accordion>
+
+<Accordion title="“This terrain used the retired recipe pipeline and was converted to a graph.”">
+
+The definition was saved by an early version as a recipe without a node graph.
+It was converted the moment you opened or built it, in one undoable step.
+
+The converted graph runs on the native engine, with the native Stream erosion
+node in place of the old erosion passes. **The result can look different from
+the old one.** Undo restores the recipe, but opening or building the
+definition converts it again: only a graph can be built. **Convert to graph**
+in the toolbar does the same conversion on purpose.
+
+</Accordion>
+
+</Accordions>
+
+## Building
+
+<Accordions type="multiple">
+
+<Accordion title="“Not enough memory to evaluate <node> at <N>x<N>. Lower the resolution or close other applications.”">
+
+One node could not get the memory it needs at that grid. Each build has a
+working memory budget (by default 40 % of the computer's memory) and, with
+**Spill To Disk** on, writes waiting node results to disk before giving up.
+
+Build at 2017 before 4033, close other applications, or raise **Working Memory
+Budget** under **Editor Preferences → Plugins → TerrainForge Native Engine**.
+The World & biomes tab estimates a build's peak memory before you start.
+
+</Accordion>
+
+<Accordion title="“Terrain [<min>, <max>]m is outside recipe vertical range; widen it before Generate.”">
+
+The terrain rose above **Highest height** or fell below **Lowest height**.
+TerrainForge fails the build rather than clip the peaks, because a clipped
+heightmap looks almost right. Widen the range on the World & biomes tab and
+build again.
+
+</Accordion>
+
+<Accordion title="“Generation deadline exceeded. Increase Job Timeout in Editor Preferences > Plugins > TerrainForge, then build again.”">
+
+The build ran longer than **Job Timeout** (an hour by default) and was
+stopped. A large take on the CPU can need longer; set Compute to Auto if a GPU
+is available, or raise the timeout.
+
+</Accordion>
+
+<Accordion title="“The editor restarted during this build. Call Recover Generation to clean it up, then build again.”">
+
+A build runs inside the editor process. When the editor closes, the build
+stops: *"A build cannot be reconnected after an editor restart. Build again."*
+Finished takes are kept.
+
+</Accordion>
+
+<Accordion title="A GPU node ran on the CPU">
+
+Not an error. A GPU kernel that cannot run (no device, shaders still
+compiling, too little video memory, a submission that took too long) falls
+back to the CPU by itself, with the same result. The **Ran on** column of the
+build monitor shows the device each node used. **Compute** set to CPU Only, or
+the node's own `compute` set to `cpu`, keeps it on the CPU on purpose.
+
+</Accordion>
+
+<Accordion title="Flat terraces in the terrain">
+
+Usually an 8-bit source image, or a height range far wider than the terrain,
+leaving too few height steps. Import 16-bit or float sources and keep the
+range close to the data.
+
+</Accordion>
+
+</Accordions>
+
+## Importing a landscape
+
+<Accordions type="multiple">
+
+<Accordion title="“Not enough free memory to import a <N> take with <L> layers in the editor: …”">
+
+The memory guard estimated the import's peak and it does not fit:
+
+> Not enough free memory to import a `<N>` take with `<L>` layers in the editor:
+> it needs about `<size>` plus a `<size>` reserve, `<size>` is free. Close other
+> applications, or import it headless with the TerrainForgeImport commandlet
+> (it may use the page file).
+
+The headless import builds one streaming proxy at a time and needs far less.
+See [bigger takes](/docs/automation-forge/terrainforge/getting-started#bigger-takes).
+
+</Accordion>
+
+<Accordion title="“Interactive import is capped at 8129 samples …”">
+
+> Interactive import is capped at `<cap>` samples
+> (TerrainForge.Import.MaxInteractiveResolution); this take has `<N>` and needs
+> about `<size>`. Import it headless: UnrealEditor-Cmd.exe `<project>`
+> -run=TerrainForgeImport -TakeDir=`<take folder>` -Level=/Game/`<new map>`.
+
+A 16321 take imports headless only. The command is in
+[getting started](/docs/automation-forge/terrainforge/getting-started#bigger-takes).
+
+</Accordion>
+
+<Accordion title="The import is refused before it starts">
+
+Each refusal names what to fix:
+
+- *"The open map has unsaved changes. Save it deliberately or open a clean map
+  before Import New Level."*
+- *"Import New Level requires an unused /Game/ package path. Existing maps are
+  never replaced."*
+- *"Editor is unavailable or playing. Stop PIE before Import New Level."*
+- *"A current completed take is required. Call Generate Terrain through Maps
+  and inspect its preview before Import New Level."*
+- *"Paint weights do not sum to 255. Call Generate Terrain through Maps."*
+- *"Water editor actor factories are unavailable. Enable Water and restart
+  before Import New Level."*
+
+</Accordion>
+
+</Accordions>
+
+## Real-world data
+
+<Accordions type="multiple">
+
+<Accordion title="“The public OpenStreetMap server (overpass-api.de) is busy; …”">
+
+> The public OpenStreetMap server (overpass-api.de) is busy; try again in a few
+> minutes, or add another Overpass server in Editor Preferences > TerrainForge
+> GIS.
+
+The public Overpass server is shared by everyone and sheds load. TerrainForge
+already waited and retried before saying this. In Discover, the OpenStreetMap
+rows carry the sentence and the elevation and land cover rows are unaffected.
+
+With more than one server configured, a busy one is skipped and the import
+notes which server answered. When every server is busy:
+
+> OpenStreetMap (Overpass) is busy on every configured endpoint (…). Wait a
+> minute and import again.
+
+See [internet access](/docs/automation-forge/terrainforge/gis#internet-access).
+
+</Accordion>
+
+<Accordion title="“The computer is short of memory (more than 85 % of it is in use), so the GIS import stopped. …”">
+
+GIS work stops rather than page when the machine is short of memory, and
+never carries on with less data:
+
+- *"The computer is short of memory (more than 85 % of it is in use), so the
+  GIS import stopped. Close other applications or choose a smaller grid, then
+  import again."*
+- *"… so the GIS site check stopped. Close other applications, then check the
+  site again."*
+- *"… so the level build stopped. Close other applications or choose the 2017
+  grid, then build again."*
+
+A 4033 import or level build needs about 1.2 GB free. Discover is exempt: it
+holds only a few megabytes.
+
+</Accordion>
+
+<Accordion title="“GIS import cancelled before asset adoption.”">
+
+The import was cancelled, by **Cancel import** or `CancelGIS`, before its
+result was applied. The definition is unchanged. The other cancelled
+messages read the same way:
+
+- *"Level build cancelled before the project was written."*
+- *"Discover was cancelled."*
+- *"The GIS site check was cancelled."*
+
+</Accordion>
+
+<Accordion title="“The editor closed during the import. Start a new import.”">
+
+The editor closed while an import or level build was running. The job is
+marked failed when the definition loads again, so a new import can start.
+
+</Accordion>
+
+<Accordion title="“Another GIS import is active. Poll or cancel it first.”">
+
+One import or level build runs at a time across the editor. Wait for it, or
+cancel it, then start yours. Discover and the site check are not blocked.
+
+</Accordion>
+
+<Accordion title="Budgets: sources, masks and project size">
+
+| Message | Means |
+|---|---|
+| *"Choose at most 15 mask datasets; a graph holds 16 source files."* | Untick masks; the elevation takes the sixteenth slot |
+| *"Portable source budget exceeded (16 sources / 96 MiB)."* | The import's own sources are too many or too large. Lower the grid or the datasets |
+| *"Combined source budget exceeded. Remove unused sources or import into a new definition."* | Merging would push the definition past the budget |
+| *"Portable GIS project exceeds 144 MiB. Reduce resolution or datasets."* | The whole import is too large |
+| *"Level sources exceed the 96 MiB portable budget even with reduced mask grids."* | A level build could not fit even at a quarter of the mask grid |
+| *"The level project exceeds the 144 MiB portable project limit."* | The level project is too large |
+
+</Accordion>
+
+<Accordion title="“Definition changed during import. …”">
+
+> Definition changed during import. The downloaded project is retained; import
+> into a new definition to avoid overwriting edits. The imported project is
+> kept at `<path>`; import it into a new definition.
+
+Someone, or an agent, edited the definition while the import ran. Their edits
+win; the result is saved under `Saved/TerrainForge/gis-imports/` instead of
+being applied. **Open project** on a new definition can load it.
+
+</Accordion>
+
+<Accordion title="“To merge GIS sources, match the definition's physical extent first or choose Replace Graph. …”">
+
+> To merge GIS sources, match the definition's physical extent first or choose
+> Replace Graph. No automatic geographic alignment is inferred.
+
+With **Replace graph and world settings** off, the square must be the same
+size as the definition's world. TerrainForge does not guess where an earlier
+terrain sits on the Earth.
+
+</Accordion>
+
+<Accordion title="“A 1 m level is a 1 m grid: set the GIS grid to 2017 or 4033 samples, then retry.”">
+
+A level project is 2017 or 4033 samples at 1 m. Set the grid to one of them;
+the map's **1 m level size** box does it with the square.
+
+</Accordion>
+
+<Accordion title="“Unknown requirement profile '<id>'. Choose one of: …”">
+
+No profile file has that id. Ids are file names without `.json`. A file that
+failed to validate is not usable either; `ListGISProfiles` and the log line
+*"Skipped a GIS profile."* give its error. See
+[profiles](/docs/automation-forge/terrainforge/levels#profiles).
+
+</Accordion>
+
+<Accordion title="A source covers only part of the square, or leaves voids">
+
+- *"… cover only `<share>` of the square. Choose "elevation" (best available)
+  to fill the rest from other sources."* A forced source stops at its own
+  survey; the best-available dataset fills the rest from the next source.
+- *"`<n>` void pixels (`<share>`) were filled from the nearest measured
+  sample."* A note, not an error. A large share means the sources here are
+  thin; check the elevation coverage in Discover.
+
+</Accordion>
+
+<Accordion title="“The selected square crosses the supported Mercator latitude limit.”">
+
+The last-resort elevation tiles stop at about 80° north and south. Move the
+square towards the equator. Polar terrain is not supported.
+
+A square across the 180th meridian reads *"The square crosses the
+antimeridian; this product is tiled per hemisphere."* for the sources tiled
+that way.
+
+</Accordion>
+
+</Accordions>

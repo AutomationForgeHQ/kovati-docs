@@ -1,0 +1,293 @@
+---
+title: Level projects
+description: Check whether a real place can become a 1 m game level, see what would have to be generated, then build it into a definition with paint layers, masks and water.
+status: shipped
+plugins: [TerrainForge]
+icon: LandPlot
+---
+
+A **level project** turns a real square into a terrain on a **1 m grid**:
+2017 or 4033 samples, so a square of 2016 or 4032 m. It is built from the best
+real data for the place, and where the data is missing, from a **generated
+fill** the check names in advance.
+
+Two steps, both following a **requirement profile**:
+
+1. **Check location** says whether the place can become a level, and what
+   would be real and what generated.
+2. **Proceed (create level project)** builds it and replaces the definition's
+   graph, sources and world settings. Undo restores them.
+
+Both live on the **World & biomes** tab, under **Real location (1 m level)**:
+
+> Can this place become a level from real data? The check covers a 4032 m
+> square on a 1 m grid: elevation, still water, rivers, glaciers, forest,
+> ground cover, paths, climate lines and licences. Missing layers get a
+> generated fill.
+
+The square is shared with the GIS tab's map. **Pick on map** takes you there,
+and the map's **1 m level size** box gives the square the right shape.
+
+## Profiles
+
+A profile says what a level needs from real data, and how the build turns that
+data into a project. One JSON file is one profile; **the file name is its id**.
+
+- **`game_level` ships with TerrainForge**: *"Game level: 1 m landscape grid,
+  eight paint layers, drainage water"*. It paints **Snow, Rocks, Scree,
+  Meadow, Wetland, Soil, Forest and Water**.
+- **Your own profiles go in `<Project>/Config/TerrainForge/GISProfiles/`.**
+  They are project config, so they travel with the project in source control.
+- More folders can be added under **Additional profile folders** in **Editor
+  Preferences → Plugins → TerrainForge GIS**. Relative paths are relative to
+  the project.
+
+Folders are read in that order: the plugin's, the project's, then the extra
+ones. **A file with the same id replaces an earlier one**, so a project can
+override `game_level` without touching the plugin.
+
+A file that does not validate is skipped, the earlier profile of that id stays
+usable, and the log says *"Skipped a GIS profile."* with the reason. The
+**Level profile** box chooses which profile the check and the build follow;
+the agent tool `ListGISProfiles` lists every profile, and the files that
+failed, with their error.
+
+An id starts with a letter and has at most 48 letters, digits and
+underscores.
+
+## Check location
+
+The check reads the square at up to 1025 samples: the best available
+elevation, every ESA WorldCover class, and the OpenStreetMap datasets the
+profile names. It takes 10 to 40 seconds, and its answer is kept for 15
+minutes.
+
+It then judges four things.
+
+**Elevation.** How fine the real elevation is, against the profile's
+thresholds:
+
+| Status | `game_level` means |
+|---|---|
+| `native` | 1 m bare earth covers the square |
+| `acceptable` | 10 m or finer |
+| `partial` | 30 m or finer, surface models allowed. A **detail fill** adds texture below the source's resolution |
+| `missing` | nothing usable |
+
+The detail fill is noise followed by weathering. In the profile's own words,
+it *"adds texture at the scale the source cannot resolve; it does not recover
+real landforms."*
+
+**Climate.** A treeline and a snowline from the latitude, from a table in the
+profile. Where the square itself shows them (forest heights, snow that does
+not touch the edge), **the observed lines replace the model**.
+
+**Each requirement.** `game_level` has eleven: still water, rivers,
+glaciers, forest, grassland, bare rock, scree, wetland, paths, roads and
+buildings. Each gets a status, a source and a reason:
+
+| Status | When |
+|---|---|
+| `native` | OpenStreetMap maps the edges (and covers most of what land cover classifies) |
+| `partial` | OpenStreetMap maps only part, or only the 10 m land cover has it |
+| `missing` | The terrain calls for it — snow above the snowline, scree on talus slopes — but no source maps it. It gets the profile's **fill** |
+| `absent` | No source maps it and the terrain does not call for it |
+
+Still water is checked against the elevation: a mapped lake that is not level
+on the ground is not counted as one, and a water area tagged as a river is
+never a lake.
+
+**The verdict.**
+
+| Verdict | Means |
+|---|---|
+| **Ready** | Everything required is real |
+| **Ready with generated fills** | It can be built; the fills listed will be generated |
+| **Not recommended** | Too little land, no usable elevation, or only coarse elevation over steep, high-relief ground |
+
+The tab shows each requirement with its status, source, cover and generated
+fill, the treeline and snowline, the licences, and **Full report (Markdown)**.
+
+### The fills `game_level` uses
+
+| Fill | What is generated |
+|---|---|
+| Drainage | Rivers and lakes routed from the elevation |
+| Snowline | Snow above the snowline on slopes under 55° |
+| Treeline | Forest floor below the treeline on slopes under 38° |
+| Meadow | Meadow below the meadow line on slopes under 35° |
+| Rock slope | Rock on slopes over 40° |
+| Scree slope | Scree on 28–42° slopes above the treeline |
+| Moisture | Wetland where flat (under 6°), moist and within 25 m of water |
+| Detail | Noise and weathering below the elevation source's resolution |
+
+## What a level build produces
+
+**Proceed (create level project)** runs the check again (or reuses it), then:
+
+1. **Elevation** at full resolution, best available, voids filled.
+2. **OpenStreetMap** features for the profile's datasets. `game_level` leaves
+   rivers out: its rivers come from drainage.
+3. **ESA WorldCover** classes the check relied on.
+4. **Still water is carved.** Each mapped lake of at least 200 m² that is
+   level on the ground becomes a basin, deeper in the middle, between 1.5 and
+   10 m deep depending on its size.
+5. **Masks**, one per requirement, feathered with a noise edge so they do not
+   look traced.
+6. **Sources**: the elevation as `level_dem.tif` (32-bit float, with its
+   provenance inside) and each mask as `level_<key>.png`. Masks are reduced to
+   half or a quarter of the grid if that is what it takes to fit 96 MiB.
+7. **The graph**: the elevation (through the detail fill if it applies) to the
+   output; one mask node per mask; guide nodes that combine masks with height
+   and slope bands, exported as `G_Snow`, `G_Rocks`, `G_Meadow`, `G_Scree`,
+   `G_Forest`, `G_Wetland` and `G_Soil`; and `LakeMask`, plus `RiverExclude`
+   where there are glaciers.
+8. **Biome rules**, one per paint layer, each guided by its export. The
+   fallback for land nothing else claims is Scree.
+9. **World settings**: drainage water, rivers from 0.25 km², 3 m wide at 1
+   km², lakes from 300 m², and a height range with 2 m to spare.
+10. **Provenance** of every source, the verdict, the fills, the climate lines
+    and the licences, in the definition's GIS provenance.
+
+Then it says *"Level project imported: the graph, sources, biome rules and
+drainage water replaced this definition. Build a take to see it."* A level
+build replaces; it never merges.
+
+- A **Not recommended** verdict does not stop the build. It is recorded in the
+  provenance notes with its reasons.
+- **It never falls back to coarser data.** If memory runs short, it stops.
+- A 4033 level build takes about five seconds once the data is downloaded,
+  and about a minute in all with downloads. It needs about 1.2 GB of free
+  memory.
+
+## The profile file
+
+Everything above is data in the profile; the logic that reads it is fixed.
+This is the schema, from `game_level.json` and the validator.
+
+### Top level
+
+| Key | Type | Meaning |
+|---|---|---|
+| `schema` | `2` | Required. Profiles of another schema are refused |
+| `label` | text | Shown in the profile list |
+| `gridSpacingM` | number | Metres per sample. `1` for a level |
+| `elevation` | object | `targetM`, `acceptableM`, `minimumM`: the resolutions for `native`, `acceptable` and `partial`. `highReliefM`, `highSlopeDegrees`: what makes coarse elevation *not recommended* |
+| `minLandShare` | 0 to 1 | Below this share of land, the verdict is *not recommended* |
+| `requirements` | list | What the level needs; see below |
+| `expect` | object | When a requirement is *expected*; see below |
+| `fills` | object | The generated fills, by key. Must include `detail` |
+| `climate` | object | Treeline and snowline tables and the observed-line rules |
+| `build` | object | How the level build turns the data into a project |
+
+### `requirements[]`
+
+| Key | Meaning |
+|---|---|
+| `id`, `label` | Required |
+| `kind` | `still_water` for lakes checked against the elevation; otherwise omit |
+| `osm` | OpenStreetMap dataset ids: `water`, `lakes`, `rivers`, `forest`, `grassland`, `wetland`, `glacier`, `scree`, `bare_rock`, `shingle`, `cliffs`, `roads`, `paths`, `buildings` |
+| `worldcover` | WorldCover classes: `trees`, `shrubland`, `grassland`, `cropland`, `built`, `bare`, `snow`, `water`, `wetland`, `moss` |
+| `flatnessM` | Still water: how level a lake must be (default 2) |
+| `expect` | `always`, `never` (default), or a kind defined under `expect` |
+| `importance` | `required` or `optional` (default) |
+| `fill` | `none` (default) or a key of `fills` |
+
+### `expect`
+
+Each kind is a share of land that must meet a condition, `minShare`:
+
+| Kind | Condition | Bounds |
+|---|---|---|
+| `above_snowline` | at or above the snowline, slope under `maxSlopeDegrees` | `maxSlopeDegrees`, `minShare` |
+| `below_treeline` | below the treeline, slope under `maxSlopeDegrees` | `maxSlopeDegrees`, `minShare` |
+| `vegetated` | below the snowline | `minShare` |
+| `steep` | slope at least `minSlopeDegrees` | `minSlopeDegrees`, `minShare` |
+| `talus` | between the two slopes, above the treeline | `minSlopeDegrees`, `maxSlopeDegrees`, `minShare` |
+
+### `fills`
+
+Each fill has a `label` and any of `guide`, `recipe`, `rule` and `note`. Labels
+and values are templates: `{treelineM}`, `{snowlineM}` and `{meadowBelowM}`
+are filled in from the check, with `{name:.0f}` for rounding. The `detail` fill
+has `label`, `nodes` (a Noise, a Combine and a Weathering node), `note` and
+`optionalAboveM`, and its templates are `{resolutionM}`, `{noiseScale}`,
+`{noiseHeight}`, `{noiseBase}`, `{weatherScale}` and `{weatherMaxDepth}`.
+
+A fill key is a lower-case letter, then at most 31 lower-case letters, digits
+or underscores.
+
+### `climate`
+
+| Key | Meaning |
+|---|---|
+| `note` | Text kept with the result |
+| `treelineM`, `snowlineM` | `[latitude, metres]` pairs, latitudes increasing; interpolated by absolute latitude |
+| `meadowAboveTreelineM` | The meadow line, above the treeline |
+| `observed` | `minPixelsShare`, `minPixels`, `edgeRingPx`, `maxEdgeSnowShare`, `treelinePercentile`: when the square's own forest and snow replace the model |
+
+### `build`
+
+| Key | Meaning |
+|---|---|
+| `resolutions` | Which of 2017 and 4033 the profile allows |
+| `osmExclude` | OSM datasets the build does not fetch |
+| `lakes` | `minAreaM2`; `depth` with `k`, `offset`, `areaFactor`, `min`, `max`; `maskDilate` |
+| `masks` | In order. Each has a `key` and `label` and exactly one source: a `requirement` (with `featherM`, `ragged`, `seed`, optional `worldcoverMinSlopeDegrees`), a `worldcover` class list (with `featherM`, `ragged`, `seed`), an `osmUnion` dataset list (with `gaussianSigmaPx`), or `"lakes": true` |
+| `fbm` | `scalesM` and `falloff` of the noise on mask edges |
+| `guides` | Each has a `name`, an `export` and a `template`: `snow`, `rock`, `meadow`, `scree`, `forest` or `mask`, with the `mask`, `subtract`, `requirement`, slope and feather fields that template takes |
+| `extraExports` | `name`, `mask`, and `ifPresent` (write it only when the mask exists) |
+| `rules` | 2 to 16 biome rules; see below |
+| `biomes` | `packing` (`none`, `rgb`, `rgba`), `fallbackLand`, `fallbackWater`, `moistureBias`, `moistureScaleM`, `riparianDistanceM` |
+| `recipe` | `waterMode` (`drainage`, `authored`, `none`), `riverAreaM2`, `riverWidthM`, `minLakeAreaM2`, `heightMarginM` |
+| `assetNames` | `dem` and `maskPattern` (with `{key}`) |
+| `provenanceKey`, `provenanceNote` | Where in the GIS provenance the build is recorded, and a note kept with it |
+
+### `build.rules[]`
+
+A rule is one paint layer. Fields left out take these defaults:
+
+| Field | Default | Range |
+|---|---|---|
+| `name` | required | a letter, then at most 47 letters, digits or underscores; `ids`, `preview` and `pack_…` are reserved |
+| `semantic` | | `forest`, `meadow`, `grassland`, `rock`, `soil`, `wetland`, `snow`, `water`, `custom` |
+| `color` | | `#rrggbb` |
+| `domain` | `land` | `land`, `water`, `any` |
+| `heightReference` | `world` | `world`, `snowline` |
+| `minHeightM`, `maxHeightM` | -10000, 30000 | -30000 to 30000 |
+| `heightBlendM` | 100 | 0 to 10000 |
+| `minSlopeDegrees`, `maxSlopeDegrees` | 0, 90 | 0 to 90 |
+| `slopeBlendDegrees` | 5 | 0 to 45 |
+| `minMoisture`, `maxMoisture` | 0, 1 | 0 to 1 |
+| `moistureBlend` | 0.1 | 0 to 1 |
+| `minWaterDistanceM`, `maxWaterDistanceM` | 0, 150000 | 0 to 150000 |
+| `waterDistanceBlendM` | 15 | 0 to 10000 |
+| `strength` | 1 | 0 to 100 |
+| `density` | 1 | 0 to 1 |
+| `patchScaleM` | 150 | 1 to 100000 |
+| `patchiness` | 0 | 0 to 1 |
+| `guide` | | an export name |
+| `invertGuide` | false | |
+
+Each low bound must be below its high bound. `whenGuideMissing` overrides
+fields when the build writes no export for the rule's guide; inside it,
+`requirementMissing` (with a `requirement` id) overrides them again when that
+requirement's status is `missing`. Neither may change `name` or `guide`.
+
+### When a profile is refused
+
+Validation stops at the first problem, with one sentence that names the file
+and the key:
+
+> `<path>: build.rules[4].whenGuideMissing.strength must be from 0 to 100.`
+
+The others follow the same shape: *"… is required."*, *"… is not a profile
+field."*, *"… must be a number."*, *"… must be one of: …"*, *"… names no
+requirement '…'."*, *"… repeats '…'."*, and *"Invalid JSON at line L column
+C"*. An unknown id passed to the check or the build is refused with the list of
+ids that exist:
+
+> Unknown requirement profile 'my_level'. Choose one of: game_level.
+
+Start a new profile by copying `game_level.json` from the plugin's
+`Resources/GISProfiles/` into your project's folder under a new name.

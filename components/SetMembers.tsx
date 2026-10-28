@@ -1,4 +1,4 @@
-import { latest, membersOf, type ManifestPlugin } from '@/lib/manifest'
+import { latest, membersOf, set as setOf, type ManifestPlugin } from '@/lib/manifest'
 
 /**
  * The plugins in a Forge set, read from the register.
@@ -31,6 +31,16 @@ const DIST_LABEL = {
 export function SetMembers({ set }: { set: string }) {
   const members = membersOf(set)
   if (members.length === 0) {
+    // A set that is written up before its first release is not in the
+    // manifest yet. Say that, rather than imply the register is wrong.
+    if (!setOf(set)) {
+      return (
+        <p className="text-fd-muted-foreground">
+          Nothing in this set has been released yet. This table fills in from
+          the release manifest when it is.
+        </p>
+      )
+    }
     return (
       <p className="text-fd-muted-foreground">
         No plugins are registered under <code>{set}</code>.

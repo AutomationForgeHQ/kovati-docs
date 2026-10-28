@@ -1,0 +1,8730 @@
+{
+ "source": "TerrainForge/Source/TerrainForgeCore/Private/tfnodes",
+ "count": 94,
+ "nodes": [
+  {
+   "type": "HeightfieldFile",
+   "label": "Imported heightfield",
+   "category": "Generate",
+   "description": "Load a local grayscale PNG/TIFF or square little-endian R16. Explicit decoding preserves elevations. Sources are embedded in saved projects and exports.",
+   "inputs": {},
+   "params": {
+    "asset": {
+     "label": "Source image",
+     "type": "asset",
+     "default": ""
+    },
+    "encoding": {
+     "label": "Height decoding",
+     "default": "normalized",
+     "options": [
+      "normalized",
+      "unreal",
+      "metres",
+      "range"
+     ],
+     "type": "select"
+    },
+    "low": {
+     "label": "Encoded zero (m)",
+     "default": -500,
+     "min": -10000,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "high": {
+     "label": "Encoded one (m)",
+     "default": 3000,
+     "min": -10000,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "fit": {
+     "label": "Fit to world",
+     "default": "stretch",
+     "options": [
+      "stretch",
+      "crop"
+     ],
+     "type": "select"
+    },
+    "sampling": {
+     "label": "Resampling",
+     "default": "linear",
+     "options": [
+      "linear",
+      "nearest"
+     ],
+     "type": "select"
+    },
+    "flipX": {
+     "label": "Flip east / west",
+     "type": "boolean",
+     "default": false
+    },
+    "flipY": {
+     "label": "Flip north / south",
+     "type": "boolean",
+     "default": false
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "MaskFile",
+   "label": "Imported mask",
+   "category": "Select",
+   "description": "Read a grayscale selection image. Integer samples map to 0–1; float samples are clamped. Range mode stretches the source minimum/maximum. Row zero is north.",
+   "inputs": {},
+   "params": {
+    "asset": {
+     "label": "Source image",
+     "type": "asset",
+     "default": ""
+    },
+    "encoding": {
+     "label": "Mask decoding",
+     "default": "normalized",
+     "options": [
+      "normalized",
+      "range"
+     ],
+     "type": "select"
+    },
+    "fit": {
+     "label": "Fit to world",
+     "default": "stretch",
+     "options": [
+      "stretch",
+      "crop"
+     ],
+     "type": "select"
+    },
+    "sampling": {
+     "label": "Resampling",
+     "default": "linear",
+     "options": [
+      "linear",
+      "nearest"
+     ],
+     "type": "select"
+    },
+    "flipX": {
+     "label": "Flip east / west",
+     "type": "boolean",
+     "default": false
+    },
+    "flipY": {
+     "label": "Flip north / south",
+     "type": "boolean",
+     "default": false
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "Noise",
+   "label": "Fractal noise",
+   "category": "Generate",
+   "description": "FastNoise Lite noise in world metres. Seed offset adds to the world seed.",
+   "inputs": {},
+   "params": {
+    "algorithm": {
+     "label": "Noise basis",
+     "default": "simplex",
+     "options": [
+      "simplex",
+      "perlin",
+      "cellular"
+     ],
+     "type": "select"
+    },
+    "fractal": {
+     "label": "Fractal",
+     "default": "ridged",
+     "options": [
+      "fbm",
+      "ridged",
+      "billow"
+     ],
+     "type": "select"
+    },
+    "scale": {
+     "label": "Feature size (m)",
+     "default": 3600,
+     "min": 50,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "height": {
+     "label": "Relief (m)",
+     "default": 1500,
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 250,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "octaves": {
+     "label": "Octaves",
+     "default": 6,
+     "min": 1,
+     "max": 10,
+     "step": 1,
+     "type": "integer"
+    },
+    "gain": {
+     "label": "Persistence",
+     "default": 0.48,
+     "min": 0.05,
+     "max": 0.95,
+     "step": 0.01,
+     "type": "number"
+    },
+    "lacunarity": {
+     "label": "Lacunarity",
+     "default": 2,
+     "min": 1.1,
+     "max": 4,
+     "step": 0.1,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Layout",
+   "label": "Authored landforms",
+   "category": "Generate",
+   "description": "Existing ranges, peaks and basins from the recipe. Edit their coordinates in the project JSON.",
+   "inputs": {},
+   "params": {},
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Warp",
+   "label": "Domain warp",
+   "category": "Shape",
+   "description": "Bend terrain coordinates with two coherent noise fields; amplitude is measured in metres.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "amount": {
+     "label": "Displacement (m)",
+     "default": 550,
+     "min": 0,
+     "max": 10000,
+     "step": 25,
+     "type": "number"
+    },
+    "scale": {
+     "label": "Feature size (m)",
+     "default": 2200,
+     "min": 50,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 17,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Combine",
+   "label": "Combine terrain",
+   "category": "Layer",
+   "description": "Blend two heightfields with 24 mathematical modes. Nonlinear modes use the reference elevation as 1.0; mix/add/subtract/min/max preserve metres. Separation identifies the top layer's contribution.",
+   "inputs": {
+    "a": "terrain",
+    "b": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "mode": {
+     "label": "Operation",
+     "default": "mix",
+     "options": [
+      "mix",
+      "add",
+      "subtract",
+      "difference",
+      "multiply",
+      "divide",
+      "divide_offset",
+      "screen",
+      "max",
+      "min",
+      "hypotenuse",
+      "overlay",
+      "power",
+      "exclusion",
+      "dodge",
+      "burn",
+      "soft_light",
+      "hard_light",
+      "pin_light",
+      "grain_merge",
+      "grain_extract",
+      "reflect",
+      "glow",
+      "phoenix"
+     ],
+     "type": "select"
+    },
+    "amount": {
+     "label": "Blend",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "range": {
+     "label": "Reference elevation (m)",
+     "default": 2500,
+     "min": 1,
+     "max": 20000,
+     "step": 100,
+     "type": "number"
+    },
+    "output": {
+     "label": "Output range",
+     "default": "unbounded",
+     "options": [
+      "unbounded",
+      "clamp",
+      "normalize"
+     ],
+     "type": "select"
+    },
+    "separationTie": {
+     "label": "Separation where both layers agree",
+     "default": "zero",
+     "options": [
+      "zero",
+      "blend"
+     ],
+     "type": "select",
+     "createDefault": "blend"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "separation": "mask"
+   }
+  },
+  {
+   "type": "Smooth",
+   "label": "Smooth",
+   "category": "Shape",
+   "description": "Gaussian smoothing with a radius in world metres.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "radius": {
+     "label": "Radius (m)",
+     "default": 60,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "amount": {
+     "label": "Strength",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "compute": {
+     "label": "Compute",
+     "default": "auto",
+     "options": [
+      "auto",
+      "cpu",
+      "gpu"
+     ],
+     "type": "select",
+     "runtimeOnly": true
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Terrace",
+   "label": "Terrace",
+   "category": "Shape",
+   "description": "Create strata at fixed height intervals. Softness rounds each step.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "spacing": {
+     "label": "Step height (m)",
+     "default": 90,
+     "min": 1,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "softness": {
+     "label": "Softness",
+     "default": 0.18,
+     "min": 0.01,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "amount": {
+     "label": "Strength",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Remap",
+   "label": "Remap elevation",
+   "category": "Shape",
+   "description": "Fit the incoming height range to a new range, with an optional curve.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "low": {
+     "label": "Low elevation (m)",
+     "default": 200,
+     "min": -5000,
+     "max": 15000,
+     "step": 50,
+     "type": "number"
+    },
+    "high": {
+     "label": "High elevation (m)",
+     "default": 1900,
+     "min": -5000,
+     "max": 15000,
+     "step": 50,
+     "type": "number"
+    },
+    "curve": {
+     "label": "Curve",
+     "default": 1,
+     "min": 0.1,
+     "max": 5,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Erosion",
+   "label": "Stream erosion",
+   "category": "Simulate",
+   "description": "Stream-power incision and hillslope diffusion. Wear is removed height, normalized to a mask.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "years": {
+     "label": "Duration (years)",
+     "default": 25000,
+     "min": 0,
+     "max": 100000,
+     "step": 1000,
+     "type": "number"
+    },
+    "steps": {
+     "label": "Steps",
+     "default": 35,
+     "min": 1,
+     "max": 100,
+     "step": 1,
+     "type": "integer"
+    },
+    "erodibility": {
+     "label": "Erodibility",
+     "default": 0.0001,
+     "min": 0,
+     "max": 0.002,
+     "step": 0.00001,
+     "type": "number"
+    },
+    "diffusion": {
+     "label": "Diffusion (m²/year)",
+     "default": 0.08,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "wear": "mask"
+   }
+  },
+  {
+   "type": "Thermal",
+   "label": "Thermal erosion",
+   "category": "Simulate",
+   "description": "Move material down slopes above the talus angle. Closed edges conserve material; a mask blends the result.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "resistance": "mask?"
+   },
+   "params": {
+    "angle": {
+     "label": "Talus angle (°)",
+     "default": 32,
+     "min": 1,
+     "max": 85,
+     "step": 1,
+     "type": "number"
+    },
+    "steps": {
+     "label": "Iterations",
+     "default": 35,
+     "min": 1,
+     "max": 200,
+     "step": 1,
+     "type": "integer"
+    },
+    "rate": {
+     "label": "Transport rate",
+     "default": 0.3,
+     "min": 0.01,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    },
+    "solver": {
+     "label": "Solver",
+     "default": "iterations",
+     "options": [
+      "iterations",
+      "converge"
+     ],
+     "type": "select",
+     "createDefault": "converge"
+    },
+    "tolerance": {
+     "label": "Settle tolerance (°)",
+     "default": 0.5,
+     "min": 0.05,
+     "max": 5,
+     "step": 0.05,
+     "type": "number"
+    },
+    "relaxation": {
+     "label": "Settling amount",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "rockAngle": {
+     "label": "Resistant rock angle (°)",
+     "default": 70,
+     "min": 1,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "deposition": "mask",
+    "wear": "mask"
+   }
+  },
+  {
+   "type": "Hydraulic",
+   "label": "Hydraulic erosion",
+   "category": "Simulate",
+   "description": "Continuous droplet paths erode and transport sediment. Closed boundaries return all carried material; open boundaries report discharged load. Mask limits mobility; rainfall controls droplet origins. White resistance blocks erosion while still permitting deposition.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "rainfall": "mask?",
+    "resistance": "mask?"
+   },
+   "params": {
+    "particles": {
+     "label": "Droplets",
+     "default": 80000,
+     "min": 0,
+     "max": 2000000,
+     "step": 5000,
+     "type": "integer",
+     "createDefault": 0
+    },
+    "lifetime": {
+     "label": "Maximum travel (steps)",
+     "default": 100,
+     "min": 4,
+     "max": 300,
+     "step": 1,
+     "type": "integer"
+    },
+    "radius": {
+     "label": "Erosion radius (m)",
+     "default": 80,
+     "min": 1,
+     "max": 2000,
+     "step": 10,
+     "type": "number",
+     "createDefault": 2
+    },
+    "rain": {
+     "label": "Rain strength",
+     "default": 0.1,
+     "min": 0.001,
+     "max": 2,
+     "step": 0.01,
+     "type": "number"
+    },
+    "maxDepth": {
+     "label": "Bedrock depth (m)",
+     "default": 180,
+     "min": 0,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "inertia": {
+     "label": "Flow inertia",
+     "default": 0.18,
+     "min": 0,
+     "max": 0.9,
+     "step": 0.01,
+     "type": "number"
+    },
+    "capacity": {
+     "label": "Sediment capacity",
+     "default": 4,
+     "min": 0.1,
+     "max": 20,
+     "step": 0.1,
+     "type": "number"
+    },
+    "erosion": {
+     "label": "Erosion rate",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "deposition": {
+     "label": "Settling rate",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "evaporation": {
+     "label": "Evaporation per step",
+     "default": 0.025,
+     "min": 0.001,
+     "max": 0.5,
+     "step": 0.001,
+     "type": "number"
+    },
+    "boundary": {
+     "label": "Sediment boundary",
+     "default": "closed",
+     "options": [
+      "closed",
+      "open"
+     ],
+     "type": "select"
+    },
+    "seed": {
+     "label": "Rain seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "execution": {
+     "label": "Execution",
+     "default": "serial",
+     "options": [
+      "serial",
+      "parallel"
+     ],
+     "type": "select",
+     "createDefault": "parallel"
+    },
+    "density": {
+     "label": "Droplets per cell",
+     "default": 0,
+     "min": 0,
+     "max": 8,
+     "step": 0.05,
+     "type": "number",
+     "createDefault": 0.5
+    },
+    "momentum": {
+     "label": "Channel memory",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "createDefault": 0.4
+    },
+    "minSlope": {
+     "label": "Minimum slope (m/m)",
+     "default": 0.0001,
+     "min": 0,
+     "max": 0.5,
+     "step": 0.0001,
+     "type": "number"
+    },
+    "flowGuided": {
+     "label": "Start droplets off channels",
+     "default": false,
+     "type": "boolean"
+    },
+    "compute": {
+     "label": "Compute (parallel)",
+     "default": "auto",
+     "options": [
+      "auto",
+      "cpu",
+      "gpu"
+     ],
+     "type": "select",
+     "runtimeOnly": true
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "wear": "mask",
+    "deposition": "mask",
+    "flow": "mask"
+   }
+  },
+  {
+   "type": "HeightMask",
+   "label": "Height selector",
+   "category": "Select",
+   "description": "Select a band of elevation with feathered edges. White includes, black excludes.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "low": {
+     "label": "From (m)",
+     "default": 800,
+     "min": -5000,
+     "max": 15000,
+     "step": 50,
+     "type": "number"
+    },
+    "high": {
+     "label": "To (m)",
+     "default": 1900,
+     "min": -5000,
+     "max": 15000,
+     "step": 50,
+     "type": "number"
+    },
+    "feather": {
+     "label": "Feather (m)",
+     "default": 150,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "SlopeMask",
+   "label": "Slope selector",
+   "category": "Select",
+   "description": "Select a slope band in degrees, measured at this graph's sampling resolution.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "low": {
+     "label": "From (°)",
+     "default": 25,
+     "min": 0,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "high": {
+     "label": "To (°)",
+     "default": 90,
+     "min": 1,
+     "max": 90,
+     "step": 1,
+     "type": "number"
+    },
+    "feather": {
+     "label": "Feather (°)",
+     "default": 8,
+     "min": 0,
+     "max": 45,
+     "step": 1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "RadialMask",
+   "label": "Radial falloff",
+   "category": "Select",
+   "description": "A circular inclusion mask in world metres. Useful for islands and local operations.",
+   "inputs": {},
+   "params": {
+    "radius": {
+     "label": "Radius (m)",
+     "default": 2800,
+     "min": 10,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "feather": {
+     "label": "Feather (m)",
+     "default": 1200,
+     "min": 1,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -50000,
+     "max": 50000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -50000,
+     "max": 50000,
+     "step": 100,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "MaskCombine",
+   "label": "Combine masks",
+   "category": "Select",
+   "description": "Combine two selection masks, clamped to zero through one.",
+   "inputs": {
+    "a": "mask",
+    "b": "mask"
+   },
+   "params": {
+    "mode": {
+     "label": "Operation",
+     "default": "multiply",
+     "options": [
+      "multiply",
+      "max",
+      "min",
+      "add",
+      "subtract"
+     ],
+     "type": "select"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "Invert",
+   "label": "Invert mask",
+   "category": "Select",
+   "description": "Swap included and excluded areas.",
+   "inputs": {
+    "mask": "mask"
+   },
+   "params": {},
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "Output",
+   "label": "Terrain output",
+   "category": "Export",
+   "description": "The height field used for builds. Water routing and paint maps run after this node.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {},
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Constant",
+   "label": "Constant height",
+   "category": "Generate",
+   "description": "A flat elevation field in metres.",
+   "inputs": {},
+   "params": {
+    "height": {
+     "label": "Elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 15000,
+     "step": 50,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Gradient",
+   "label": "Linear gradient",
+   "category": "Generate",
+   "description": "A ramp with a world-space direction and elevation range.",
+   "inputs": {},
+   "params": {
+    "low": {
+     "label": "Low elevation (m)",
+     "default": 100,
+     "min": -5000,
+     "max": 15000,
+     "step": 50,
+     "type": "number"
+    },
+    "high": {
+     "label": "High elevation (m)",
+     "default": 1200,
+     "min": -5000,
+     "max": 15000,
+     "step": 50,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Direction (°)",
+     "default": 90,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Mountain",
+   "label": "Mountain",
+   "category": "Landforms",
+   "description": "Place a mountain with a compact footprint. Natural starts with broad divides, rounded crests and limited fine-scale relief. Alpine and Massif retain their exaggerated profiles. Follow with Geologic weathering for channels and deposition.",
+   "inputs": {},
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "height": {
+     "label": "Relief (m)",
+     "default": 1200,
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "radius": {
+     "label": "Radius (m)",
+     "default": 3000,
+     "min": 20,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Roughness",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "style": {
+     "label": "Profile",
+     "default": "natural",
+     "createDefault": "radial",
+     "options": [
+      "natural",
+      "alpine",
+      "rounded",
+      "stratified",
+      "massif",
+      "radial"
+     ],
+     "type": "select"
+    },
+    "bulk": {
+     "label": "Bulk",
+     "default": 1.1,
+     "min": 0.3,
+     "max": 3,
+     "step": 0.1,
+     "type": "number"
+    },
+    "aspect": {
+     "label": "Aspect ratio",
+     "default": 1,
+     "min": 0.2,
+     "max": 5,
+     "step": 0.1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "footprint": "mask"
+   }
+  },
+  {
+   "type": "MountainRange",
+   "label": "Mountain range",
+   "category": "Landforms",
+   "description": "A positioned, winding chain of peaks with controllable length, width and direction.",
+   "inputs": {
+    "upliftMask": "mask?",
+    "erodibility": "mask?",
+    "outlets": "mask?"
+   },
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "height": {
+     "label": "Relief (m)",
+     "default": 1100,
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "length": {
+     "label": "Length (m)",
+     "default": 6000,
+     "min": 100,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "width": {
+     "label": "Half width (m)",
+     "default": 2200,
+     "min": 20,
+     "max": 20000,
+     "step": 100,
+     "type": "number"
+    },
+    "peaks": {
+     "label": "Peak count",
+     "default": 5,
+     "min": 2,
+     "max": 30,
+     "step": 1,
+     "type": "integer"
+    },
+    "bend": {
+     "label": "Winding",
+     "default": 0.25,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Roughness",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "style": {
+     "label": "Style",
+     "default": "legacy",
+     "createDefault": "uplift",
+     "options": [
+      "legacy",
+      "ridgeTree",
+      "uplift"
+     ],
+     "type": "select"
+    },
+    "termination": {
+     "label": "Range ends",
+     "default": "fade",
+     "options": [
+      "fade",
+      "hook",
+      "split",
+      "plunge"
+     ],
+     "type": "select"
+    },
+    "endTaper": {
+     "label": "End taper (of length)",
+     "default": 0.2,
+     "min": 0.02,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    },
+    "endTurn": {
+     "label": "Hook angle (°)",
+     "default": 60,
+     "min": 0,
+     "max": 120,
+     "step": 5,
+     "type": "number"
+    },
+    "branches": {
+     "label": "Side ranges",
+     "default": 2,
+     "min": 0,
+     "max": 6,
+     "step": 1,
+     "type": "integer"
+    },
+    "crestVariation": {
+     "label": "Crest variation",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "crestWavelength": {
+     "label": "Crest wavelength (m)",
+     "default": 2500,
+     "min": 200,
+     "max": 50000,
+     "step": 100,
+     "type": "number"
+    },
+    "cols": {
+     "label": "Col depth",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "spurSpacing": {
+     "label": "Spur spacing (x half width)",
+     "default": 0.6,
+     "min": 0.2,
+     "max": 3,
+     "step": 0.05,
+     "type": "number"
+    },
+    "spurLength": {
+     "label": "Spur length (x half width)",
+     "default": 1,
+     "min": 0.2,
+     "max": 1.5,
+     "step": 0.05,
+     "type": "number"
+    },
+    "spurAngle": {
+     "label": "Spur angle (°)",
+     "default": 60,
+     "min": 20,
+     "max": 85,
+     "step": 5,
+     "type": "number"
+    },
+    "subSpurs": {
+     "label": "Sub-spurs",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "profileConcavity": {
+     "label": "Flank concavity",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "asymmetry": {
+     "label": "Flank asymmetry",
+     "default": 0.3,
+     "min": -0.8,
+     "max": 0.8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "crestSharpness": {
+     "label": "Crest sharpness",
+     "default": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "cirques": {
+     "label": "Cirques",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "cirqueAspect": {
+     "label": "Cirque aspect (° from north)",
+     "default": 0,
+     "min": 0,
+     "max": 360,
+     "step": 15,
+     "type": "number"
+    },
+    "warp": {
+     "label": "Domain warp (x half width)",
+     "default": 0.22,
+     "min": 0,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    },
+    "clipMode": {
+     "label": "Map edge",
+     "default": "fade",
+     "options": [
+      "fade",
+      "turn",
+      "allow"
+     ],
+     "type": "select"
+    },
+    "edgeMargin": {
+     "label": "Edge margin (m)",
+     "default": 500,
+     "min": 0,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "profile": {
+     "label": "Uplift profile exponent",
+     "default": 2,
+     "min": 1,
+     "max": 3,
+     "step": 0.1,
+     "type": "number"
+    },
+    "concavity": {
+     "label": "Valley concavity (m)",
+     "default": 0.45,
+     "min": 0.3,
+     "max": 0.7,
+     "step": 0.01,
+     "type": "number"
+    },
+    "channelHead": {
+     "label": "Channel head area (m²)",
+     "default": 20000,
+     "min": 1000,
+     "max": 1000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "routingRandomness": {
+     "label": "Routing exponent",
+     "default": 2,
+     "min": 0.3,
+     "max": 8,
+     "step": 0.1,
+     "type": "number"
+    },
+    "age": {
+     "label": "Age (0 = steady state)",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "rockVariation": {
+     "label": "Rock variation",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "rockScale": {
+     "label": "Rock scale (m)",
+     "default": 800,
+     "min": 50,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "ridgeRounding": {
+     "label": "Hillslope rounding steps",
+     "default": 12,
+     "min": 0,
+     "max": 32,
+     "step": 1,
+     "type": "integer"
+    },
+    "maxSlope": {
+     "label": "Max slope (°, 0 = off)",
+     "default": 40,
+     "min": 0,
+     "max": 70,
+     "step": 1,
+     "type": "number"
+    },
+    "foothills": {
+     "label": "Foothill uplift",
+     "default": 0.03,
+     "min": 0,
+     "max": 0.3,
+     "step": 0.01,
+     "type": "number"
+    },
+    "edgePolicy": {
+     "label": "Drainage at map edge",
+     "default": "continue",
+     "options": [
+      "continue",
+      "outlet",
+      "recipe"
+     ],
+     "type": "select"
+    },
+    "pad": {
+     "label": "Padding (of map size)",
+     "default": 0.125,
+     "min": 0,
+     "max": 0.5,
+     "step": 0.025,
+     "type": "number"
+    },
+    "ensemble": {
+     "label": "Ensemble draws",
+     "default": 2,
+     "min": 1,
+     "max": 4,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "footprint": "mask",
+    "crest": "mask",
+    "valleys": "mask",
+    "cirques": "mask",
+    "drainage": "mask",
+    "channels": "mask",
+    "ridges": "mask",
+    "uplift": "mask",
+    "age": "mask"
+   }
+  },
+  {
+   "type": "DrawRange",
+   "label": "Drawn range",
+   "category": "Landforms",
+   "description": "Draw a ridgeline in the layout view. Point coordinates are world metres; centre and rotation transform the path.",
+   "inputs": {
+    "upliftMask": "mask?",
+    "erodibility": "mask?",
+    "outlets": "mask?"
+   },
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "height": {
+     "label": "Relief (m)",
+     "default": 1200,
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "width": {
+     "label": "Half width (m)",
+     "default": 850,
+     "min": 10,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Roughness",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "points": {
+     "label": "Control points",
+     "default": [
+      [
+       -2500,
+       -2400
+      ],
+      [
+       -500,
+       -700
+      ],
+      [
+       1800,
+       1800
+      ]
+     ],
+     "type": "points",
+     "minPoints": 2,
+     "maxPoints": 64,
+     "closed": false
+    },
+    "style": {
+     "label": "Style",
+     "default": "legacy",
+     "createDefault": "uplift",
+     "options": [
+      "legacy",
+      "ridgeTree",
+      "uplift"
+     ],
+     "type": "select"
+    },
+    "termination": {
+     "label": "Range ends",
+     "default": "fade",
+     "options": [
+      "fade",
+      "hook",
+      "split",
+      "plunge"
+     ],
+     "type": "select"
+    },
+    "endTaper": {
+     "label": "End taper (of length)",
+     "default": 0.2,
+     "min": 0.02,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    },
+    "endTurn": {
+     "label": "Hook angle (°)",
+     "default": 60,
+     "min": 0,
+     "max": 120,
+     "step": 5,
+     "type": "number"
+    },
+    "branches": {
+     "label": "Side ranges",
+     "default": 2,
+     "min": 0,
+     "max": 6,
+     "step": 1,
+     "type": "integer"
+    },
+    "crestVariation": {
+     "label": "Crest variation",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "crestWavelength": {
+     "label": "Crest wavelength (m)",
+     "default": 2500,
+     "min": 200,
+     "max": 50000,
+     "step": 100,
+     "type": "number"
+    },
+    "cols": {
+     "label": "Col depth",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "spurSpacing": {
+     "label": "Spur spacing (x half width)",
+     "default": 0.6,
+     "min": 0.2,
+     "max": 3,
+     "step": 0.05,
+     "type": "number"
+    },
+    "spurLength": {
+     "label": "Spur length (x half width)",
+     "default": 1,
+     "min": 0.2,
+     "max": 1.5,
+     "step": 0.05,
+     "type": "number"
+    },
+    "spurAngle": {
+     "label": "Spur angle (°)",
+     "default": 60,
+     "min": 20,
+     "max": 85,
+     "step": 5,
+     "type": "number"
+    },
+    "subSpurs": {
+     "label": "Sub-spurs",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "profileConcavity": {
+     "label": "Flank concavity",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "asymmetry": {
+     "label": "Flank asymmetry",
+     "default": 0.3,
+     "min": -0.8,
+     "max": 0.8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "crestSharpness": {
+     "label": "Crest sharpness",
+     "default": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "cirques": {
+     "label": "Cirques",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "cirqueAspect": {
+     "label": "Cirque aspect (° from north)",
+     "default": 0,
+     "min": 0,
+     "max": 360,
+     "step": 15,
+     "type": "number"
+    },
+    "warp": {
+     "label": "Domain warp (x half width)",
+     "default": 0.22,
+     "min": 0,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    },
+    "clipMode": {
+     "label": "Map edge",
+     "default": "fade",
+     "options": [
+      "fade",
+      "turn",
+      "allow"
+     ],
+     "type": "select"
+    },
+    "edgeMargin": {
+     "label": "Edge margin (m)",
+     "default": 500,
+     "min": 0,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "profile": {
+     "label": "Uplift profile exponent",
+     "default": 2,
+     "min": 1,
+     "max": 3,
+     "step": 0.1,
+     "type": "number"
+    },
+    "concavity": {
+     "label": "Valley concavity (m)",
+     "default": 0.45,
+     "min": 0.3,
+     "max": 0.7,
+     "step": 0.01,
+     "type": "number"
+    },
+    "channelHead": {
+     "label": "Channel head area (m²)",
+     "default": 20000,
+     "min": 1000,
+     "max": 1000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "routingRandomness": {
+     "label": "Routing exponent",
+     "default": 2,
+     "min": 0.3,
+     "max": 8,
+     "step": 0.1,
+     "type": "number"
+    },
+    "age": {
+     "label": "Age (0 = steady state)",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "rockVariation": {
+     "label": "Rock variation",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "rockScale": {
+     "label": "Rock scale (m)",
+     "default": 800,
+     "min": 50,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "ridgeRounding": {
+     "label": "Hillslope rounding steps",
+     "default": 12,
+     "min": 0,
+     "max": 32,
+     "step": 1,
+     "type": "integer"
+    },
+    "maxSlope": {
+     "label": "Max slope (°, 0 = off)",
+     "default": 40,
+     "min": 0,
+     "max": 70,
+     "step": 1,
+     "type": "number"
+    },
+    "foothills": {
+     "label": "Foothill uplift",
+     "default": 0.03,
+     "min": 0,
+     "max": 0.3,
+     "step": 0.01,
+     "type": "number"
+    },
+    "edgePolicy": {
+     "label": "Drainage at map edge",
+     "default": "continue",
+     "options": [
+      "continue",
+      "outlet",
+      "recipe"
+     ],
+     "type": "select"
+    },
+    "pad": {
+     "label": "Padding (of map size)",
+     "default": 0.125,
+     "min": 0,
+     "max": 0.5,
+     "step": 0.025,
+     "type": "number"
+    },
+    "ensemble": {
+     "label": "Ensemble draws",
+     "default": 2,
+     "min": 1,
+     "max": 4,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "footprint": "mask",
+    "crest": "mask",
+    "valleys": "mask",
+    "cirques": "mask",
+    "drainage": "mask",
+    "channels": "mask",
+    "ridges": "mask",
+    "uplift": "mask",
+    "age": "mask"
+   }
+  },
+  {
+   "type": "Canyon",
+   "label": "Canyon",
+   "category": "Landforms",
+   "description": "An authored canyon path with a graded floor. Geologic walls add irregular alcoves, buttresses and sampling-aware strata. Layered preserves the original profile. Points run upstream to downstream.",
+   "inputs": {},
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Plateau elevation (m)",
+     "default": 1600,
+     "min": -5000,
+     "max": 15000,
+     "step": 50,
+     "type": "number"
+    },
+    "style": {
+     "label": "Wall style",
+     "default": "geologic",
+     "options": [
+      "layered",
+      "geologic"
+     ],
+     "type": "select"
+    },
+    "depth": {
+     "label": "Canyon depth (m)",
+     "default": 650,
+     "min": 1,
+     "max": 5000,
+     "step": 25,
+     "type": "number"
+    },
+    "width": {
+     "label": "Valley half width (m)",
+     "default": 1500,
+     "min": 10,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "slot": {
+     "label": "Floor half width (m)",
+     "default": 160,
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "drop": {
+     "label": "Floor drop (m)",
+     "default": 180,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    },
+    "strata": {
+     "label": "Strata height (m)",
+     "default": 65,
+     "min": 0,
+     "max": 500,
+     "step": 5,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Roughness",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "formation": {
+     "label": "Geologic formation scale (m)",
+     "default": 700,
+     "min": 20,
+     "max": 10000,
+     "step": 25,
+     "type": "number"
+    },
+    "strataVariation": {
+     "label": "Geologic layer irregularity",
+     "default": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "points": {
+     "label": "Control points",
+     "default": [
+      [
+       -600,
+       -3500
+      ],
+      [
+       700,
+       -1200
+      ],
+      [
+       -650,
+       1000
+      ],
+      [
+       450,
+       3500
+      ]
+     ],
+     "type": "points",
+     "minPoints": 2,
+     "maxPoints": 64,
+     "closed": false
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "footprint": "mask"
+   }
+  },
+  {
+   "type": "Volcano",
+   "label": "Volcano",
+   "category": "Landforms",
+   "description": "A placed volcanic cone with a caldera, radial ridges and an irregular rim.",
+   "inputs": {},
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "height": {
+     "label": "Relief (m)",
+     "default": 1200,
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "radius": {
+     "label": "Radius (m)",
+     "default": 1800,
+     "min": 20,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Roughness",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "caldera": {
+     "label": "Caldera radius / cone",
+     "default": 0.2,
+     "min": 0.03,
+     "max": 0.7,
+     "step": 0.01,
+     "type": "number"
+    },
+    "depth": {
+     "label": "Caldera depth (m)",
+     "default": 300,
+     "min": 0,
+     "max": 5000,
+     "step": 25,
+     "type": "number"
+    },
+    "rim": {
+     "label": "Rim relief (m)",
+     "default": 110,
+     "min": 0,
+     "max": 2000,
+     "step": 10,
+     "type": "number"
+    },
+    "style": {
+     "label": "Style",
+     "default": "legacy",
+     "options": [
+      "legacy",
+      "cinder",
+      "strato",
+      "shield"
+     ],
+     "type": "select"
+    },
+    "age": {
+     "label": "Age (kyr, 0 = fresh)",
+     "default": 0,
+     "min": 0,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "erodibility": {
+     "label": "Erodibility K",
+     "default": 0.000002,
+     "min": 1e-8,
+     "max": 0.0001,
+     "step": 1e-7,
+     "type": "number"
+    },
+    "diffusion": {
+     "label": "Hillslope diffusion (m²/yr)",
+     "default": 0.005,
+     "min": 0,
+     "max": 1,
+     "step": 0.001,
+     "type": "number"
+    },
+    "ringFault": {
+     "label": "Ring fault step (m)",
+     "default": 0,
+     "min": 0,
+     "max": 2000,
+     "step": 10,
+     "type": "number"
+    },
+    "erosionSpacing": {
+     "label": "Erosion spacing (m, 0 = auto)",
+     "default": 0,
+     "min": 0,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "footprint": "mask"
+   }
+  },
+  {
+   "type": "Crater",
+   "label": "Impact crater",
+   "category": "Landforms",
+   "description": "An impact bowl with a raised rim, rough ejecta apron and optional central rebound.",
+   "inputs": {},
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "radius": {
+     "label": "Radius (m)",
+     "default": 1800,
+     "min": 20,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Roughness",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "depth": {
+     "label": "Bowl depth (m)",
+     "default": 260,
+     "min": 0,
+     "max": 5000,
+     "step": 25,
+     "type": "number"
+    },
+    "rim": {
+     "label": "Rim relief (m)",
+     "default": 180,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    },
+    "rebound": {
+     "label": "Central rebound",
+     "default": 0.2,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "footprint": "mask"
+   }
+  },
+  {
+   "type": "Island",
+   "label": "Island",
+   "category": "Landforms",
+   "description": "Draw a closed landmass outline. Coast breakup and inland ridges stay inside its feathered footprint.",
+   "inputs": {},
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "height": {
+     "label": "Relief (m)",
+     "default": 1200,
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "coast": {
+     "label": "Coast transition (m)",
+     "default": 700,
+     "min": 10,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Roughness",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "points": {
+     "label": "Control points",
+     "default": [
+      [
+       -2600,
+       -1600
+      ],
+      [
+       -1000,
+       -2800
+      ],
+      [
+       1500,
+       -2200
+      ],
+      [
+       2800,
+       200
+      ],
+      [
+       1000,
+       2600
+      ],
+      [
+       -2300,
+       1700
+      ]
+     ],
+     "type": "points",
+     "minPoints": 3,
+     "maxPoints": 64,
+     "closed": true
+    },
+    "islandScale": {
+     "label": "Ridges follow island size",
+     "default": false,
+     "createDefault": true,
+     "type": "boolean"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "footprint": "mask"
+   }
+  },
+  {
+   "type": "Dunes",
+   "label": "Dune field",
+   "category": "Landforms",
+   "description": "Wind-oriented asymmetrical dunes, with curved crests, spacing and relief controls.",
+   "inputs": {},
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "height": {
+     "label": "Relief (m)",
+     "default": 100,
+     "min": 0,
+     "max": 10000,
+     "step": 10,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "spacing": {
+     "label": "Crest spacing (m)",
+     "default": 480,
+     "min": 20,
+     "max": 10000,
+     "step": 20,
+     "type": "number"
+    },
+    "chaos": {
+     "label": "Crest variation",
+     "default": 0.4,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "sharpness": {
+     "label": "Slip-face bias",
+     "default": 0.7,
+     "min": 0.1,
+     "max": 0.95,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Plateau",
+   "label": "Plateau",
+   "category": "Landforms",
+   "description": "A positioned mesa with a broad top, broken escarpment and adjustable wall slope.",
+   "inputs": {
+    "strata": "mask?",
+    "outlets": "mask?"
+   },
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "base": {
+     "label": "Base elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "height": {
+     "label": "Relief (m)",
+     "default": 1200,
+     "min": 0,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "radius": {
+     "label": "Radius (m)",
+     "default": 1800,
+     "min": 20,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Roughness",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "top": {
+     "label": "Top width / radius",
+     "default": 0.65,
+     "min": 0.1,
+     "max": 0.95,
+     "step": 0.05,
+     "type": "number"
+    },
+    "aspect": {
+     "label": "Aspect ratio",
+     "default": 1.4,
+     "min": 0.2,
+     "max": 5,
+     "step": 0.1,
+     "type": "number"
+    },
+    "style": {
+     "label": "Style",
+     "default": "legacy",
+     "options": [
+      "legacy",
+      "canyonlands"
+     ],
+     "type": "select"
+    },
+    "age": {
+     "label": "Dissection (age, 0-1)",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "concavity": {
+     "label": "Concavity m/n",
+     "default": 0.45,
+     "min": 0.2,
+     "max": 0.8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "channelHead": {
+     "label": "Channel head area (m²)",
+     "default": 20000,
+     "min": 100,
+     "max": 10000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "wallSlope": {
+     "label": "Steepest wall (°)",
+     "default": 80,
+     "min": 20,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "floorWidth": {
+     "label": "Canyon floor half width (m)",
+     "default": 40,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "iterations": {
+     "label": "Drainage iterations",
+     "default": 3,
+     "min": 1,
+     "max": 12,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "footprint": "mask",
+    "canyons": "mask"
+   }
+  },
+  {
+   "type": "Transform",
+   "label": "Transform",
+   "category": "Shape",
+   "description": "Translate, rotate and stretch a heightfield in world units. Outside pixels use the fill elevation.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "scaleX": {
+     "label": "Scale X",
+     "default": 1,
+     "min": 0.05,
+     "max": 10,
+     "step": 0.05,
+     "type": "number"
+    },
+    "scaleY": {
+     "label": "Scale Y",
+     "default": 1,
+     "min": 0.05,
+     "max": 10,
+     "step": 0.05,
+     "type": "number"
+    },
+    "heightScale": {
+     "label": "Height scale",
+     "default": 1,
+     "min": 0,
+     "max": 10,
+     "step": 0.05,
+     "type": "number"
+    },
+    "offsetZ": {
+     "label": "Vertical offset (m)",
+     "default": 0,
+     "min": -10000,
+     "max": 10000,
+     "step": 25,
+     "type": "number"
+    },
+    "fill": {
+     "label": "Outside elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 15000,
+     "step": 25,
+     "type": "number"
+    },
+    "edges": {
+     "label": "Outside sampling",
+     "default": "fill",
+     "options": [
+      "fill",
+      "reflect",
+      "repeat"
+     ],
+     "type": "select"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "CarvePath",
+   "label": "River path",
+   "category": "Water",
+   "description": "Graded preserves the original spline trench. Alluvial adds bounded bend migration, terrain confinement, pool cross sections and sediment-limited inner bars. It is a kinematic model, not 2D hydraulics. Guides pin the bankfull course; tributary joins and lake shores also pin the wet course. End at a world edge, lake or another river within Junction snap. Cutoffs and braiding are not simulated. In Alluvial, waterWidth(s) controls the channel; width and slot apply only to Graded.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "channelModel": {
+     "label": "Channel model",
+     "default": "graded",
+     "options": [
+      "graded",
+      "alluvial"
+     ],
+     "type": "select"
+    },
+    "migration": {
+     "label": "Migration travel budget (m)",
+     "default": 120,
+     "min": 0,
+     "max": 2000,
+     "step": 10,
+     "type": "number"
+    },
+    "migrationSteps": {
+     "label": "Migration steps",
+     "default": 40,
+     "min": 1,
+     "max": 160,
+     "step": 1,
+     "type": "integer"
+    },
+    "bendMemory": {
+     "label": "Upstream influence (channel widths)",
+     "default": 3,
+     "min": 0.5,
+     "max": 12,
+     "step": 0.5,
+     "type": "number"
+    },
+    "confinement": {
+     "label": "Confining bank relief (m)",
+     "default": 8,
+     "min": 0.1,
+     "max": 200,
+     "step": 1,
+     "type": "number"
+    },
+    "flowGrowth": {
+     "label": "Downstream discharge ratio",
+     "default": 1,
+     "min": 1,
+     "max": 16,
+     "step": 0.25,
+     "type": "number"
+    },
+    "bars": {
+     "label": "Inner point bar strength",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "barRetention": {
+     "label": "Maximum eroded sediment retained",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "mapRange": {
+     "label": "Erosion/deposition mask white (m)",
+     "default": 10,
+     "min": 0.1,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "joinDistance": {
+     "label": "Junction snap (m)",
+     "default": 1,
+     "min": 0.001,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "points": {
+     "label": "Control points",
+     "default": [
+      [
+       -600,
+       -3500
+      ],
+      [
+       700,
+       -1200
+      ],
+      [
+       -650,
+       1000
+      ],
+      [
+       450,
+       3500
+      ]
+     ],
+     "type": "points",
+     "minPoints": 2,
+     "maxPoints": 64,
+     "closed": false
+    },
+    "depth": {
+     "label": "Initial bed depth (m)",
+     "default": 25,
+     "min": 0.1,
+     "max": 3000,
+     "step": 5,
+     "type": "number"
+    },
+    "width": {
+     "label": "Bank half width (m)",
+     "default": 180,
+     "min": 1,
+     "max": 10000,
+     "step": 10,
+     "type": "number"
+    },
+    "slot": {
+     "label": "Bed half width (m)",
+     "default": 25,
+     "min": 0.5,
+     "max": 5000,
+     "step": 5,
+     "type": "number"
+    },
+    "grade": {
+     "label": "Minimum bed slope",
+     "default": 0.002,
+     "min": 0.00001,
+     "max": 0.2,
+     "step": 0.001,
+     "type": "number"
+    },
+    "water": {
+     "label": "Export water surface",
+     "type": "boolean",
+     "default": false
+    },
+    "waterWidth": {
+     "label": "Water full width (m)",
+     "default": 40,
+     "min": 0.5,
+     "max": 1000,
+     "step": 5,
+     "type": "number"
+    },
+    "waterWidths": {
+     "label": "Water widths at path points (m)",
+     "type": "pointWidths",
+     "default": [],
+     "min": 0.5,
+     "max": 1000,
+     "maxCount": 64,
+     "points": "points",
+     "description": "Empty uses uniform waterWidth. Otherwise provide one full width per control point; linear profile follows normalized control-point chord distance and survives clipping and reach splitting."
+    },
+    "waterDepth": {
+     "label": "Water depth (m)",
+     "default": 2,
+     "min": 0.4,
+     "max": 100,
+     "step": 1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "channel": "mask",
+    "banks": "mask",
+    "erosion": "mask",
+    "deposition": "mask"
+   }
+  },
+  {
+   "type": "Rivers",
+   "label": "River network",
+   "category": "Water",
+   "description": "Route drainage through the terrain and carve connected channels. Headwaters confines source regions while retaining their downstream flow.",
+   "inputs": {
+    "terrain": "terrain",
+    "headwaters": "mask?"
+   },
+   "params": {
+    "area": {
+     "label": "Catchment threshold (m²)",
+     "default": 400000,
+     "min": 100,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "width": {
+     "label": "Channel half width (m)",
+     "default": 45,
+     "min": 1,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "depth": {
+     "label": "Channel depth (m)",
+     "default": 8,
+     "min": 0.1,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "valley": {
+     "label": "Valley widening",
+     "default": 2,
+     "min": 1,
+     "max": 12,
+     "step": 0.5,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "channels": "mask",
+    "flow": "mask"
+   }
+  },
+  {
+   "type": "Lake",
+   "label": "Positioned lake",
+   "category": "Water",
+   "description": "Choose a source inside a contained basin and an absolute water level. Exports coverage, depth and exterior shore masks. Authored water mode preserves enabled lake surfaces from this node's terrain; downstream transforms do not move them.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "x": {
+     "label": "Source X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Source Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "level": {
+     "label": "Water level (m)",
+     "default": 800,
+     "min": -5000,
+     "max": 15000,
+     "step": 5,
+     "type": "number"
+    },
+    "shore": {
+     "label": "Shore width (m)",
+     "default": 100,
+     "min": 0,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "depthRange": {
+     "label": "Depth mask white (m)",
+     "default": 100,
+     "min": 0.1,
+     "max": 5000,
+     "step": 5,
+     "type": "number"
+    },
+    "minDepth": {
+     "label": "Minimum bed depth (m)",
+     "default": 0.5,
+     "min": 0.4,
+     "max": 100,
+     "step": 1,
+     "type": "number"
+    },
+    "water": {
+     "label": "Export water surface",
+     "type": "boolean",
+     "default": true
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "water": "mask",
+    "depth": "mask",
+    "shore": "mask"
+   }
+  },
+  {
+   "type": "Lakes",
+   "label": "Lakes",
+   "category": "Water",
+   "description": "Find enclosed depressions using priority-flood routing. Exposes lake coverage, depth and shore selections without inventing uphill water.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "minArea": {
+     "label": "Minimum area (m²)",
+     "default": 20000,
+     "min": 1,
+     "max": 1000000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "minDepth": {
+     "label": "Minimum depth (m)",
+     "default": 1,
+     "min": 0.01,
+     "max": 1000,
+     "step": 0.1,
+     "type": "number"
+    },
+    "shore": {
+     "label": "Shore width (m)",
+     "default": 60,
+     "min": 1,
+     "max": 2000,
+     "step": 10,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "water": "mask",
+    "depth": "mask",
+    "shore": "mask"
+   }
+  },
+  {
+   "type": "ShapeMask",
+   "label": "Shape mask",
+   "category": "Select",
+   "description": "Place a circle, ellipse or box mask with feathered edges. White includes the selected area.",
+   "inputs": {},
+   "params": {
+    "x": {
+     "label": "Centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Rotation (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "shape": {
+     "label": "Shape",
+     "default": "ellipse",
+     "options": [
+      "ellipse",
+      "box"
+     ],
+     "type": "select"
+    },
+    "width": {
+     "label": "Width (m)",
+     "default": 2600,
+     "min": 10,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "length": {
+     "label": "Length (m)",
+     "default": 2600,
+     "min": 10,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "feather": {
+     "label": "Feather (m)",
+     "default": 350,
+     "min": 0,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "Layers",
+   "label": "Layer stack",
+   "category": "Layer",
+   "description": "Seven ordered terrain layers, each with a blend mode, opacity and optional mask. Reorder layers in the inspector; unconnected layers are skipped.",
+   "inputs": {
+    "terrain": "terrain",
+    "layer1": "terrain?",
+    "mask1": "mask?",
+    "layer2": "terrain?",
+    "mask2": "mask?",
+    "layer3": "terrain?",
+    "mask3": "mask?",
+    "layer4": "terrain?",
+    "mask4": "mask?",
+    "layer5": "terrain?",
+    "mask5": "mask?",
+    "layer6": "terrain?",
+    "mask6": "mask?",
+    "layer7": "terrain?",
+    "mask7": "mask?"
+   },
+   "params": {
+    "range": {
+     "label": "Reference elevation (m)",
+     "default": 2500,
+     "min": 1,
+     "max": 20000,
+     "step": 100,
+     "type": "number"
+    },
+    "order": {
+     "label": "Layer order",
+     "default": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "type": "order"
+    },
+    "mode1": {
+     "label": "Blend mode",
+     "default": "max",
+     "options": [
+      "mix",
+      "add",
+      "subtract",
+      "difference",
+      "multiply",
+      "divide",
+      "divide_offset",
+      "screen",
+      "max",
+      "min",
+      "hypotenuse",
+      "overlay",
+      "power",
+      "exclusion",
+      "dodge",
+      "burn",
+      "soft_light",
+      "hard_light",
+      "pin_light",
+      "grain_merge",
+      "grain_extract",
+      "reflect",
+      "glow",
+      "phoenix"
+     ],
+     "type": "select",
+     "group": "Layer 1"
+    },
+    "opacity1": {
+     "label": "Opacity",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Layer 1"
+    },
+    "enabled1": {
+     "label": "Enabled",
+     "default": true,
+     "type": "boolean",
+     "group": "Layer 1"
+    },
+    "mode2": {
+     "label": "Blend mode",
+     "default": "max",
+     "options": [
+      "mix",
+      "add",
+      "subtract",
+      "difference",
+      "multiply",
+      "divide",
+      "divide_offset",
+      "screen",
+      "max",
+      "min",
+      "hypotenuse",
+      "overlay",
+      "power",
+      "exclusion",
+      "dodge",
+      "burn",
+      "soft_light",
+      "hard_light",
+      "pin_light",
+      "grain_merge",
+      "grain_extract",
+      "reflect",
+      "glow",
+      "phoenix"
+     ],
+     "type": "select",
+     "group": "Layer 2"
+    },
+    "opacity2": {
+     "label": "Opacity",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Layer 2"
+    },
+    "enabled2": {
+     "label": "Enabled",
+     "default": true,
+     "type": "boolean",
+     "group": "Layer 2"
+    },
+    "mode3": {
+     "label": "Blend mode",
+     "default": "max",
+     "options": [
+      "mix",
+      "add",
+      "subtract",
+      "difference",
+      "multiply",
+      "divide",
+      "divide_offset",
+      "screen",
+      "max",
+      "min",
+      "hypotenuse",
+      "overlay",
+      "power",
+      "exclusion",
+      "dodge",
+      "burn",
+      "soft_light",
+      "hard_light",
+      "pin_light",
+      "grain_merge",
+      "grain_extract",
+      "reflect",
+      "glow",
+      "phoenix"
+     ],
+     "type": "select",
+     "group": "Layer 3"
+    },
+    "opacity3": {
+     "label": "Opacity",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Layer 3"
+    },
+    "enabled3": {
+     "label": "Enabled",
+     "default": true,
+     "type": "boolean",
+     "group": "Layer 3"
+    },
+    "mode4": {
+     "label": "Blend mode",
+     "default": "max",
+     "options": [
+      "mix",
+      "add",
+      "subtract",
+      "difference",
+      "multiply",
+      "divide",
+      "divide_offset",
+      "screen",
+      "max",
+      "min",
+      "hypotenuse",
+      "overlay",
+      "power",
+      "exclusion",
+      "dodge",
+      "burn",
+      "soft_light",
+      "hard_light",
+      "pin_light",
+      "grain_merge",
+      "grain_extract",
+      "reflect",
+      "glow",
+      "phoenix"
+     ],
+     "type": "select",
+     "group": "Layer 4"
+    },
+    "opacity4": {
+     "label": "Opacity",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Layer 4"
+    },
+    "enabled4": {
+     "label": "Enabled",
+     "default": true,
+     "type": "boolean",
+     "group": "Layer 4"
+    },
+    "mode5": {
+     "label": "Blend mode",
+     "default": "max",
+     "options": [
+      "mix",
+      "add",
+      "subtract",
+      "difference",
+      "multiply",
+      "divide",
+      "divide_offset",
+      "screen",
+      "max",
+      "min",
+      "hypotenuse",
+      "overlay",
+      "power",
+      "exclusion",
+      "dodge",
+      "burn",
+      "soft_light",
+      "hard_light",
+      "pin_light",
+      "grain_merge",
+      "grain_extract",
+      "reflect",
+      "glow",
+      "phoenix"
+     ],
+     "type": "select",
+     "group": "Layer 5"
+    },
+    "opacity5": {
+     "label": "Opacity",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Layer 5"
+    },
+    "enabled5": {
+     "label": "Enabled",
+     "default": true,
+     "type": "boolean",
+     "group": "Layer 5"
+    },
+    "mode6": {
+     "label": "Blend mode",
+     "default": "max",
+     "options": [
+      "mix",
+      "add",
+      "subtract",
+      "difference",
+      "multiply",
+      "divide",
+      "divide_offset",
+      "screen",
+      "max",
+      "min",
+      "hypotenuse",
+      "overlay",
+      "power",
+      "exclusion",
+      "dodge",
+      "burn",
+      "soft_light",
+      "hard_light",
+      "pin_light",
+      "grain_merge",
+      "grain_extract",
+      "reflect",
+      "glow",
+      "phoenix"
+     ],
+     "type": "select",
+     "group": "Layer 6"
+    },
+    "opacity6": {
+     "label": "Opacity",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Layer 6"
+    },
+    "enabled6": {
+     "label": "Enabled",
+     "default": true,
+     "type": "boolean",
+     "group": "Layer 6"
+    },
+    "mode7": {
+     "label": "Blend mode",
+     "default": "max",
+     "options": [
+      "mix",
+      "add",
+      "subtract",
+      "difference",
+      "multiply",
+      "divide",
+      "divide_offset",
+      "screen",
+      "max",
+      "min",
+      "hypotenuse",
+      "overlay",
+      "power",
+      "exclusion",
+      "dodge",
+      "burn",
+      "soft_light",
+      "hard_light",
+      "pin_light",
+      "grain_merge",
+      "grain_extract",
+      "reflect",
+      "glow",
+      "phoenix"
+     ],
+     "type": "select",
+     "group": "Layer 7"
+    },
+    "opacity7": {
+     "label": "Opacity",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Layer 7"
+    },
+    "enabled7": {
+     "label": "Enabled",
+     "default": true,
+     "type": "boolean",
+     "group": "Layer 7"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "coverage": "mask"
+   }
+  },
+  {
+   "type": "Stratify",
+   "label": "Stratified rock",
+   "category": "Shape",
+   "description": "Uneven seeded layers with local folds, tilt and controllable ledges. Unresolved bands fade out on coarse grids. The ledges output selects flattened portions, not rock material types.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "spacing": {
+     "label": "Layer spacing (m)",
+     "default": 110,
+     "min": 2,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "variation": {
+     "label": "Layer irregularity",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "sharpness": {
+     "label": "Ledge sharpness",
+     "default": 0.65,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "scale": {
+     "label": "Formation scale (m)",
+     "default": 650,
+     "min": 10,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "tilt": {
+     "label": "Layer tilt (°)",
+     "default": 0,
+     "min": -25,
+     "max": 25,
+     "step": 1,
+     "type": "number"
+    },
+    "direction": {
+     "label": "Tilt direction (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "octaves": {
+     "label": "Fold octaves",
+     "default": 3,
+     "min": 1,
+     "max": 6,
+     "step": 1,
+     "type": "integer"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "amount": {
+     "label": "Strength",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "ledges": "mask"
+   }
+  },
+  {
+   "type": "Clamp",
+   "label": "Clamp elevations",
+   "category": "Shape",
+   "description": "Limit terrain to a fixed elevation interval. Optional mask blends the clipped result.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "low": {
+     "label": "Low elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 15000,
+     "step": 25,
+     "type": "number"
+    },
+    "high": {
+     "label": "High elevation (m)",
+     "default": 1800,
+     "min": -5000,
+     "max": 15000,
+     "step": 25,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Flip",
+   "label": "Flip terrain",
+   "category": "Shape",
+   "description": "Mirror the heightfield across either world axis.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "axis": {
+     "label": "Mirror axis",
+     "default": "x",
+     "options": [
+      "x",
+      "y",
+      "both"
+     ],
+     "type": "select"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Median",
+   "label": "Median filter",
+   "category": "Shape",
+   "description": "Remove isolated spikes with a bounded median kernel. Radius is measured in world metres; the kernel is capped at 51 samples.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "radius": {
+     "label": "Radius (m)",
+     "default": 60,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Sharpen",
+   "label": "Sharpen terrain",
+   "category": "Shape",
+   "description": "Unsharp masking adds local relief relative to a smoothed surface.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "radius": {
+     "label": "Radius (m)",
+     "default": 100,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    },
+    "amount": {
+     "label": "Strength",
+     "default": 1,
+     "min": 0,
+     "max": 3,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Equalize",
+   "label": "Equalize heights",
+   "category": "Shape",
+   "description": "Redistribute the elevation histogram while preserving its endpoints. Blend strength controls contrast.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "amount": {
+     "label": "Strength",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Curve",
+   "label": "Profile curve",
+   "category": "Shape",
+   "description": "Shape elevation using five control values and monotone cubic interpolation between them. Input can be relative to the terrain or a fixed range.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "mode": {
+     "label": "Input range",
+     "default": "relative",
+     "options": [
+      "relative",
+      "absolute"
+     ],
+     "type": "select"
+    },
+    "low": {
+     "label": "Low elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 15000,
+     "step": 25,
+     "type": "number"
+    },
+    "high": {
+     "label": "High elevation (m)",
+     "default": 1800,
+     "min": -5000,
+     "max": 15000,
+     "step": 25,
+     "type": "number"
+    },
+    "y0": {
+     "label": "At 0% input",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "y1": {
+     "label": "At 25% input",
+     "default": 0.25,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "y2": {
+     "label": "At 50% input",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "y3": {
+     "label": "At 75% input",
+     "default": 0.75,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "y4": {
+     "label": "At 100% input",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "VariableBlur",
+   "label": "Variable blur",
+   "category": "Shape",
+   "description": "A guide mask interpolates four Gaussian scales: black preserves detail, white applies the full radius.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "guide": "mask"
+   },
+   "params": {
+    "radius": {
+     "label": "Radius (m)",
+     "default": 250,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "DirectionalWarp",
+   "label": "Directional warp",
+   "category": "Shape",
+   "description": "A height guide displaces sampling along one direction. Guide elevation / reference controls signed displacement.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "guide": "terrain"
+   },
+   "params": {
+    "amount": {
+     "label": "Displacement (m)",
+     "default": 250,
+     "min": -10000,
+     "max": 10000,
+     "step": 25,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Direction (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "reference": {
+     "label": "Guide reference (m)",
+     "default": 2500,
+     "min": 1,
+     "max": 20000,
+     "step": 100,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "SlopeWarp",
+   "label": "Slope warp",
+   "category": "Shape",
+   "description": "Move terrain sampling along the guide gradient. The displacement is bounded and measured in metres.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "guide": "terrain"
+   },
+   "params": {
+    "amount": {
+     "label": "Displacement (m)",
+     "default": 250,
+     "min": -10000,
+     "max": 10000,
+     "step": 25,
+     "type": "number"
+    },
+    "radius": {
+     "label": "Radius (m)",
+     "default": 60,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Morphology",
+   "label": "Expand / contract",
+   "category": "Shape",
+   "description": "A local maximum expands high ground; a local minimum contracts it. Uses a square footprint capped at 101 samples.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "mode": {
+     "label": "Operation",
+     "default": "expand",
+     "options": [
+      "expand",
+      "contract"
+     ],
+     "type": "select"
+    },
+    "radius": {
+     "label": "Radius (m)",
+     "default": 100,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "DistanceMask",
+   "label": "Distance mask",
+   "category": "Select",
+   "description": "Distance to a mask boundary in world metres. Use the falloff outside a feature, or increasing distance inside it.",
+   "inputs": {
+    "mask": "mask"
+   },
+   "params": {
+    "mode": {
+     "label": "Region",
+     "default": "outside",
+     "options": [
+      "outside",
+      "inside",
+      "both"
+     ],
+     "type": "select"
+    },
+    "distance": {
+     "label": "Falloff distance (m)",
+     "default": 500,
+     "min": 1,
+     "max": 100000,
+     "step": 25,
+     "type": "number"
+    },
+    "threshold": {
+     "label": "Mask threshold",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "CurvatureMask",
+   "label": "Curvature selector",
+   "category": "Select",
+   "description": "Convex ridges and concave hollows from the Laplacian of a smoothed heightfield. This uses mean curvature response, not separate plan/profile modes.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "radius": {
+     "label": "Radius (m)",
+     "default": 80,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    },
+    "sensitivity": {
+     "label": "Sensitivity (m)",
+     "default": 500,
+     "min": 1,
+     "max": 100000,
+     "step": 50,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "convex": "mask",
+    "concave": "mask"
+   }
+  },
+  {
+   "type": "AspectMask",
+   "label": "Facing direction",
+   "category": "Select",
+   "description": "Select slopes facing a compass angle: 0° is +X, 90° is +Y. Flat areas are excluded.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "angle": {
+     "label": "Facing direction (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "width": {
+     "label": "Angular half width (°)",
+     "default": 60,
+     "min": 1,
+     "max": 180,
+     "step": 5,
+     "type": "number"
+    },
+    "feather": {
+     "label": "Angle feather (°)",
+     "default": 15,
+     "min": 0,
+     "max": 90,
+     "step": 5,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "PeaksMask",
+   "label": "Peaks & ridges",
+   "category": "Select",
+   "description": "Select positive relief above the local average. Radius sets the scale of ridges to include.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "radius": {
+     "label": "Radius (m)",
+     "default": 350,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number"
+    },
+    "contrast": {
+     "label": "Relief contrast (m)",
+     "default": 100,
+     "min": 1,
+     "max": 2000,
+     "step": 10,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "EdgeFade",
+   "label": "Fade borders",
+   "category": "Shape",
+   "description": "Bring height toward a chosen elevation along the world boundary.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "width": {
+     "label": "Border width (m)",
+     "default": 700,
+     "min": 1,
+     "max": 50000,
+     "step": 50,
+     "type": "number"
+    },
+    "elevation": {
+     "label": "Edge elevation (m)",
+     "default": 0,
+     "min": -5000,
+     "max": 15000,
+     "step": 25,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Repeat",
+   "label": "Repeat terrain",
+   "category": "Shape",
+   "description": "Repeat an upstream tile across the domain. Use Seamless first to align opposite boundaries.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "countX": {
+     "label": "Tiles X",
+     "default": 2,
+     "min": 1,
+     "max": 16,
+     "step": 1,
+     "type": "integer"
+    },
+    "countY": {
+     "label": "Tiles Y",
+     "default": 2,
+     "min": 1,
+     "max": 16,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Seamless",
+   "label": "Match tile edges",
+   "category": "Shape",
+   "description": "Blend opposite borders to matching elevations for repeating tiles. Border values match; matching derivatives is not guaranteed.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "width": {
+     "label": "Blend width / world",
+     "default": 0.15,
+     "min": 0.01,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Switch",
+   "label": "Switch terrain",
+   "category": "Layer",
+   "description": "Choose one of two heightfields. Both branches are validated; cached evaluations are reused.",
+   "inputs": {
+    "a": "terrain",
+    "b": "terrain"
+   },
+   "params": {
+    "useB": {
+     "label": "Use input B",
+     "default": false,
+     "type": "boolean"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "CompareMask",
+   "label": "Compare heights",
+   "category": "Select",
+   "description": "Compare two elevations with a tolerance and a soft transition. White marks the selected relation.",
+   "inputs": {
+    "a": "terrain",
+    "b": "terrain"
+   },
+   "params": {
+    "mode": {
+     "label": "Comparison",
+     "default": "above",
+     "options": [
+      "above",
+      "below",
+      "equal"
+     ],
+     "type": "select"
+    },
+    "tolerance": {
+     "label": "Tolerance (m)",
+     "default": 1,
+     "min": 0,
+     "max": 2000,
+     "step": 1,
+     "type": "number"
+    },
+    "feather": {
+     "label": "Feather (m)",
+     "default": 10,
+     "min": 0,
+     "max": 1000,
+     "step": 5,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "DrainageFill",
+   "label": "Fill depressions",
+   "category": "Water",
+   "description": "Priority-flood depression filling with a minimum routing gradient. Changes terrain by raising pits, rather than cutting outlets.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {},
+   "outputs": {
+    "terrain": "terrain",
+    "fill": "mask"
+   }
+  },
+  {
+   "type": "Palette",
+   "label": "Terrain palette",
+   "category": "Color",
+   "description": "Map terrain elevation or an optional mask guide through an original five-color ramp. These are authored palettes, not satellite imagery.",
+   "inputs": {
+    "terrain": "terrain",
+    "guide": "mask?"
+   },
+   "params": {
+    "palette": {
+     "label": "Palette",
+     "default": "alpine",
+     "options": [
+      "alpine",
+      "desert",
+      "moss",
+      "volcanic",
+      "custom"
+     ],
+     "type": "select"
+    },
+    "range": {
+     "label": "Elevation range",
+     "default": "relative",
+     "options": [
+      "relative",
+      "absolute"
+     ],
+     "type": "select"
+    },
+    "low": {
+     "label": "Low elevation (m)",
+     "default": 0,
+     "min": -10000,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "high": {
+     "label": "High elevation (m)",
+     "default": 2200,
+     "min": -10000,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "enhance": {
+     "label": "Guide enhancement",
+     "default": "none",
+     "options": [
+      "none",
+      "autolevel",
+      "equalize"
+     ],
+     "type": "select"
+    },
+    "bias": {
+     "label": "Ramp bias",
+     "default": 1,
+     "min": 0.1,
+     "max": 8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "reverse": {
+     "label": "Reverse ramp",
+     "default": false,
+     "type": "boolean"
+    },
+    "color0": {
+     "label": "Custom color at 0%",
+     "default": "#343e29",
+     "type": "color"
+    },
+    "color1": {
+     "label": "Custom color at 25%",
+     "default": "#667047",
+     "type": "color"
+    },
+    "color2": {
+     "label": "Custom color at 50%",
+     "default": "#948977",
+     "type": "color"
+    },
+    "color3": {
+     "label": "Custom color at 75%",
+     "default": "#c3bcae",
+     "type": "color"
+    },
+    "color4": {
+     "label": "Custom color at 100%",
+     "default": "#e7e8e3",
+     "type": "color"
+    }
+   },
+   "outputs": {
+    "color": "color"
+   }
+  },
+  {
+   "type": "SolidColor",
+   "label": "Solid color",
+   "category": "Color",
+   "description": "A uniform sRGB color for masked biome and surface layers.",
+   "inputs": {},
+   "params": {
+    "color": {
+     "label": "Color",
+     "default": "#aaa08c",
+     "type": "color"
+    }
+   },
+   "outputs": {
+    "color": "color"
+   }
+  },
+  {
+   "type": "Tint",
+   "label": "Two-color tint",
+   "category": "Color",
+   "description": "Map a mask between two sRGB colors. Input enhancement is explicit and off by default.",
+   "inputs": {
+    "mask": "mask"
+   },
+   "params": {
+    "start": {
+     "label": "Dark color",
+     "default": "#3c4933",
+     "type": "color"
+    },
+    "end": {
+     "label": "Light color",
+     "default": "#ded5b6",
+     "type": "color"
+    },
+    "enhance": {
+     "label": "Mask enhancement",
+     "default": "none",
+     "options": [
+      "none",
+      "autolevel",
+      "equalize"
+     ],
+     "type": "select"
+    },
+    "reverse": {
+     "label": "Reverse ramp",
+     "default": false,
+     "type": "boolean"
+    }
+   },
+   "outputs": {
+    "color": "color"
+   }
+  },
+  {
+   "type": "ColorCombine",
+   "label": "Blend colors",
+   "category": "Color",
+   "description": "Blend two color layers through opacity and an optional mask. Linear-light mixing is the default; artistic sRGB blending is also available.",
+   "inputs": {
+    "a": "color",
+    "b": "color",
+    "mask": "mask?"
+   },
+   "params": {
+    "mode": {
+     "label": "Operation",
+     "default": "mix",
+     "options": [
+      "mix",
+      "multiply",
+      "screen",
+      "overlay",
+      "soft_light",
+      "hard_light",
+      "add",
+      "subtract",
+      "difference",
+      "min",
+      "max"
+     ],
+     "type": "select"
+    },
+    "amount": {
+     "label": "Opacity",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "space": {
+     "label": "Blend space",
+     "default": "linear",
+     "options": [
+      "linear",
+      "srgb"
+     ],
+     "type": "select"
+    }
+   },
+   "outputs": {
+    "color": "color"
+   }
+  },
+  {
+   "type": "ColorAdjust",
+   "label": "Adjust color",
+   "category": "Color",
+   "description": "Hue rotation, saturation, lightness and gamma for sRGB colors. A mask limits adjustments; packed data is a separate type.",
+   "inputs": {
+    "color": "color",
+    "mask": "mask?"
+   },
+   "params": {
+    "hue": {
+     "label": "Hue shift (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "saturation": {
+     "label": "Saturation scale",
+     "default": 1,
+     "min": 0,
+     "max": 3,
+     "step": 0.05,
+     "type": "number"
+    },
+    "lightness": {
+     "label": "Lightness shift",
+     "default": 0,
+     "min": -1,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "gamma": {
+     "label": "Gamma",
+     "default": 1,
+     "min": 0.1,
+     "max": 5,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "color": "color"
+   }
+  },
+  {
+   "type": "RGBMerge",
+   "label": "Pack RGB masks",
+   "category": "Color",
+   "description": "Pack R/G/B masks as linear data. No gamma conversion. Each channel can optionally be enhanced; leave None for calibrated masks.",
+   "inputs": {
+    "r": "mask",
+    "g": "mask",
+    "b": "mask"
+   },
+   "params": {
+    "enhancer": {
+     "label": "R enhancement",
+     "default": "none",
+     "options": [
+      "none",
+      "autolevel",
+      "equalize"
+     ],
+     "type": "select"
+    },
+    "enhanceg": {
+     "label": "G enhancement",
+     "default": "none",
+     "options": [
+      "none",
+      "autolevel",
+      "equalize"
+     ],
+     "type": "select"
+    },
+    "enhanceb": {
+     "label": "B enhancement",
+     "default": "none",
+     "options": [
+      "none",
+      "autolevel",
+      "equalize"
+     ],
+     "type": "select"
+    }
+   },
+   "outputs": {
+    "packed": "rgb"
+   }
+  },
+  {
+   "type": "RGBSplit",
+   "label": "Unpack RGB masks",
+   "category": "Color",
+   "description": "Recover the exact R/G/B masks from packed linear data. The average output is an arithmetic mean. Color textures are a distinct type.",
+   "inputs": {
+    "packed": "rgb"
+   },
+   "params": {},
+   "outputs": {
+    "r": "mask",
+    "g": "mask",
+    "b": "mask",
+    "average": "mask"
+   }
+  },
+  {
+   "type": "Sediment",
+   "label": "Bedrock & alluvium",
+   "category": "Simulate",
+   "description": "Stream power with alluvium (SPACE) transports loose sediment, erodes exposed bedrock and deposits material downstream. Optional soil creep and conversion share the same soil layer. White resistance protects bedrock, while existing soil remains mobile. A shared incision floor limits entrainment and creep without restoring removed material. Fixed outer heights with reported outlet sediment loss. Uncalibrated geological time, D8 routing.",
+   "inputs": {
+    "terrain": "terrain",
+    "resistance": "mask?",
+    "rainfall": "mask?",
+    "soilDepth": "terrain?"
+   },
+   "params": {
+    "years": {
+     "label": "Evolution duration (years)",
+     "default": 750,
+     "min": 0,
+     "max": 50000,
+     "step": 250,
+     "type": "number"
+    },
+    "steps": {
+     "label": "Evolution steps",
+     "default": 40,
+     "min": 1,
+     "max": 200,
+     "step": 1,
+     "type": "integer"
+    },
+    "maxDepth": {
+     "label": "Maximum net incision (m)",
+     "default": 20,
+     "min": 0,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    },
+    "rockErodibility": {
+     "label": "Bedrock erodibility",
+     "default": 0.00002,
+     "min": 0,
+     "max": 0.002,
+     "step": 0.00001,
+     "type": "number"
+    },
+    "sedimentErodibility": {
+     "label": "Sediment erodibility",
+     "default": 0.0001,
+     "min": 0,
+     "max": 0.01,
+     "step": 0.00005,
+     "type": "number"
+    },
+    "settling": {
+     "label": "Effective settling (m/year)",
+     "default": 1,
+     "min": 0.001,
+     "max": 100,
+     "step": 0.1,
+     "type": "number"
+    },
+    "initialSoil": {
+     "label": "Initial soil depth (m)",
+     "default": 2,
+     "min": 0,
+     "max": 500,
+     "step": 0.5,
+     "type": "number"
+    },
+    "coverDepth": {
+     "label": "Soil shielding depth (m)",
+     "default": 1,
+     "min": 0.05,
+     "max": 100,
+     "step": 0.1,
+     "type": "number"
+    },
+    "diffusion": {
+     "label": "Soil diffusivity (m²/year)",
+     "default": 0.03,
+     "min": 0,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    },
+    "production": {
+     "label": "Bare-rock soil production (m/year)",
+     "default": 0.001,
+     "min": 0,
+     "max": 0.01,
+     "step": 0.0005,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Soil critical slope (°)",
+     "default": 34,
+     "min": 5,
+     "max": 85,
+     "step": 1,
+     "type": "number"
+    },
+    "soilRange": {
+     "label": "Soil mask white depth (m)",
+     "default": 10,
+     "min": 0.01,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "exposureDepth": {
+     "label": "Rock cover fade depth (m)",
+     "default": 1,
+     "min": 0.01,
+     "max": 100,
+     "step": 0.1,
+     "type": "number"
+    },
+    "mapRange": {
+     "label": "Net-change mask white depth (m)",
+     "default": 20,
+     "min": 0.01,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    },
+    "flowArea": {
+     "label": "Flow mask reference (m² at unit runoff)",
+     "default": 1000000,
+     "min": 1,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "bedrock": "terrain",
+    "soilDepth": "terrain",
+    "soil": "mask",
+    "exposedRock": "mask",
+    "wear": "mask",
+    "deposition": "mask",
+    "flow": "mask"
+   }
+  },
+  {
+   "type": "Hillslope",
+   "label": "Soil & hillslope transport",
+   "category": "Simulate",
+   "description": "Weather bedrock into mobile soil, then move only that soil downhill. Depth-dependent creep rounds soil-covered divides and fills hollows while bare resistant rock stays exposed. Closed, paired fluxes conserve volume. White resistance prevents rock conversion, not transport of existing soil; black mask protects both layers. Art-directed process, not calibrated geological time.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "resistance": "mask?",
+    "soilDepth": "terrain?"
+   },
+   "params": {
+    "steps": {
+     "label": "Transport iterations",
+     "default": 120,
+     "min": 1,
+     "max": 500,
+     "step": 1,
+     "type": "integer"
+    },
+    "diffusion": {
+     "label": "Diffusive exposure (m²)",
+     "default": 1800,
+     "min": 0,
+     "max": 50000,
+     "step": 100,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Critical slope (°)",
+     "default": 34,
+     "min": 5,
+     "max": 85,
+     "step": 1,
+     "type": "number"
+    },
+    "initialSoil": {
+     "label": "Initial soil depth (m)",
+     "default": 4,
+     "min": 0,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "production": {
+     "label": "Bare-rock conversion budget (m)",
+     "default": 12,
+     "min": 0,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "decayDepth": {
+     "label": "Soil attenuation depth (m)",
+     "default": 3,
+     "min": 0.05,
+     "max": 100,
+     "step": 0.5,
+     "type": "number"
+    },
+    "rockDepth": {
+     "label": "Available bedrock (m)",
+     "default": 40,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "soilRange": {
+     "label": "Soil mask white depth (m)",
+     "default": 10,
+     "min": 0.01,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "exposureDepth": {
+     "label": "Rock cover fade depth (m)",
+     "default": 1,
+     "min": 0.01,
+     "max": 100,
+     "step": 0.1,
+     "type": "number"
+    },
+    "mapRange": {
+     "label": "Transport mask white depth (m)",
+     "default": 20,
+     "min": 0.01,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    },
+    "stepControl": {
+     "label": "Step control",
+     "default": "fixed",
+     "options": [
+      "fixed",
+      "adaptive"
+     ],
+     "type": "select",
+     "createDefault": "adaptive"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "bedrock": "terrain",
+    "soilDepth": "terrain",
+    "soil": "mask",
+    "exposedRock": "mask",
+    "wear": "mask",
+    "deposition": "mask"
+   }
+  },
+  {
+   "type": "Weathering",
+   "label": "Geologic weathering",
+   "category": "Simulate",
+   "description": "Carve broad valleys, then gullies and fine channels. Transfers only erosion/deposition changes back to the original surface, preserving existing fine detail. Optional native-resolution protection and rainfall masks; bounded total incision and conservative material accounting. CPU art-directed model, not calibrated geophysics.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "rainfall": "mask?",
+    "resistance": "mask?"
+   },
+   "params": {
+    "scale": {
+     "label": "Valley scale (m)",
+     "default": 256,
+     "min": 16,
+     "max": 4000,
+     "step": 16,
+     "type": "number"
+    },
+    "valleys": {
+     "label": "Valley weathering",
+     "default": 1,
+     "min": 0,
+     "max": 2,
+     "step": 0.05,
+     "type": "number"
+    },
+    "gullies": {
+     "label": "Gully weathering",
+     "default": 1,
+     "min": 0,
+     "max": 2,
+     "step": 0.05,
+     "type": "number"
+    },
+    "surface": {
+     "label": "Fine weathering",
+     "default": 0.5,
+     "min": 0,
+     "max": 2,
+     "step": 0.05,
+     "type": "number"
+    },
+    "quality": {
+     "label": "Particle density",
+     "default": 1,
+     "min": 0.1,
+     "max": 2,
+     "step": 0.1,
+     "type": "number"
+    },
+    "maxDepth": {
+     "label": "Total incision limit (m)",
+     "default": 300,
+     "min": 0,
+     "max": 2000,
+     "step": 10,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Talus angle (°)",
+     "default": 34,
+     "min": 1,
+     "max": 85,
+     "step": 1,
+     "type": "number"
+    },
+    "talusSteps": {
+     "label": "Talus settling steps",
+     "default": 65,
+     "min": 0,
+     "max": 150,
+     "step": 1,
+     "type": "integer"
+    },
+    "mapRange": {
+     "label": "Mask reference depth (m)",
+     "default": 50,
+     "min": 0.01,
+     "max": 5000,
+     "step": 5,
+     "type": "number"
+    },
+    "boundary": {
+     "label": "Sediment boundary",
+     "default": "open",
+     "options": [
+      "closed",
+      "open"
+     ],
+     "type": "select"
+    },
+    "seed": {
+     "label": "Weathering seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "execution": {
+     "label": "Execution",
+     "default": "serial",
+     "options": [
+      "serial",
+      "parallel"
+     ],
+     "type": "select",
+     "createDefault": "parallel"
+    },
+    "surfaceRadius": {
+     "label": "Fine brush radius (m)",
+     "default": 0,
+     "min": 0,
+     "max": 500,
+     "step": 0.5,
+     "type": "number",
+     "createDefault": 2
+    },
+    "momentum": {
+     "label": "Channel memory",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "wear": "mask",
+    "deposition": "mask",
+    "flow": "mask"
+   }
+  },
+  {
+   "type": "Talus",
+   "label": "Talus breakdown",
+   "category": "Simulate",
+   "description": "Eight-neighbour slope transport with bedrock, seeded talus variation, directional bias and optional sediment loss. Mask blocks transport across protected cells. Wear/deposition masks use an explicit metre reference; diagnostics account for removed material.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "resistance": "mask?"
+   },
+   "params": {
+    "steps": {
+     "label": "Iterations",
+     "default": 60,
+     "min": 1,
+     "max": 300,
+     "step": 1,
+     "type": "integer"
+    },
+    "maxDepth": {
+     "label": "Bedrock depth (m)",
+     "default": 100,
+     "min": 0,
+     "max": 5000,
+     "step": 5,
+     "type": "number"
+    },
+    "mapRange": {
+     "label": "Mask reference depth (m)",
+     "default": 50,
+     "min": 0.01,
+     "max": 5000,
+     "step": 5,
+     "type": "number"
+    },
+    "angle": {
+     "label": "Talus angle (°)",
+     "default": 32,
+     "min": 1,
+     "max": 85,
+     "step": 1,
+     "type": "number"
+    },
+    "rate": {
+     "label": "Transport rate",
+     "default": 0.65,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "direction": {
+     "label": "Bias direction (°)",
+     "default": 0,
+     "min": -180,
+     "max": 180,
+     "step": 5,
+     "type": "number"
+    },
+    "bias": {
+     "label": "Directional bias",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "variation": {
+     "label": "Rock variation",
+     "default": 0.2,
+     "min": 0,
+     "max": 0.8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "scale": {
+     "label": "Variation scale (m)",
+     "default": 250,
+     "min": 1,
+     "max": 10000,
+     "step": 25,
+     "type": "number"
+    },
+    "removal": {
+     "label": "Sediment removal",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Rock seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "solver": {
+     "label": "Solver",
+     "default": "iterations",
+     "options": [
+      "iterations",
+      "converge"
+     ],
+     "type": "select",
+     "createDefault": "converge"
+    },
+    "tolerance": {
+     "label": "Settle tolerance (°)",
+     "default": 0.5,
+     "min": 0.05,
+     "max": 5,
+     "step": 0.05,
+     "type": "number"
+    },
+    "relaxation": {
+     "label": "Settling amount",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "rockAngle": {
+     "label": "Resistant rock angle (°)",
+     "default": 70,
+     "min": 1,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "wear": "mask",
+    "deposition": "mask"
+   }
+  },
+  {
+   "type": "Wind",
+   "label": "Wind erosion",
+   "category": "Simulate",
+   "description": "Directional surface abrasion and conservative airborne sediment advection. Exposed ground supplies material; sheltered ground settles it. Closed edges return carried load, open edges report export. This is a grid-based artistic model, not atmospheric CFD.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "steps": {
+     "label": "Iterations",
+     "default": 60,
+     "min": 1,
+     "max": 300,
+     "step": 1,
+     "type": "integer"
+    },
+    "maxDepth": {
+     "label": "Bedrock depth (m)",
+     "default": 100,
+     "min": 0,
+     "max": 5000,
+     "step": 5,
+     "type": "number"
+    },
+    "mapRange": {
+     "label": "Mask reference depth (m)",
+     "default": 50,
+     "min": 0.01,
+     "max": 5000,
+     "step": 5,
+     "type": "number"
+    },
+    "direction": {
+     "label": "Wind toward (°)",
+     "default": 25,
+     "min": -180,
+     "max": 180,
+     "step": 5,
+     "type": "number"
+    },
+    "capacity": {
+     "label": "Carrying depth (m)",
+     "default": 15,
+     "min": 0,
+     "max": 500,
+     "step": 0.5,
+     "type": "number"
+    },
+    "abrasion": {
+     "label": "Abrasion rate",
+     "default": 0.25,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "settling": {
+     "label": "Settling rate",
+     "default": 0.15,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "transport": {
+     "label": "Travel per step (cells)",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "shelter": {
+     "label": "Shelter scale (m)",
+     "default": 200,
+     "min": 1,
+     "max": 10000,
+     "step": 25,
+     "type": "number"
+    },
+    "edgeFade": {
+     "label": "Closed-edge slowdown (m)",
+     "default": 600,
+     "min": 1,
+     "max": 10000,
+     "step": 50,
+     "type": "number"
+    },
+    "boundary": {
+     "label": "Sediment boundary",
+     "default": "open",
+     "options": [
+      "closed",
+      "open"
+     ],
+     "type": "select"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "wear": "mask",
+    "deposition": "mask"
+   }
+  },
+  {
+   "type": "Channels",
+   "label": "River channels",
+   "category": "Water",
+   "description": "Carve rivers sized by their discharge: width w = a·Q^b and depth d = c·Q^f (Leopold & Maddock), with Q from the upstream area. Beds fall strictly downstream and only cut. Reaches meander on gentle slopes, braid where the slope is steep for the discharge, and run straight in steep or narrow valleys. Exports water depth, the wetted river, braid bars and channel width.",
+   "inputs": {
+    "terrain": "terrain",
+    "rainfall": "mask?"
+   },
+   "params": {
+    "channelArea": {
+     "label": "Channel threshold (m²)",
+     "default": 1000000,
+     "min": 100,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "Qref": {
+     "label": "Bankfull discharge at reference area (m³/s)",
+     "default": 10,
+     "min": 0.01,
+     "max": 100000,
+     "step": 1,
+     "type": "number"
+    },
+    "Aref": {
+     "label": "Reference area (m²)",
+     "default": 10000000,
+     "min": 1000,
+     "max": 1000000000000,
+     "step": 100000,
+     "type": "number"
+    },
+    "areaExp": {
+     "label": "Discharge area exponent",
+     "default": 0.8,
+     "min": 0.3,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "widthCoeff": {
+     "label": "Width coefficient a (m)",
+     "default": 4,
+     "min": 0.1,
+     "max": 50,
+     "step": 0.1,
+     "type": "number"
+    },
+    "widthExp": {
+     "label": "Width exponent b",
+     "default": 0.5,
+     "min": 0.1,
+     "max": 0.9,
+     "step": 0.01,
+     "type": "number"
+    },
+    "depthCoeff": {
+     "label": "Depth coefficient c (m)",
+     "default": 0.3,
+     "min": 0.01,
+     "max": 10,
+     "step": 0.01,
+     "type": "number"
+    },
+    "depthExp": {
+     "label": "Depth exponent f",
+     "default": 0.4,
+     "min": 0.1,
+     "max": 0.9,
+     "step": 0.01,
+     "type": "number"
+    },
+    "style": {
+     "label": "River style",
+     "default": "Auto",
+     "options": [
+      "Auto",
+      "Meander",
+      "Braided",
+      "Straight"
+     ],
+     "type": "select"
+    },
+    "migration": {
+     "label": "Meander amplitude (channel widths)",
+     "default": 1.5,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "type": "number"
+    },
+    "wavelength": {
+     "label": "Meander wavelength (channel widths)",
+     "default": 11,
+     "min": 4,
+     "max": 30,
+     "step": 0.5,
+     "type": "number"
+    },
+    "braidBelt": {
+     "label": "Braid belt width (channel widths)",
+     "default": 8,
+     "min": 2,
+     "max": 20,
+     "step": 0.5,
+     "type": "number"
+    },
+    "levees": {
+     "label": "Levee height (× depth)",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "minGradient": {
+     "label": "Minimum bed gradient (m/m)",
+     "default": 0.0005,
+     "min": 0.000001,
+     "max": 0.1,
+     "step": 0.0001,
+     "type": "number"
+    },
+    "bankAngle": {
+     "label": "Bank angle (°)",
+     "default": 35,
+     "min": 5,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "depthRange": {
+     "label": "Water depth white at (m)",
+     "default": 5,
+     "min": 0.1,
+     "max": 100,
+     "step": 0.5,
+     "type": "number"
+    },
+    "widthRange": {
+     "label": "Width white at (m)",
+     "default": 100,
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "water": "mask",
+    "riverMask": "mask",
+    "bars": "mask",
+    "width": "mask"
+   }
+  },
+  {
+   "type": "Erode",
+   "label": "Erode (particles + sediment)",
+   "category": "Simulate",
+   "description": "Rain drops run down the terrain, erode where they carry less than they could and settle where they carry more: channels and gullies cut in, fans, filled hollows and floodplains build up. Runs coarse to fine (valley-scale channels, then gully-scale rills); fresh sediment relaxes to its angle of repose. White resistance erodes no rock; rainfall scales the number of drops.",
+   "inputs": {
+    "terrain": "terrain",
+    "resistance": "mask?",
+    "rainfall": "mask?"
+   },
+   "params": {
+    "drops": {
+     "label": "Drops per cell (per level)",
+     "default": 0.5,
+     "min": 0,
+     "max": 8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "passes": {
+     "label": "Passes per level",
+     "default": 12,
+     "min": 1,
+     "max": 256,
+     "step": 1,
+     "type": "integer"
+    },
+    "travel": {
+     "label": "Drop travel (cells)",
+     "default": 96,
+     "min": 4,
+     "max": 1024,
+     "step": 4,
+     "type": "integer"
+    },
+    "coarsest": {
+     "label": "Coarsest level spacing (m)",
+     "default": 16,
+     "min": 1,
+     "max": 256,
+     "step": 1,
+     "type": "number"
+    },
+    "capacity": {
+     "label": "Sediment capacity",
+     "default": 0.05,
+     "min": 0,
+     "max": 2,
+     "step": 0.005,
+     "type": "number"
+    },
+    "depthExponent": {
+     "label": "Coarse-level depth exponent",
+     "default": 1,
+     "min": 0,
+     "max": 2,
+     "step": 0.05,
+     "type": "number"
+    },
+    "erosion": {
+     "label": "Erosion rate",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "deposition": {
+     "label": "Settling rate",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "rockErodibility": {
+     "label": "Rock erodibility",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "inertia": {
+     "label": "Flow inertia",
+     "default": 0.3,
+     "min": 0,
+     "max": 0.95,
+     "step": 0.01,
+     "type": "number"
+    },
+    "evaporation": {
+     "label": "Evaporation per step",
+     "default": 0.02,
+     "min": 0.001,
+     "max": 0.5,
+     "step": 0.001,
+     "type": "number"
+    },
+    "minSlope": {
+     "label": "Minimum slope (m/m)",
+     "default": 0.02,
+     "min": 0,
+     "max": 0.5,
+     "step": 0.005,
+     "type": "number"
+    },
+    "discharge": {
+     "label": "Channel concentration (discharge exponent)",
+     "default": 0.5,
+     "min": 0,
+     "max": 2,
+     "step": 0.05,
+     "type": "number"
+    },
+    "channelArea": {
+     "label": "Channel start area (m²)",
+     "default": 500,
+     "min": 1,
+     "max": 1000000,
+     "step": 50,
+     "type": "number"
+    },
+    "radius": {
+     "label": "Erosion radius (m)",
+     "default": 3,
+     "min": 0.5,
+     "max": 200,
+     "step": 0.5,
+     "type": "number"
+    },
+    "deathRadius": {
+     "label": "Spread of a stopped drop's load (m, 0 = at its cell)",
+     "default": 8,
+     "min": 0,
+     "max": 200,
+     "step": 0.5,
+     "type": "number"
+    },
+    "lakeArea": {
+     "label": "Keep lakes larger than (m², 0 = off)",
+     "default": 20000,
+     "min": 0,
+     "max": 10000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "lakeDepth": {
+     "label": "Keep lakes deeper than (m)",
+     "default": 1,
+     "min": 0,
+     "max": 500,
+     "step": 0.5,
+     "type": "number"
+    },
+    "lakeKeep": {
+     "label": "Lake depth sediment cannot fill",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "repose": {
+     "label": "Sediment settling angle (°, 0 = off)",
+     "default": 15,
+     "min": 0,
+     "max": 60,
+     "step": 1,
+     "type": "number"
+    },
+    "settle": {
+     "label": "Settling passes per pass",
+     "default": 1,
+     "min": 0,
+     "max": 8,
+     "step": 1,
+     "type": "integer"
+    },
+    "grade": {
+     "label": "Floor grading of fresh sediment (0 = off)",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "createDefault": 0.5
+    },
+    "depthRange": {
+     "label": "Wear and deposits white at (m)",
+     "default": 10,
+     "min": 0.01,
+     "max": 1000,
+     "step": 0.5,
+     "type": "number"
+    },
+    "sedimentRange": {
+     "label": "Sediment white at (m)",
+     "default": 5,
+     "min": 0.01,
+     "max": 1000,
+     "step": 0.5,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "compute": {
+     "label": "Compute",
+     "default": "auto",
+     "options": [
+      "auto",
+      "cpu",
+      "gpu"
+     ],
+     "type": "select",
+     "runtimeOnly": true
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "flow": "mask",
+    "wear": "mask",
+    "deposits": "mask",
+    "sediment": "mask"
+   }
+  },
+  {
+   "type": "ErosionDetail",
+   "label": "Erosion detail",
+   "category": "Simulate",
+   "description": "Carve branching, flow-aligned gullies into slopes without a simulation. Stripes run downhill and each finer octave follows the walls of the coarser gullies, so they branch like tributaries. No detail on flats or in channels; deeper in hollows, shallower on hard rock. Strata and joint sets act as resistance, not as added height. Gullies start only where enough area drains down a steep enough slope (channel heads), never point into closed depressions, and leave a ring around small lakes. Outputs the gully and ridge masks and the resistance used.",
+   "inputs": {
+    "terrain": "terrain",
+    "flow": "mask?",
+    "mask": "mask?",
+    "resistance": "mask?"
+   },
+   "params": {
+    "scale": {
+     "label": "Largest gully spacing (m)",
+     "default": 300,
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "octaves": {
+     "label": "Octaves",
+     "default": 4,
+     "min": 1,
+     "max": 8,
+     "step": 1,
+     "type": "integer"
+    },
+    "depth": {
+     "label": "Gully depth (m)",
+     "default": 30,
+     "min": 0,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Detail exponent",
+     "default": 1.2,
+     "min": 0.5,
+     "max": 1.5,
+     "step": 0.05,
+     "type": "number"
+    },
+    "lacunarity": {
+     "label": "Lacunarity",
+     "default": 1.93,
+     "min": 1.5,
+     "max": 3,
+     "step": 0.01,
+     "type": "number"
+    },
+    "branching": {
+     "label": "Branching",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "sharpness": {
+     "label": "Sharpness (V gullies, knife ridges)",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "curvature": {
+     "label": "Hollow emphasis",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "slopeStart": {
+     "label": "Detail starts at slope (deg)",
+     "default": 10,
+     "min": 0,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "slopeEnd": {
+     "label": "Full detail at slope (deg)",
+     "default": 35,
+     "min": 1,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "strataPeriod": {
+     "label": "Strata period (m, 0 = off)",
+     "default": 0,
+     "min": 0,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "strataStrength": {
+     "label": "Strata hardness",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "fractureSets": {
+     "label": "Joint sets",
+     "default": 0,
+     "min": 0,
+     "max": 3,
+     "step": 1,
+     "type": "integer"
+    },
+    "fractureSpacing": {
+     "label": "Joint spacing (m)",
+     "default": 80,
+     "min": 5,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "fractureStrike": {
+     "label": "Joint strike (deg from north)",
+     "default": 35,
+     "min": 0,
+     "max": 180,
+     "step": 1,
+     "type": "number"
+    },
+    "fractureStrength": {
+     "label": "Joint weakness",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "channelThreshold": {
+     "label": "Channel head threshold (m, 0 = off)",
+     "default": 20,
+     "min": 0,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "lakeFade": {
+     "label": "Lake ring (lake radii, 0 = off)",
+     "default": 3,
+     "min": 0,
+     "max": 6,
+     "step": 0.5,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "gullies": "mask",
+    "ridges": "mask",
+    "resistance": "mask"
+   }
+  },
+  {
+   "type": "Floodplain",
+   "label": "Floodplain and terraces",
+   "category": "Water",
+   "description": "Flatten valley floors next to rivers into floodplains at the bankfull level, with natural levees and back-swamp wetlands, and cut river terraces above them. Everything is measured as height above the nearest channel (HAND) along the flow, so the shapes follow the drainage instead of absolute contours.",
+   "inputs": {
+    "terrain": "terrain",
+    "rainfall": "mask?"
+   },
+   "params": {
+    "channelArea": {
+     "label": "Channel threshold (m²)",
+     "default": 1000000,
+     "min": 100,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "Qref": {
+     "label": "Bankfull discharge at reference area (m³/s)",
+     "default": 10,
+     "min": 0.01,
+     "max": 100000,
+     "step": 1,
+     "type": "number"
+    },
+    "Aref": {
+     "label": "Reference area (m²)",
+     "default": 10000000,
+     "min": 1000,
+     "max": 1000000000000,
+     "step": 100000,
+     "type": "number"
+    },
+    "areaExp": {
+     "label": "Discharge area exponent",
+     "default": 0.8,
+     "min": 0.3,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "widthCoeff": {
+     "label": "Width coefficient a (m)",
+     "default": 4,
+     "min": 0.1,
+     "max": 50,
+     "step": 0.1,
+     "type": "number"
+    },
+    "widthExp": {
+     "label": "Width exponent b",
+     "default": 0.5,
+     "min": 0.1,
+     "max": 0.9,
+     "step": 0.01,
+     "type": "number"
+    },
+    "depthCoeff": {
+     "label": "Depth coefficient c (m)",
+     "default": 0.3,
+     "min": 0.01,
+     "max": 10,
+     "step": 0.01,
+     "type": "number"
+    },
+    "depthExp": {
+     "label": "Depth exponent f",
+     "default": 0.4,
+     "min": 0.1,
+     "max": 0.9,
+     "step": 0.01,
+     "type": "number"
+    },
+    "heightFactor": {
+     "label": "Floodplain height (× channel depth)",
+     "default": 2.5,
+     "min": 0.5,
+     "max": 30,
+     "step": 0.5,
+     "type": "number"
+    },
+    "maxDistance": {
+     "label": "Floodplain reach (channel widths)",
+     "default": 20,
+     "min": 1,
+     "max": 200,
+     "step": 1,
+     "type": "number"
+    },
+    "levee": {
+     "label": "Levee height (× depth)",
+     "default": 0.2,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "wetland": {
+     "label": "Back-swamp wetland",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "terraces": {
+     "label": "Terrace levels",
+     "default": 0,
+     "min": 0,
+     "max": 4,
+     "step": 1,
+     "type": "integer"
+    },
+    "terraceSpacing": {
+     "label": "Terrace spacing (m)",
+     "default": 6,
+     "min": 1,
+     "max": 30,
+     "step": 0.5,
+     "type": "number"
+    },
+    "riserAngle": {
+     "label": "Terrace riser angle (°)",
+     "default": 30,
+     "min": 10,
+     "max": 60,
+     "step": 1,
+     "type": "number"
+    },
+    "terraceVariation": {
+     "label": "Terrace spacing variation",
+     "default": 0.3,
+     "min": 0,
+     "max": 0.8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "floodplain": "mask",
+    "terraces": "mask",
+    "wetland": "mask"
+   }
+  },
+  {
+   "type": "FlowRoute",
+   "label": "Flow routing",
+   "category": "Water",
+   "description": "Analyse drainage without changing the terrain. Routes water with D8, random D8, multiple flow directions or D-infinity over filled, carved or basin-linked depressions, and exports flow, channels, height above drainage, wetness, lake depth, drainage basins and stream order. Every mask is scaled by an explicit area or height, not by its own maximum.",
+   "inputs": {
+    "terrain": "terrain",
+    "rainfall": "mask?"
+   },
+   "params": {
+    "method": {
+     "label": "Flow method",
+     "default": "MFD",
+     "options": [
+      "D8",
+      "RandomD8",
+      "MFD",
+      "DInf"
+     ],
+     "type": "select"
+    },
+    "mfdExponent": {
+     "label": "Slope exponent (MFD, random D8)",
+     "default": 1.1,
+     "min": 0.1,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    },
+    "depressions": {
+     "label": "Depressions",
+     "default": "Fill",
+     "options": [
+      "Fill",
+      "Carve",
+      "Basins"
+     ],
+     "type": "select"
+    },
+    "channelArea": {
+     "label": "Channel threshold (m²)",
+     "default": 200000,
+     "min": 100,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "flowArea": {
+     "label": "Flow mask white at (m²)",
+     "default": 10000000,
+     "min": 1,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "handRange": {
+     "label": "Height above drainage white at (m)",
+     "default": 50,
+     "min": 0.1,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    },
+    "wetnessRange": {
+     "label": "Wetness index white at",
+     "default": 20,
+     "min": 1,
+     "max": 50,
+     "step": 1,
+     "type": "number"
+    },
+    "lakeRange": {
+     "label": "Lake depth white at (m)",
+     "default": 20,
+     "min": 0.1,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    },
+    "orderRange": {
+     "label": "Stream order white at",
+     "default": 6,
+     "min": 1,
+     "max": 12,
+     "step": 1,
+     "type": "integer"
+    },
+    "seed": {
+     "label": "Seed (random D8)",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "compute": {
+     "label": "Compute device (D8 accumulation)",
+     "default": "auto",
+     "options": [
+      "auto",
+      "cpu",
+      "gpu"
+     ],
+     "type": "select",
+     "runtimeOnly": true
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "flow": "mask",
+    "channels": "mask",
+    "hand": "mask",
+    "wetness": "mask",
+    "lakes": "mask",
+    "basins": "color",
+    "order": "mask"
+   }
+  },
+  {
+   "type": "Geology",
+   "label": "Geology (rock volume)",
+   "category": "Simulate",
+   "description": "A 3D rock volume under the terrain: dipping, folded and faulted beds of hard and soft rock, with joint sets and fault damage zones. The terrain passes through carrying the rock, and Erode samples it at the eroding surface as it cuts down, so hard beds stand as ledges, ribs and benches and joints steer gullies. Resistance is the rock at the input surface (white = hard) for any node with a resistance input; bed and joints show the hardness and the weak zones, layers numbers the beds.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "thickness": {
+     "label": "Mean bed thickness (m)",
+     "default": 25,
+     "min": 0.5,
+     "max": 1000,
+     "step": 0.5,
+     "type": "number"
+    },
+    "thicknessVariation": {
+     "label": "Bed thickness variation",
+     "default": 0.6,
+     "min": 0,
+     "max": 1.5,
+     "step": 0.05,
+     "type": "number"
+    },
+    "hardFraction": {
+     "label": "Share of hard beds",
+     "default": 0.45,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "hardness": {
+     "label": "Average hardness",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "contrast": {
+     "label": "Hardness contrast",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "datum": {
+     "label": "Datum (m)",
+     "default": 0,
+     "min": -10000,
+     "max": 10000,
+     "step": 10,
+     "type": "number"
+    },
+    "dip": {
+     "label": "Dip (°)",
+     "default": 12,
+     "min": 0,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "dipDirection": {
+     "label": "Dip direction (°, beds descend towards)",
+     "default": 30,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "foldAmplitude": {
+     "label": "Fold amplitude (m)",
+     "default": 0,
+     "min": 0,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "foldWavelength": {
+     "label": "Fold wavelength (m)",
+     "default": 3000,
+     "min": 100,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "foldAxis": {
+     "label": "Fold axis direction (°)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "warp": {
+     "label": "Bed warp (m)",
+     "default": 20,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "warpScale": {
+     "label": "Warp scale (m)",
+     "default": 1500,
+     "min": 50,
+     "max": 100000,
+     "step": 50,
+     "type": "number"
+    },
+    "faults": {
+     "label": "Faults",
+     "default": 3,
+     "min": 0,
+     "max": 16,
+     "step": 1,
+     "type": "integer"
+    },
+    "faultThrow": {
+     "label": "Fault throw (m)",
+     "default": 40,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "faultDip": {
+     "label": "Fault dip (°)",
+     "default": 70,
+     "min": 10,
+     "max": 90,
+     "step": 1,
+     "type": "number"
+    },
+    "faultStrike": {
+     "label": "Fault strike (°)",
+     "default": 60,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "faultSpread": {
+     "label": "Fault strike scatter (°)",
+     "default": 25,
+     "min": 0,
+     "max": 90,
+     "step": 5,
+     "type": "number"
+    },
+    "faultLength": {
+     "label": "Fault length (m)",
+     "default": 2500,
+     "min": 10,
+     "max": 100000,
+     "step": 50,
+     "type": "number"
+    },
+    "faultZone": {
+     "label": "Fault zone half-width (m)",
+     "default": 6,
+     "min": 0.5,
+     "max": 200,
+     "step": 0.5,
+     "type": "number"
+    },
+    "faultWeakness": {
+     "label": "Fault zone weakness",
+     "default": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "jointSets": {
+     "label": "Joint sets",
+     "default": 2,
+     "min": 0,
+     "max": 3,
+     "step": 1,
+     "type": "integer"
+    },
+    "jointStrike": {
+     "label": "Joint strike (°)",
+     "default": 30,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "jointAngle": {
+     "label": "Angle between joint sets (°)",
+     "default": 80,
+     "min": 0,
+     "max": 180,
+     "step": 5,
+     "type": "number"
+    },
+    "jointDip": {
+     "label": "Joint dip (°)",
+     "default": 85,
+     "min": 10,
+     "max": 90,
+     "step": 1,
+     "type": "number"
+    },
+    "jointSpacing": {
+     "label": "Joint spacing (m)",
+     "default": 40,
+     "min": 0.5,
+     "max": 2000,
+     "step": 0.5,
+     "type": "number"
+    },
+    "jointWidth": {
+     "label": "Joint zone half-width (m)",
+     "default": 2,
+     "min": 0.1,
+     "max": 100,
+     "step": 0.1,
+     "type": "number"
+    },
+    "jointWeakness": {
+     "label": "Joint weakness",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "jointPersistence": {
+     "label": "Joint persistence",
+     "default": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "resistance": "mask",
+    "bed": "mask",
+    "joints": "mask",
+    "layers": "mask"
+   }
+  },
+  {
+   "type": "Glaciate",
+   "label": "Glaciate",
+   "category": "Simulate",
+   "description": "Carve the terrain with glaciers at their maximum extent: steady-state balance-flux ice above an equilibrium-line altitude, abrasion that scales with sliding speed (U-shaped troughs, hanging tributary valleys, overdeepenings), cirques with tarns at glacier heads, lateral and terminal moraines, then a post-glacial river pass. Physical units: metres and years. Large-scale work runs on an internal ice grid; fine detail outside the ice is kept.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "elaMode": {
+     "label": "ELA reference",
+     "default": "relief",
+     "options": [
+      "relief",
+      "absolute"
+     ],
+     "type": "select",
+     "group": "Climate"
+    },
+    "elaFraction": {
+     "label": "ELA height in the relief (0 = lowest, 1 = highest)",
+     "default": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number",
+     "group": "Climate"
+    },
+    "ela": {
+     "label": "Equilibrium-line altitude (m, absolute reference)",
+     "default": 1600,
+     "min": -1000,
+     "max": 9000,
+     "step": 10,
+     "type": "number",
+     "group": "Climate"
+    },
+    "aspectBias": {
+     "label": "ELA lowered on north faces (m)",
+     "default": 150,
+     "min": -500,
+     "max": 500,
+     "step": 10,
+     "type": "number",
+     "group": "Climate"
+    },
+    "balanceGradient": {
+     "label": "Mass-balance gradient (m/yr per m)",
+     "default": 0.01,
+     "min": 0.001,
+     "max": 0.05,
+     "step": 0.001,
+     "type": "number",
+     "group": "Climate"
+    },
+    "maxAccumulation": {
+     "label": "Max accumulation (m/yr)",
+     "default": 2,
+     "min": 0.1,
+     "max": 10,
+     "step": 0.1,
+     "type": "number",
+     "group": "Climate"
+    },
+    "sliding": {
+     "label": "Sliding (x deformation speed)",
+     "default": 1,
+     "min": 0,
+     "max": 5,
+     "step": 0.1,
+     "type": "number",
+     "group": "Ice"
+    },
+    "iceGrid": {
+     "label": "Ice grid spacing (m)",
+     "default": 64,
+     "min": 16,
+     "max": 512,
+     "step": 8,
+     "type": "number",
+     "group": "Ice"
+    },
+    "glacialTime": {
+     "label": "Glacial time (kyr)",
+     "default": 500,
+     "min": 0,
+     "max": 2000,
+     "step": 10,
+     "type": "number",
+     "group": "Erosion"
+    },
+    "epochs": {
+     "label": "Ice/erosion steps",
+     "default": 8,
+     "min": 1,
+     "max": 32,
+     "step": 1,
+     "type": "integer",
+     "group": "Erosion"
+    },
+    "abrasionExponent": {
+     "label": "Abrasion speed exponent",
+     "default": 2,
+     "min": 1,
+     "max": 3,
+     "step": 0.1,
+     "type": "number",
+     "group": "Erosion"
+    },
+    "maxDepth": {
+     "label": "Glacial erosion limit (m)",
+     "default": 400,
+     "min": 0,
+     "max": 3000,
+     "step": 10,
+     "type": "number",
+     "group": "Erosion"
+    },
+    "wallAngle": {
+     "label": "Trough wall angle (°)",
+     "default": 50,
+     "min": 0,
+     "max": 85,
+     "step": 1,
+     "type": "number",
+     "group": "Erosion"
+    },
+    "uShape": {
+     "label": "U-profile shaping",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Shaping"
+    },
+    "uExponent": {
+     "label": "U-profile exponent",
+     "default": 2,
+     "min": 1,
+     "max": 4,
+     "step": 0.1,
+     "type": "number",
+     "group": "Shaping"
+    },
+    "polish": {
+     "label": "Glacial polish",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Shaping"
+    },
+    "cirques": {
+     "label": "Cirques",
+     "default": false,
+     "type": "boolean",
+     "group": "Shaping"
+    },
+    "cirqueRadius": {
+     "label": "Cirque radius (m)",
+     "default": 600,
+     "min": 100,
+     "max": 3000,
+     "step": 10,
+     "type": "number",
+     "group": "Shaping"
+    },
+    "cirqueFloor": {
+     "label": "Cirque floor above ELA (m)",
+     "default": 0,
+     "min": -500,
+     "max": 500,
+     "step": 10,
+     "type": "number",
+     "group": "Shaping"
+    },
+    "headwallAngle": {
+     "label": "Cirque headwall angle (°)",
+     "default": 55,
+     "min": 30,
+     "max": 80,
+     "step": 1,
+     "type": "number",
+     "group": "Shaping"
+    },
+    "moraineHeight": {
+     "label": "Moraine height (m)",
+     "default": 30,
+     "min": 0,
+     "max": 200,
+     "step": 1,
+     "type": "number",
+     "group": "Deposits"
+    },
+    "postglacialYears": {
+     "label": "Post-glacial river time (yr)",
+     "default": 11700,
+     "min": 0,
+     "max": 200000,
+     "step": 100,
+     "type": "number",
+     "group": "Deposits"
+    },
+    "lakeFill": {
+     "label": "Lake sediment fill",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number",
+     "group": "Deposits"
+    },
+    "iceRange": {
+     "label": "Ice mask white at (m)",
+     "default": 400,
+     "min": 1,
+     "max": 3000,
+     "step": 10,
+     "type": "number",
+     "group": "Masks"
+    },
+    "erosionRange": {
+     "label": "Erosion mask white at (m)",
+     "default": 200,
+     "min": 1,
+     "max": 3000,
+     "step": 10,
+     "type": "number",
+     "group": "Masks"
+    },
+    "lakeRange": {
+     "label": "Lake depth white at (m)",
+     "default": 20,
+     "min": 0.1,
+     "max": 1000,
+     "step": 1,
+     "type": "number",
+     "group": "Masks"
+    },
+    "seed": {
+     "label": "Seed (cirque shapes)",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer",
+     "group": "Masks"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "ice": "mask",
+    "glacier": "mask",
+    "erosion": "mask",
+    "moraine": "mask",
+    "cirques": "mask",
+    "lakes": "mask"
+   }
+  },
+  {
+   "type": "Gullies",
+   "label": "Gullies (fine incision)",
+   "category": "Simulate",
+   "description": "Cut real gullies at full resolution: water is routed locally, channels incise where enough area drains down a steep enough slope (the channel head sets the gully spacing, tens of metres), and hillslopes between them are rounded by soil creep that speeds up towards the critical slope while cliffs stay sharp. Gives the 8-64 m relief of real mountains instead of uniform noise. Runs tile by tile on big terrains. Optional resistance (hard rock incises and creeps less) and mask. Outputs the terrain, the channel mask and the incision depth.",
+   "inputs": {
+    "terrain": "terrain",
+    "resistance": "mask?",
+    "mask": "mask?"
+   },
+   "params": {
+    "steps": {
+     "label": "Steps",
+     "default": 2,
+     "min": 1,
+     "max": 8,
+     "step": 1,
+     "type": "integer"
+    },
+    "headArea": {
+     "label": "Channel head area (m²)",
+     "default": 300,
+     "min": 50,
+     "max": 100000,
+     "step": 50,
+     "type": "number"
+    },
+    "reach": {
+     "label": "Upstream reach (m)",
+     "default": 80,
+     "min": 4,
+     "max": 1000,
+     "step": 4,
+     "type": "number"
+    },
+    "depth": {
+     "label": "Incision depth (m)",
+     "default": 8,
+     "min": 0,
+     "max": 100,
+     "step": 0.5,
+     "type": "number"
+    },
+    "areaExponent": {
+     "label": "Area exponent m",
+     "default": 0.5,
+     "min": 0,
+     "max": 2,
+     "step": 0.05,
+     "type": "number"
+    },
+    "slopeExponent": {
+     "label": "Slope exponent n",
+     "default": 1,
+     "min": 0.25,
+     "max": 3,
+     "step": 0.05,
+     "type": "number"
+    },
+    "flowExponent": {
+     "label": "Flow concentration",
+     "default": 4,
+     "min": 1,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    },
+    "wallSlope": {
+     "label": "Gully wall slope (deg)",
+     "default": 45,
+     "min": 5,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "rounding": {
+     "label": "Gully floor rounding (m)",
+     "default": 2,
+     "min": 0,
+     "max": 20,
+     "step": 0.5,
+     "type": "number"
+    },
+    "creep": {
+     "label": "Hillslope rounding (m)",
+     "default": 0.8,
+     "min": 0,
+     "max": 50,
+     "step": 0.5,
+     "type": "number"
+    },
+    "criticalSlope": {
+     "label": "Critical slope (deg)",
+     "default": 38,
+     "min": 10,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "rockSlope": {
+     "label": "Cliffs from slope (deg)",
+     "default": 50,
+     "min": 10,
+     "max": 85,
+     "step": 1,
+     "type": "number"
+    },
+    "channelCreep": {
+     "label": "Creep in channels",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "hardness": {
+     "label": "Resistance strength",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "mapRange": {
+     "label": "Incision mask range (m)",
+     "default": 5,
+     "min": 0.1,
+     "max": 100,
+     "step": 0.1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "channels": "mask",
+    "incision": "mask"
+   }
+  },
+  {
+   "type": "HydroFix",
+   "label": "Hydro fix",
+   "category": "Water",
+   "description": "Make the terrain drain: cut outlets through the barriers of closed depressions (least-cost breaching), up to a maximum cut depth and length, and fill whatever is left. Every cell then drains to the map edge. Breach and fill masks show the changes.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "method": {
+     "label": "Method",
+     "default": "Hybrid",
+     "options": [
+      "Hybrid",
+      "Breach",
+      "Fill"
+     ],
+     "type": "select"
+    },
+    "maxDepth": {
+     "label": "Maximum cut depth (m)",
+     "default": 30,
+     "min": 0,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    },
+    "maxLength": {
+     "label": "Maximum cut length (m)",
+     "default": 2000,
+     "min": 0,
+     "max": 100000,
+     "step": 50,
+     "type": "number"
+    },
+    "depthRange": {
+     "label": "Masks white at (m)",
+     "default": 10,
+     "min": 0.01,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "breach": "mask",
+    "fill": "mask"
+   }
+  },
+  {
+   "type": "LakeShore",
+   "label": "Lake shore",
+   "category": "Water",
+   "description": "Shape lake shores without changing lake levels: sandy beaches with a Dean equilibrium profile under water and a berm above it, rocky shores with a wave-cut bench and notch, reed shelves in sheltered bays. Fetch (open water upwind) scales the closure depth, berm and bench. Lakes come from FlowRoute, Lakes or Lake, or are found when the input is not connected.",
+   "inputs": {
+    "terrain": "terrain",
+    "lakes": "mask?"
+   },
+   "params": {
+    "beachSlope": {
+     "label": "Steepest beach shore (°)",
+     "default": 15,
+     "min": 0,
+     "max": 60,
+     "step": 1,
+     "type": "number"
+    },
+    "rockSlope": {
+     "label": "Rocky shore from (°)",
+     "default": 25,
+     "min": 0,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "deanA": {
+     "label": "Dean profile A (m^1/3)",
+     "default": 0.1,
+     "min": 0.02,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    },
+    "closureDepth": {
+     "label": "Closure depth at 1 km fetch (m)",
+     "default": 2,
+     "min": 0.1,
+     "max": 20,
+     "step": 0.1,
+     "type": "number"
+    },
+    "berm": {
+     "label": "Berm height (m)",
+     "default": 1,
+     "min": 0,
+     "max": 5,
+     "step": 0.1,
+     "type": "number"
+    },
+    "faceAngle": {
+     "label": "Beach face angle (°)",
+     "default": 6,
+     "min": 1,
+     "max": 20,
+     "step": 0.5,
+     "type": "number"
+    },
+    "bermWidth": {
+     "label": "Berm width at 1 km fetch (m)",
+     "default": 12,
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "type": "number"
+    },
+    "benchWidth": {
+     "label": "Bench width at 1 km fetch (m)",
+     "default": 6,
+     "min": 0,
+     "max": 50,
+     "step": 0.5,
+     "type": "number"
+    },
+    "benchDepth": {
+     "label": "Bench depth (m)",
+     "default": 1,
+     "min": 0,
+     "max": 5,
+     "step": 0.1,
+     "type": "number"
+    },
+    "windDirection": {
+     "label": "Wind blows towards (°)",
+     "default": 45,
+     "min": 0,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "reeds": {
+     "label": "Reed shores",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "reedFetch": {
+     "label": "Sheltered below fetch (m)",
+     "default": 300,
+     "min": 1,
+     "max": 10000,
+     "step": 10,
+     "type": "number"
+    },
+    "reedWidth": {
+     "label": "Reed belt width (m)",
+     "default": 25,
+     "min": 1,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "minLakeArea": {
+     "label": "Minimum lake area (m²)",
+     "default": 20000,
+     "min": 0,
+     "max": 1000000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "minLakeDepth": {
+     "label": "Minimum lake depth (m)",
+     "default": 1,
+     "min": 0,
+     "max": 1000,
+     "step": 0.1,
+     "type": "number"
+    },
+    "shoreRange": {
+     "label": "Shore distance white at (m)",
+     "default": 100,
+     "min": 1,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "beach": "mask",
+    "rockyShore": "mask",
+    "wetland": "mask",
+    "shoreDistance": "mask"
+   }
+  },
+  {
+   "type": "Landform",
+   "label": "Landform (uplift and rivers)",
+   "category": "Simulate",
+   "description": "Grow mountains from an uplift map: rivers cut into rising rock until erosion balances uplift, which forms dendritic valleys, spurs, cols and varying crest heights. Implicit stream power with deposition, lakes that trap sediment and hillslope diffusion, in metres and years. White uplift rises at the given rate; white resistance erodes less.",
+   "inputs": {
+    "terrain": "terrain?",
+    "uplift": "mask",
+    "resistance": "mask?",
+    "rainfall": "mask?"
+   },
+   "params": {
+    "mode": {
+     "label": "Solver",
+     "default": "Implicit",
+     "options": [
+      "Implicit",
+      "SteadyState"
+     ],
+     "type": "select"
+    },
+    "duration": {
+     "label": "Duration (kyr)",
+     "default": 2000,
+     "min": 0,
+     "max": 50000,
+     "step": 100,
+     "type": "number"
+    },
+    "upliftMax": {
+     "label": "Uplift at white (mm/yr)",
+     "default": 1,
+     "min": 0,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    },
+    "erodibility": {
+     "label": "Erodibility K",
+     "default": 0.00002,
+     "min": 1e-7,
+     "max": 0.001,
+     "step": 0.000001,
+     "type": "number"
+    },
+    "concavity": {
+     "label": "Concavity m/n",
+     "default": 0.45,
+     "min": 0.2,
+     "max": 0.8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "slopeExponent": {
+     "label": "Slope exponent n",
+     "default": 1,
+     "min": 0.5,
+     "max": 2,
+     "step": 0.1,
+     "type": "number"
+    },
+    "channelHead": {
+     "label": "Channel head area (m²)",
+     "default": 5000,
+     "min": 0,
+     "max": 10000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "diffusion": {
+     "label": "Hillslope diffusion (m²/yr)",
+     "default": 0.002,
+     "min": 0,
+     "max": 1,
+     "step": 0.001,
+     "type": "number"
+    },
+    "deposition": {
+     "label": "Deposition G",
+     "default": 1,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "type": "number"
+    },
+    "lakeTrap": {
+     "label": "Lakes trap sediment",
+     "type": "boolean",
+     "default": true
+    },
+    "deltaSlope": {
+     "label": "Delta front slope (°)",
+     "default": 10,
+     "min": 1,
+     "max": 30,
+     "step": 1,
+     "type": "number"
+    },
+    "maxSlope": {
+     "label": "Max slope (°, 0 = off)",
+     "default": 0,
+     "min": 0,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "routing": {
+     "label": "Receivers",
+     "default": "RandomD8",
+     "options": [
+      "RandomD8",
+      "D8",
+      "MFD"
+     ],
+     "type": "select"
+    },
+    "routingExponent": {
+     "label": "Receiver slope exponent",
+     "default": 1,
+     "min": 0.1,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    },
+    "boundary": {
+     "label": "Base level",
+     "default": "Open",
+     "options": [
+      "Open",
+      "Recipe"
+     ],
+     "type": "select"
+    },
+    "edgeFade": {
+     "label": "Uplift fade at outlet edges (m)",
+     "default": 1500,
+     "min": 0,
+     "max": 10000,
+     "step": 100,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Initial roughness (m, no terrain input)",
+     "default": 2,
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "type": "number"
+    },
+    "targetRelief": {
+     "label": "Target relief (m, 0 = physical)",
+     "default": 0,
+     "min": 0,
+     "max": 10000,
+     "step": 10,
+     "type": "number"
+    },
+    "resolution": {
+     "label": "Simulation spacing (m, 0 = graph)",
+     "default": 20,
+     "min": 0,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "resistanceContrast": {
+     "label": "Resistance contrast",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "channelArea": {
+     "label": "Channel threshold (m²)",
+     "default": 200000,
+     "min": 100,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "flowArea": {
+     "label": "Flow mask white at (m²)",
+     "default": 10000000,
+     "min": 1,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "depthRange": {
+     "label": "Wear and deposit white at (m)",
+     "default": 200,
+     "min": 0.1,
+     "max": 10000,
+     "step": 1,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "wear": "mask",
+    "deposition": "mask",
+    "flow": "mask",
+    "channels": "mask",
+    "drainageArea": "mask",
+    "ridges": "mask",
+    "lakeSediment": "mask",
+    "fans": "mask"
+   }
+  },
+  {
+   "type": "LavaFlow",
+   "label": "Lava flows",
+   "category": "Landforms",
+   "description": "Lava flows from vents run down the terrain one after another: each follows a wandering steepest descent, fills the valleys it runs in and stops at its length or where the ground flattens, as a flat-topped lobe with steep margins, levees and a rounded snout. Outputs lava thickness and relative flow age for materials.",
+   "inputs": {
+    "terrain": "terrain",
+    "vents": "mask?"
+   },
+   "params": {
+    "x": {
+     "label": "Vent centre X (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "y": {
+     "label": "Vent centre Y (m)",
+     "default": 0,
+     "min": -100000,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "ventRadius": {
+     "label": "Vent ring radius (m)",
+     "default": 400,
+     "min": 0,
+     "max": 50000,
+     "step": 50,
+     "type": "number"
+    },
+    "flows": {
+     "label": "Flows",
+     "default": 8,
+     "min": 1,
+     "max": 200,
+     "step": 1,
+     "type": "integer"
+    },
+    "length": {
+     "label": "Flow length (m)",
+     "default": 5000,
+     "min": 100,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "width": {
+     "label": "Flow width (m)",
+     "default": 150,
+     "min": 10,
+     "max": 2000,
+     "step": 10,
+     "type": "number"
+    },
+    "thickness": {
+     "label": "Flow thickness (m)",
+     "default": 10,
+     "min": 0.5,
+     "max": 100,
+     "step": 0.5,
+     "type": "number"
+    },
+    "levee": {
+     "label": "Levee height / thickness",
+     "default": 0.2,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "minSlope": {
+     "label": "Stopping slope (°)",
+     "default": 1,
+     "min": 0,
+     "max": 20,
+     "step": 0.5,
+     "type": "number"
+    },
+    "routingExponent": {
+     "label": "Path slope exponent",
+     "default": 4,
+     "min": 0.5,
+     "max": 12,
+     "step": 0.5,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "lava": "mask",
+    "flowAge": "mask"
+   }
+  },
+  {
+   "type": "Normals",
+   "label": "Normal map",
+   "category": "Select",
+   "description": "Tangent-space normal map for Unreal materials, packed 0..1 (x east in red, y south in green for DirectX, z up in blue). Measure scale smooths the surface over a Gaussian radius in metres first, so preview and build grids give the same map.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "measureScale": {
+     "label": "Measure scale (m)",
+     "default": 0,
+     "min": 0,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "strength": {
+     "label": "Strength",
+     "default": 1,
+     "min": 0,
+     "max": 20,
+     "step": 0.1,
+     "type": "number"
+    },
+    "convention": {
+     "label": "Green channel",
+     "default": "DirectX",
+     "options": [
+      "DirectX",
+      "OpenGL"
+     ],
+     "type": "select"
+    }
+   },
+   "outputs": {
+    "normals": "rgb"
+   }
+  },
+  {
+   "type": "Occlusion",
+   "label": "Ambient occlusion",
+   "category": "Select",
+   "description": "Horizon-based ambient occlusion over a radius in metres: 1 under open sky, darker in pits, valley floors and at the foot of cliffs. Planes are fully open whatever their slope. Sampled at fixed distances in metres, so preview and build grids agree.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "radius": {
+     "label": "Radius (m)",
+     "default": 250,
+     "min": 1,
+     "max": 10000,
+     "step": 10,
+     "type": "number"
+    },
+    "directions": {
+     "label": "Directions",
+     "default": "16",
+     "options": [
+      "8",
+      "16"
+     ],
+     "type": "select"
+    },
+    "strength": {
+     "label": "Strength",
+     "default": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.05,
+     "type": "number"
+    },
+    "measureScale": {
+     "label": "Measure scale (m)",
+     "default": 15,
+     "min": 0,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "RelativeHeight",
+   "label": "Relative height selector",
+   "category": "Select",
+   "description": "Select by relative height instead of absolute metres, so the selection survives changes upstream. Normalized: position between the robust low and high of this terrain. Height above drainage: metres above the nearest stream. Topographic position: valley (low) to ridge (high) at a neighbourhood radius. The band is in the 0..1 units of the value output.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "mode": {
+     "label": "Measure",
+     "default": "normalized",
+     "options": [
+      "normalized",
+      "hand",
+      "tpi"
+     ],
+     "type": "select"
+    },
+    "low": {
+     "label": "From (0..1)",
+     "default": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "high": {
+     "label": "To (0..1)",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "feather": {
+     "label": "Feather (0..1)",
+     "default": 0.1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "lowPercentile": {
+     "label": "Normalized: low percentile",
+     "default": 1,
+     "min": 0,
+     "max": 50,
+     "step": 0.5,
+     "type": "number"
+    },
+    "highPercentile": {
+     "label": "Normalized: high percentile",
+     "default": 99,
+     "min": 50,
+     "max": 100,
+     "step": 0.5,
+     "type": "number"
+    },
+    "channelArea": {
+     "label": "Drainage: channel threshold (m²)",
+     "default": 200000,
+     "min": 100,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "handRange": {
+     "label": "Drainage: value 1 at (m)",
+     "default": 100,
+     "min": 0.1,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    },
+    "radius": {
+     "label": "Position: radius (m)",
+     "default": 500,
+     "min": 10,
+     "max": 20000,
+     "step": 10,
+     "type": "number"
+    },
+    "tpiRange": {
+     "label": "Position: value 0/1 at (std. dev.)",
+     "default": 2,
+     "min": 0.1,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask",
+    "value": "mask"
+   }
+  },
+  {
+   "type": "RockMap",
+   "label": "Rock map",
+   "category": "Select",
+   "description": "Where bare rock shows: steep faces above the angle where soil holds, and convex crests and edges on steep ground, plus an optional exposed-rock input. Slope and curvature are measured over a scale in metres, so preview and build grids agree.",
+   "inputs": {
+    "terrain": "terrain",
+    "exposedRock": "mask?"
+   },
+   "params": {
+    "measureScale": {
+     "label": "Measure scale (m)",
+     "default": 20,
+     "min": 0,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "rockSlope": {
+     "label": "Rock starts at (°)",
+     "default": 32,
+     "min": 0,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "cliffSlope": {
+     "label": "All rock above (°)",
+     "default": 50,
+     "min": 1,
+     "max": 90,
+     "step": 1,
+     "type": "number"
+    },
+    "convexityWeight": {
+     "label": "Crests weight",
+     "default": 0.5,
+     "min": 0,
+     "max": 2,
+     "step": 0.05,
+     "type": "number"
+    },
+    "curvatureRef": {
+     "label": "Curvature white at (1/m)",
+     "default": 0.004,
+     "min": 0.0001,
+     "max": 1,
+     "step": 0.0005,
+     "type": "number"
+    },
+    "exposedWeight": {
+     "label": "Exposed rock weight",
+     "default": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "Scree",
+   "label": "Rockfall & scree",
+   "category": "Simulate",
+   "description": "Rock faces steeper than the release angle shed debris. It runs down the steepest path, stops where the slope eases below the scree angle or its energy line flattens below the run-out angle, and settles into talus cones under gullies and aprons along cliff feet. White resistance keeps rock from releasing (parallel: resistant rock stands up to the resistant release angle and its debris rests at the coarse scree angle); black mask protects cells. Closed edges conserve volume. Resolution independent. Parallel execution moves every column at once (GPU-capable) and settles the fresh debris at its angle of repose.",
+   "inputs": {
+    "terrain": "terrain",
+    "resistance": "mask?",
+    "mask": "mask?"
+   },
+   "params": {
+    "releaseAngle": {
+     "label": "Release angle (°)",
+     "default": 50,
+     "min": 25,
+     "max": 85,
+     "step": 1,
+     "type": "number"
+    },
+    "stopAngle": {
+     "label": "Scree angle (°)",
+     "default": 34,
+     "min": 15,
+     "max": 50,
+     "step": 1,
+     "type": "number"
+    },
+    "runoutAngle": {
+     "label": "Run-out angle (°)",
+     "default": 32,
+     "min": 10,
+     "max": 50,
+     "step": 1,
+     "type": "number"
+    },
+    "releaseDepth": {
+     "label": "Release depth per cycle (m)",
+     "default": 3,
+     "min": 0,
+     "max": 50,
+     "step": 0.5,
+     "type": "number"
+    },
+    "cycles": {
+     "label": "Rockfall cycles",
+     "default": 3,
+     "min": 1,
+     "max": 20,
+     "step": 1,
+     "type": "integer"
+    },
+    "fracture": {
+     "label": "Fracture variation",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "fractureScale": {
+     "label": "Fracture scale (m)",
+     "default": 60,
+     "min": 1,
+     "max": 5000,
+     "step": 5,
+     "type": "number"
+    },
+    "tolerance": {
+     "label": "Settle tolerance (°)",
+     "default": 0.5,
+     "min": 0.05,
+     "max": 5,
+     "step": 0.05,
+     "type": "number"
+    },
+    "mapRange": {
+     "label": "Scree mask white depth (m)",
+     "default": 5,
+     "min": 0.01,
+     "max": 500,
+     "step": 0.5,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "execution": {
+     "label": "Execution",
+     "default": "serial",
+     "options": [
+      "serial",
+      "parallel"
+     ],
+     "type": "select",
+     "createDefault": "parallel"
+    },
+    "rockReleaseAngle": {
+     "label": "Resistant rock release angle (°, parallel)",
+     "default": 70,
+     "min": 25,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "coarseAngle": {
+     "label": "Scree angle on resistant rock (°, parallel)",
+     "default": 38,
+     "min": 15,
+     "max": 50,
+     "step": 1,
+     "type": "number"
+    },
+    "maxRunout": {
+     "label": "Maximum run-out (m, parallel)",
+     "default": 600,
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "headTaper": {
+     "label": "Apron head taper (m, 0 = off)",
+     "default": 0,
+     "min": 0,
+     "max": 200,
+     "step": 1,
+     "type": "number",
+     "createDefault": 12
+    },
+    "compute": {
+     "label": "Compute (parallel)",
+     "default": "auto",
+     "options": [
+      "auto",
+      "cpu",
+      "gpu"
+     ],
+     "type": "select",
+     "runtimeOnly": true
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "scree": "mask",
+    "cliff": "mask",
+    "boulders": "mask"
+   }
+  },
+  {
+   "type": "Sea",
+   "label": "Sea and coast",
+   "category": "Water",
+   "description": "Floods the terrain below a sea level from the map edge and shapes the coast. Exposed rocky shores retreat into wave-cut platforms below cliffs; gentle shores get Dean equilibrium beaches out to the closure depth with a berm above the waterline. Exposure comes from the open-water fetch towards the swell. All lengths are in metres, so the coast keeps its size at every resolution.",
+   "inputs": {
+    "terrain": "terrain",
+    "hardness": "mask?"
+   },
+   "params": {
+    "levelMode": {
+     "label": "Sea level reference",
+     "default": "coverage",
+     "options": [
+      "coverage",
+      "absolute"
+     ],
+     "type": "select"
+    },
+    "levelFraction": {
+     "label": "Share of the map under the sea",
+     "default": 0.2,
+     "min": 0,
+     "max": 0.95,
+     "step": 0.01,
+     "type": "number"
+    },
+    "seaLevel": {
+     "label": "Sea level (m, absolute reference)",
+     "default": 40,
+     "min": -5000,
+     "max": 15000,
+     "step": 1,
+     "type": "number"
+    },
+    "swellFrom": {
+     "label": "Swell from (°, 0 = east, 90 = south)",
+     "default": 135,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "referenceFetch": {
+     "label": "Fully exposed at fetch (m)",
+     "default": 30000,
+     "min": 100,
+     "max": 1000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "openSeaFetch": {
+     "label": "Open sea beyond the map edge (m)",
+     "default": 100000,
+     "min": 0,
+     "max": 10000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "tidalRange": {
+     "label": "Tidal range (m)",
+     "default": 2.5,
+     "min": 0,
+     "max": 15,
+     "step": 0.5,
+     "type": "number"
+    },
+    "ageYears": {
+     "label": "Time at this sea level (years)",
+     "default": 6000,
+     "min": 0,
+     "max": 200000,
+     "step": 500,
+     "type": "number"
+    },
+    "cliffRetreatRate": {
+     "label": "Cliff retreat, exposed (m/yr)",
+     "default": 0.05,
+     "min": 0,
+     "max": 2,
+     "step": 0.01,
+     "type": "number"
+    },
+    "cliffAngle": {
+     "label": "Rocky above slope (°)",
+     "default": 30,
+     "min": 5,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "beachSlope": {
+     "label": "Beach below slope (°)",
+     "default": 8,
+     "min": 0,
+     "max": 45,
+     "step": 1,
+     "type": "number"
+    },
+    "cliffFace": {
+     "label": "Cliff face (°)",
+     "default": 70,
+     "min": 35,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "lithologyScale": {
+     "label": "Rock band size (m)",
+     "default": 700,
+     "min": 50,
+     "max": 20000,
+     "step": 50,
+     "type": "number"
+    },
+    "lithologyContrast": {
+     "label": "Hard/soft rock contrast",
+     "default": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "bayBeaches": {
+     "label": "Beaches in bays",
+     "default": 1,
+     "min": 0,
+     "max": 2,
+     "step": 0.1,
+     "type": "number"
+    },
+    "deanA": {
+     "label": "Dean A, grain (m^1/3)",
+     "default": 0.1,
+     "min": 0.03,
+     "max": 0.5,
+     "step": 0.01,
+     "type": "number"
+    },
+    "closureDepth": {
+     "label": "Closure depth, exposed (m)",
+     "default": 10,
+     "min": 0.5,
+     "max": 40,
+     "step": 0.5,
+     "type": "number"
+    },
+    "beachFace": {
+     "label": "Beach face (°)",
+     "default": 5,
+     "min": 1,
+     "max": 20,
+     "step": 0.5,
+     "type": "number"
+    },
+    "bermHeight": {
+     "label": "Berm height, exposed (m)",
+     "default": 2.5,
+     "min": 0,
+     "max": 10,
+     "step": 0.5,
+     "type": "number"
+    },
+    "bermWidth": {
+     "label": "Berm width, exposed (m)",
+     "default": 40,
+     "min": 0,
+     "max": 500,
+     "step": 5,
+     "type": "number"
+    },
+    "alongshore": {
+     "label": "Alongshore smoothing (m)",
+     "default": 150,
+     "min": 10,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "shoreWidth": {
+     "label": "Shore mask width (m)",
+     "default": 40,
+     "min": 1,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "shore": "mask",
+    "beach": "mask",
+    "cliff": "mask",
+    "seaMask": "mask"
+   }
+  },
+  {
+   "type": "SlopeBlur",
+   "label": "Slope blur",
+   "category": "Shape",
+   "description": "Blur along the downslope direction only. Smooths noise and steps into continuous, flowing slopes while gullies and spurs across the slope stay sharp; crests are protected. Distances are in world metres, so previews and builds match.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "radius": {
+     "label": "Blur length (m)",
+     "default": 60,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "amount": {
+     "label": "Strength",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "ridges": {
+     "label": "Protect crests",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "measureScale": {
+     "label": "Direction smoothing (m)",
+     "default": 30,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "minSlope": {
+     "label": "Fade below slope (°)",
+     "default": 3,
+     "min": 0,
+     "max": 45,
+     "step": 0.5,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain"
+   }
+  },
+  {
+   "type": "Snow",
+   "label": "Snow",
+   "category": "Simulate",
+   "description": "Form-aware snow cover: a snowline in metres or as a fraction of the relief, lower on shaded faces, scoured from wind-exposed ridges and collected in lee slopes and hollows, then redistributed by avalanches so steep faces shed their snow into couloirs and cones. Outputs the snow-covered surface, snow cover, snow depth in metres and avalanche tracks.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "snowlineMode": {
+     "label": "Snowline",
+     "default": "relative",
+     "options": [
+      "relative",
+      "absolute"
+     ],
+     "type": "select"
+    },
+    "snowline": {
+     "label": "Snowline height (m, absolute)",
+     "default": 2200,
+     "min": -1000,
+     "max": 9000,
+     "step": 10,
+     "type": "number"
+    },
+    "snowlineFraction": {
+     "label": "Snowline in the relief (0 lowest, 1 highest)",
+     "default": 0.65,
+     "min": 0,
+     "max": 1,
+     "step": 0.01,
+     "type": "number"
+    },
+    "ramp": {
+     "label": "Snowline transition (m)",
+     "default": 150,
+     "min": 1,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "aspectShift": {
+     "label": "Lower on shaded faces by (m)",
+     "default": 150,
+     "min": -1000,
+     "max": 1000,
+     "step": 10,
+     "type": "number"
+    },
+    "variation": {
+     "label": "Snowline variation (m)",
+     "default": 60,
+     "min": 0,
+     "max": 500,
+     "step": 5,
+     "type": "number"
+    },
+    "variationScale": {
+     "label": "Variation size (m)",
+     "default": 500,
+     "min": 10,
+     "max": 10000,
+     "step": 10,
+     "type": "number"
+    },
+    "windDirection": {
+     "label": "Wind from (compass degrees)",
+     "default": 300,
+     "min": 0,
+     "max": 360,
+     "step": 1,
+     "type": "number"
+    },
+    "windStrength": {
+     "label": "Wind scour and drift",
+     "default": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "windRadius": {
+     "label": "Wind shelter distance (m)",
+     "default": 200,
+     "min": 10,
+     "max": 2000,
+     "step": 10,
+     "type": "number"
+    },
+    "hollowGain": {
+     "label": "Hollows collect",
+     "default": 0.6,
+     "min": 0,
+     "max": 3,
+     "step": 0.05,
+     "type": "number"
+    },
+    "holdAngle": {
+     "label": "Holds snow up to (deg)",
+     "default": 32,
+     "min": 0,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "shedAngle": {
+     "label": "Sheds snow from (deg)",
+     "default": 52,
+     "min": 1,
+     "max": 90,
+     "step": 1,
+     "type": "number"
+    },
+    "avalanche": {
+     "label": "Avalanches",
+     "type": "boolean",
+     "default": true
+    },
+    "depth": {
+     "label": "Snow depth (m)",
+     "default": 2,
+     "min": 0.05,
+     "max": 50,
+     "step": 0.05,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed offset",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "snow": "mask",
+    "snowDepth": "terrain",
+    "avalancheTracks": "mask"
+   }
+  },
+  {
+   "type": "SoilMap",
+   "label": "Soil map",
+   "category": "Select",
+   "description": "Where soil and sediment lie: gentle slopes, hollows and valley floors, drainage paths and deposition. Slope and curvature are measured over a scale in metres and flow by specific catchment area, so preview and build grids agree. Without a flow input the node routes the terrain itself.",
+   "inputs": {
+    "terrain": "terrain",
+    "flow": "mask?",
+    "deposition": "mask?"
+   },
+   "params": {
+    "measureScale": {
+     "label": "Measure scale (m)",
+     "default": 20,
+     "min": 0,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "soilSlope": {
+     "label": "Full soil below (°)",
+     "default": 20,
+     "min": 0,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "bareSlope": {
+     "label": "Bare above (°)",
+     "default": 40,
+     "min": 1,
+     "max": 90,
+     "step": 1,
+     "type": "number"
+    },
+    "baseSoil": {
+     "label": "Soil on plain slopes",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "concavityWeight": {
+     "label": "Hollows weight",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "curvatureRef": {
+     "label": "Curvature white at (1/m)",
+     "default": 0.004,
+     "min": 0.0001,
+     "max": 1,
+     "step": 0.0005,
+     "type": "number"
+    },
+    "flowWeight": {
+     "label": "Flow weight",
+     "default": 0.35,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "flowRef": {
+     "label": "Flow white at catchment (m)",
+     "default": 5000,
+     "min": 1,
+     "max": 10000000,
+     "step": 100,
+     "type": "number"
+    },
+    "depositionWeight": {
+     "label": "Deposition weight",
+     "default": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.05,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "mask": "mask"
+   }
+  },
+  {
+   "type": "Strata",
+   "label": "Strata (rock layers)",
+   "category": "Landforms",
+   "description": "Layered rock: a dipping, folded stack of beds with an erodibility and a critical slope per layer. Feed resistance into Landform or StreamPower (set their resistance contrast to 1), or connect any output to Plateau (canyonlands) so the layers are re-evaluated as the rock is cut: hard beds stand as cliffs and ledges, soft beds as slopes. Flat beds give mesas and stepped canyons, 5-30 degrees cuestas, steeper hogbacks.",
+   "inputs": {
+    "terrain": "terrain?"
+   },
+   "params": {
+    "sequence": {
+     "label": "Rock sequence",
+     "default": "canyonlands",
+     "options": [
+      "canyonlands",
+      "cuesta",
+      "badlands",
+      "alternating",
+      "granite"
+     ],
+     "type": "select"
+    },
+    "thickness": {
+     "label": "Thickness scale",
+     "default": 1,
+     "min": 0.05,
+     "max": 20,
+     "step": 0.05,
+     "type": "number"
+    },
+    "contrast": {
+     "label": "Hardness contrast",
+     "default": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "datum": {
+     "label": "Top of sequence at centre (m)",
+     "default": 0,
+     "min": -10000,
+     "max": 10000,
+     "step": 10,
+     "type": "number"
+    },
+    "dip": {
+     "label": "Dip (°)",
+     "default": 0,
+     "min": 0,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "dipDirection": {
+     "label": "Dip direction (°, beds descend towards)",
+     "default": 0,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "foldAmplitude": {
+     "label": "Fold amplitude (m)",
+     "default": 0,
+     "min": 0,
+     "max": 5000,
+     "step": 10,
+     "type": "number"
+    },
+    "foldWavelength": {
+     "label": "Fold wavelength (m)",
+     "default": 4000,
+     "min": 100,
+     "max": 100000,
+     "step": 100,
+     "type": "number"
+    },
+    "foldAngle": {
+     "label": "Fold axis direction (°)",
+     "default": 90,
+     "min": -360,
+     "max": 360,
+     "step": 5,
+     "type": "number"
+    },
+    "warp": {
+     "label": "Bed warp (m)",
+     "default": 0,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "warpScale": {
+     "label": "Warp scale (m)",
+     "default": 2500,
+     "min": 50,
+     "max": 100000,
+     "step": 50,
+     "type": "number"
+    },
+    "jitter": {
+     "label": "Bed thickness jitter",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "resistance": "mask",
+    "erodibility": "mask",
+    "criticalSlope": "mask",
+    "layerId": "mask"
+   }
+  },
+  {
+   "type": "StreamPower",
+   "label": "Stream power erosion",
+   "category": "Simulate",
+   "description": "Rivers erode the terrain for a duration: implicit stream power with random receivers, deposition that fills valleys and builds fans, lakes that trap sediment as deltas, and hillslope diffusion, in metres and years. Optional uplift and resistance (white resists). Wear and deposit masks are white at a stated thickness.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?",
+    "uplift": "mask?",
+    "resistance": "mask?",
+    "rainfall": "mask?"
+   },
+   "params": {
+    "duration": {
+     "label": "Duration (kyr)",
+     "default": 50,
+     "min": 0,
+     "max": 10000,
+     "step": 1,
+     "type": "number"
+    },
+    "upliftMax": {
+     "label": "Uplift at white (mm/yr)",
+     "default": 0,
+     "min": 0,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    },
+    "erodibility": {
+     "label": "Erodibility K",
+     "default": 0.00002,
+     "min": 1e-7,
+     "max": 0.001,
+     "step": 0.000001,
+     "type": "number"
+    },
+    "concavity": {
+     "label": "Concavity m/n",
+     "default": 0.45,
+     "min": 0.2,
+     "max": 0.8,
+     "step": 0.05,
+     "type": "number"
+    },
+    "slopeExponent": {
+     "label": "Slope exponent n",
+     "default": 1,
+     "min": 0.5,
+     "max": 2,
+     "step": 0.1,
+     "type": "number"
+    },
+    "channelHead": {
+     "label": "Channel head area (m²)",
+     "default": 0,
+     "min": 0,
+     "max": 10000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "diffusion": {
+     "label": "Hillslope diffusion (m²/yr)",
+     "default": 0.002,
+     "min": 0,
+     "max": 1,
+     "step": 0.001,
+     "type": "number"
+    },
+    "deposition": {
+     "label": "Deposition G",
+     "default": 1,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "type": "number"
+    },
+    "lakeTrap": {
+     "label": "Lakes trap sediment",
+     "type": "boolean",
+     "default": true
+    },
+    "deltaSlope": {
+     "label": "Delta front slope (°)",
+     "default": 10,
+     "min": 1,
+     "max": 30,
+     "step": 1,
+     "type": "number"
+    },
+    "maxSlope": {
+     "label": "Max slope (°, 0 = off)",
+     "default": 0,
+     "min": 0,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "routing": {
+     "label": "Receivers",
+     "default": "RandomD8",
+     "options": [
+      "RandomD8",
+      "D8",
+      "MFD"
+     ],
+     "type": "select"
+    },
+    "routingExponent": {
+     "label": "Receiver slope exponent",
+     "default": 1,
+     "min": 0.1,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    },
+    "boundary": {
+     "label": "Base level",
+     "default": "Recipe",
+     "options": [
+      "Recipe",
+      "Open"
+     ],
+     "type": "select"
+    },
+    "edgeFade": {
+     "label": "Uplift fade at outlet edges (m)",
+     "default": 0,
+     "min": 0,
+     "max": 10000,
+     "step": 100,
+     "type": "number"
+    },
+    "resolution": {
+     "label": "Simulation spacing (m, 0 = graph)",
+     "default": 0,
+     "min": 0,
+     "max": 500,
+     "step": 1,
+     "type": "number"
+    },
+    "resistanceContrast": {
+     "label": "Resistance contrast",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "channelArea": {
+     "label": "Channel threshold (m²)",
+     "default": 200000,
+     "min": 100,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "flowArea": {
+     "label": "Flow mask white at (m²)",
+     "default": 10000000,
+     "min": 1,
+     "max": 10000000000,
+     "step": 10000,
+     "type": "number"
+    },
+    "depthRange": {
+     "label": "Wear and deposit white at (m)",
+     "default": 20,
+     "min": 0.1,
+     "max": 10000,
+     "step": 1,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "wear": "mask",
+    "deposition": "mask",
+    "flow": "mask",
+    "channels": "mask",
+    "drainageArea": "mask",
+    "ridges": "mask",
+    "lakeSediment": "mask",
+    "fans": "mask"
+   }
+  },
+  {
+   "type": "Upscale",
+   "label": "Upscale detail",
+   "category": "Shape",
+   "description": "Make a coarse simulation or a coarse imported heightfield look detailed at the graph resolution. Re-samples the input at its source spacing, rebuilds a smooth surface through those samples (no bilinear facets or grid), then adds flow-aligned gullies and roughness below twice the source spacing, down to the target spacing. Detail follows slope and curvature and stays off flats, lakes and the ring around small lakes; gullies start only at channel heads.",
+   "inputs": {
+    "terrain": "terrain",
+    "mask": "mask?"
+   },
+   "params": {
+    "sourceSpacing": {
+     "label": "Source spacing (m)",
+     "default": 32,
+     "min": 0,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "interpolation": {
+     "label": "Reconstruction",
+     "default": "Spline",
+     "options": [
+      "Spline",
+      "CatmullRom"
+     ],
+     "type": "select"
+    },
+    "detail": {
+     "label": "Detail depth (m)",
+     "default": 4,
+     "min": 0,
+     "max": 200,
+     "step": 0.5,
+     "type": "number"
+    },
+    "roughness": {
+     "label": "Detail exponent",
+     "default": 1.2,
+     "min": 0.5,
+     "max": 1.5,
+     "step": 0.05,
+     "type": "number"
+    },
+    "octaves": {
+     "label": "Octaves",
+     "default": 5,
+     "min": 1,
+     "max": 8,
+     "step": 1,
+     "type": "integer"
+    },
+    "erosion": {
+     "label": "Flow-aligned share",
+     "default": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "branching": {
+     "label": "Branching",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "sharpness": {
+     "label": "Sharpness",
+     "default": 0.4,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "curvature": {
+     "label": "Hollow emphasis",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "type": "number"
+    },
+    "slopeStart": {
+     "label": "Detail starts at slope (deg)",
+     "default": 4,
+     "min": 0,
+     "max": 80,
+     "step": 1,
+     "type": "number"
+    },
+    "slopeEnd": {
+     "label": "Full detail at slope (deg)",
+     "default": 30,
+     "min": 1,
+     "max": 89,
+     "step": 1,
+     "type": "number"
+    },
+    "finestSpacing": {
+     "label": "Target spacing (m, 0 = grid)",
+     "default": 0,
+     "min": 0,
+     "max": 100,
+     "step": 0.5,
+     "type": "number"
+    },
+    "seed": {
+     "label": "Seed",
+     "default": 0,
+     "min": 0,
+     "max": 1000000,
+     "step": 1,
+     "type": "integer"
+    },
+    "channelThreshold": {
+     "label": "Channel head threshold (m, 0 = off)",
+     "default": 20,
+     "min": 0,
+     "max": 1000,
+     "step": 1,
+     "type": "number"
+    },
+    "lakeFade": {
+     "label": "Lake ring (lake radii, 0 = off)",
+     "default": 3,
+     "min": 0,
+     "max": 6,
+     "step": 0.5,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "gullies": "mask",
+    "ridges": "mask"
+   }
+  },
+  {
+   "type": "ValleyFill",
+   "label": "Valley fill",
+   "category": "Simulate",
+   "description": "Fill eroded V valleys with sediment where their drainage area is large: broad flat floodplain floors that widen downstream, rise gently to the valley walls and stop there. Deep closed basins stay lakes at their spill level, small hollows stay as they are, other basins fill with sediment that drains gently towards their outlet. Only raises the terrain.",
+   "inputs": {
+    "terrain": "terrain"
+   },
+   "params": {
+    "floodplainArea": {
+     "label": "Floodplain from drainage area (m²)",
+     "default": 1000000,
+     "min": 1000,
+     "max": 10000000000,
+     "step": 100000,
+     "type": "number"
+    },
+    "widthCoeff": {
+     "label": "Floor width coefficient (m^0.4)",
+     "default": 1.5,
+     "min": 0.05,
+     "max": 50,
+     "step": 0.1,
+     "type": "number"
+    },
+    "widthExp": {
+     "label": "Floor width exponent",
+     "default": 0.3,
+     "min": 0.1,
+     "max": 0.6,
+     "step": 0.01,
+     "type": "number"
+    },
+    "maxHalfWidth": {
+     "label": "Maximum floor half-width (m)",
+     "default": 1500,
+     "min": 5,
+     "max": 20000,
+     "step": 10,
+     "type": "number"
+    },
+    "lateralRise": {
+     "label": "Floor rise to the walls (°)",
+     "default": 1,
+     "min": 0,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    },
+    "smoothing": {
+     "label": "Along-valley smoothing (floor widths)",
+     "default": 8,
+     "min": 0,
+     "max": 50,
+     "step": 0.5,
+     "type": "number"
+    },
+    "maxFillDepth": {
+     "label": "Maximum fill depth (m)",
+     "default": 150,
+     "min": 0,
+     "max": 2000,
+     "step": 5,
+     "type": "number"
+    },
+    "toe": {
+     "label": "Minimum toe width (m)",
+     "default": 2,
+     "min": 0,
+     "max": 50,
+     "step": 0.5,
+     "type": "number"
+    },
+    "toeWidth": {
+     "label": "Toe width (floor half-widths)",
+     "default": 0.35,
+     "min": 0,
+     "max": 2,
+     "step": 0.05,
+     "type": "number"
+    },
+    "minLakeDepth": {
+     "label": "Minimum lake depth (m)",
+     "default": 2,
+     "min": 0,
+     "max": 1000,
+     "step": 0.5,
+     "type": "number"
+    },
+    "minLakeArea": {
+     "label": "Minimum lake area (m²)",
+     "default": 50000,
+     "min": 0,
+     "max": 1000000000,
+     "step": 1000,
+     "type": "number"
+    },
+    "hollowDepth": {
+     "label": "Keep hollows up to depth (m)",
+     "default": 1,
+     "min": 0,
+     "max": 50,
+     "step": 0.1,
+     "type": "number"
+    },
+    "hollowArea": {
+     "label": "Keep hollows up to area (m²)",
+     "default": 1000,
+     "min": 0,
+     "max": 1000000,
+     "step": 100,
+     "type": "number"
+    },
+    "fillGrade": {
+     "label": "Sediment fill gradient (°)",
+     "default": 2.5,
+     "min": 0,
+     "max": 10,
+     "step": 0.1,
+     "type": "number"
+    },
+    "fillRange": {
+     "label": "Fill depth white at (m)",
+     "default": 20,
+     "min": 0.1,
+     "max": 2000,
+     "step": 1,
+     "type": "number"
+    },
+    "lakeRange": {
+     "label": "Lake depth white at (m)",
+     "default": 20,
+     "min": 0.1,
+     "max": 5000,
+     "step": 1,
+     "type": "number"
+    }
+   },
+   "outputs": {
+    "terrain": "terrain",
+    "floodplain": "mask",
+    "fillDepth": "mask",
+    "lakes": "mask"
+   }
+  }
+ ]
+}
