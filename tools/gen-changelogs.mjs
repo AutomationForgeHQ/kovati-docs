@@ -66,8 +66,10 @@ const minorOf = (v) => {
   return `${maj}.${min}.x`
 }
 
+// UTC, as CI publishes: in local time a release tagged late in the evening
+// regenerated a day later on a machine east of Greenwich.
 const date = (iso) =>
-  new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 
 const DISTRIBUTION = {
   open: 'Open source',
