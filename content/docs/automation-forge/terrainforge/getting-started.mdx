@@ -38,10 +38,26 @@ and restart the editor. **Edit → Plugins** works too.
 In the Content Browser: **Add → Automation Forge → TerrainForge → Terrain
 Definition (from preset)**.
 
+<Shot
+  src="/shots/terrainforge/create-menu.png"
+  width={671}
+  height={191}
+  alt="The Content Browser's Add menu cascading three levels. Automation Forge is highlighted among engine categories such as Animation, Artificial Intelligence, Audio, Blueprint, Cinematics and Data. The second column lists TerrainForge, highlighted. The third column, headed TERRAINFORGE, offers Terrain Definition and Terrain Definition (from preset), with the second highlighted."
+  caption="Two entries for the same asset. From preset is the one to start with; the plain Terrain Definition opens on a starter mountain graph. With other Automation Forge sets installed, they are listed beside TerrainForge in the middle column."
+/>
+
 The picker lists every preset with a small hillshade of its output, drawn by
 the native engine in the background and cached. Choose **Alpine valleys
 (eroded)** for a 4 km eroded mountain range, or any of the classic ones, and
 press **Create**. The asset opens in the TerrainForge editor.
+
+<Shot
+  src="/shots/terrainforge/preset-picker.png"
+  width={999}
+  height={1080}
+  alt="The New Terrain Definition from Preset dialog. A Presets heading reads 'Start from a ready graph and its world settings. Everything stays editable; Undo restores the previous graph.' Below a search box, a list of presets, each with a small green and grey hillshade: Alpine valleys (eroded), selected, described as uplifted ranges, glaciers, rain and channel erosion over jointed crystalline rock and scree aprons, laid out for 4 km, 'alpine biomes · 16 nodes · 4.0 km, 4033² · own world settings'; Alpine valleys (eroded, 8 km), 20 nodes at 8.1 km and 8129²; then Alpine ridges, Layered canyon, Coastal island and Placed mountains, each 8.0 km at 1009². Cancel and Create buttons sit at the bottom right."
+  caption="The grey line under each preset is what you are committing to: node count, size and output grid. The two eroded alpine presets build at 4033 and 8129 samples and the classic ones at 1009, so their first builds take very different times."
+/>
 
 **Terrain Definition**, without "from preset", opens with a starter mountain
 graph instead.
@@ -93,6 +109,14 @@ simulation grid, lowest and highest height, seed, which map edges water may
 leave by, and the water mode. It shows an estimate of the build's peak memory
 before you start.
 
+<Shot
+  src="/shots/terrainforge/world-biomes.png"
+  width={453}
+  height={1160}
+  alt="The World & biomes tab for a real place, TD_R_Geiranger. World: map size 4032 m, output grid 4033 × 4033 with 'Estimated build memory: about 1.9 GB (a planning figure; the build reports what it really used)', simulation grid 2049 × 2049, lowest height -37 m, highest 1332 m, seed 42, map edges open on all sides. Water: terrain drainage, rivers start at 0.4 km², river width at 1 km² 4 m, smallest lake 20000 m², snow line 1450 m. Named maps: GIS_water, GIS_forest and GIS_glacier, each a mapped mask, with a row to add another. Real location (1 m level): latitude 62.101, longitude 7.095, level grid 4033 × 4033 (4032 m), level profile Game level, and the buttons Check location, Pick on map and a greyed-out Proceed (create level project). Viewer: display mesh 513 × 513."
+  caption="Every number a build reads is on this one tab, and a change here marks the last build out of date. Named maps are the outputs every take writes as 16-bit maps; here they are the masks a real-place import brought in."
+/>
+
 Press **Build terrain**. The resolution beside it is **World settings**,
 **Native 2K · 2017²** or **Native 4K · 4033²**. Start at 2017; 4033 is several
 minutes on the CPU.
@@ -125,8 +149,8 @@ new level**.
 
 <Shot
   src="/shots/terrainforge/export-tab.png"
-  width={1400}
-  height={1000}
+  width={1470}
+  height={775}
   alt="The Export tab of the TerrainForge editor. Under 'Export to Unreal assets', a line explains that the take's files bind to Landscape layers, PCG masks, textures and water geometry, followed by the full list of files in the current take: biome masks, data maps such as data_slope.png and data_flow.png, height.png and height.r16, pcg masks per biome, preview.png, recipe.json, validation.json, water geometry and waterlines. Below are a search box, collapsed Export Settings and Last Export sections, and the buttons Suggest bindings, Validate and Export assets. At the bottom, the New level section reads 'Import the current take as a new World Partition level with its landscape, layers and water', with the path /Game/TerrainForge/L_Terrain and the button Import as new level."
   caption="The file list at the top is the current take as it sits on disk, so you can see what the import will use before pressing anything. New level is at the bottom; the export above it is the other route, binding the same files into an existing landscape or PCG setup instead of a new map."
 />
