@@ -50,6 +50,12 @@
     "surfaceforge",
     "surfaceforgelocal",
     "surfaceforgepatina",
-    "surfaceforgetoolset"
+    "surfaceforgetoolset",
+    "---TerrainForge---",
+    "terrainforge",
+    "terrainforgetoolset",
+    "---SkinForge---",
+    "skinforge",
+    "skinforgetoolset"
   ]
 }
