@@ -74,6 +74,14 @@ Previews are quick looks on a reduced grid. A build computes the take at its
 own resolution, so a graph that previews well at 513 is still worth checking
 at 2017 before a 4033 build.
 
+<Shot
+  src="/shots/terrainforge/erosion-before-after.jpg"
+  width={1920}
+  height={476}
+  alt="Two previews of the same 4 km Alpine graph from the same camera. Left: the node Ranges on hills, two mountain ranges added to rolling hills, with smooth broad slopes, wide dark gullies and many small blue lakes scattered in hollows on the plain. Right: the graph's final output after glaciers, rain erosion, rock, channel erosion, valley floors, scree and fine detail: the same ridges now cut by dense branching gullies, valley floors flattened, and only a few larger lakes left."
+  caption="Before and after the simulation, in one graph. The left is a copy of the definition with its output moved to Ranges on hills, so the viewer draws drainage water for it too; the right is the original output. Compare the lakes as well as the slopes: once erosion has cut outlets, most of the small hollows drain and only the larger basins keep water."
+/>
+
 </Step>
 
 <Step>
@@ -114,6 +122,14 @@ itself stays.
 On the **Export** tab, under **New level**, give a content path that does not
 exist yet (it starts as `/Game/TerrainForge/L_Terrain`) and press **Import as
 new level**.
+
+<Shot
+  src="/shots/terrainforge/export-tab.png"
+  width={1400}
+  height={1000}
+  alt="The Export tab of the TerrainForge editor. Under 'Export to Unreal assets', a line explains that the take's files bind to Landscape layers, PCG masks, textures and water geometry, followed by the full list of files in the current take: biome masks, data maps such as data_slope.png and data_flow.png, height.png and height.r16, pcg masks per biome, preview.png, recipe.json, validation.json, water geometry and waterlines. Below are a search box, collapsed Export Settings and Last Export sections, and the buttons Suggest bindings, Validate and Export assets. At the bottom, the New level section reads 'Import the current take as a new World Partition level with its landscape, layers and water', with the path /Game/TerrainForge/L_Terrain and the button Import as new level."
+  caption="The file list at the top is the current take as it sits on disk, so you can see what the import will use before pressing anything. New level is at the bottom; the export above it is the other route, binding the same files into an existing landscape or PCG setup instead of a new map."
+/>
 
 The importer creates a new World Partition map with:
 

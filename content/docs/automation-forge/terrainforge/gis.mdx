@@ -203,6 +203,14 @@ Every mask arrives as an *Imported mask* node named `gis_<dataset>`, exported
 as a named map `GIS_<dataset>` and left unwired. Without an elevation dataset,
 a replacing import starts from a flat placeholder.
 
+<Shot
+  src="/shots/terrainforge/real-places.jpg"
+  width={1918}
+  height={336}
+  alt="Three real places in the TerrainForge viewer, each a 4 km square. Left: the Lauterbrunnen valley in Switzerland, a flat green valley floor with a river between near-vertical rock walls and snowy peaks behind. Centre: the Matterhorn, a single pyramid peak with snow and grey rock, its lower slopes brown. Right: Mount St Helens, the open horseshoe crater of the 1980 eruption with its rim and the grey slopes falling away from it."
+  caption="Lauterbrunnen, the Matterhorn and Mount St Helens, each imported with Replace on and nothing added yet: one Imported heightfield wired to the output, 4033 samples across 4.03 km, so about a metre apart. The mapped masks (water and woodland, and glaciers where the map has ice) sit beside it unwired, ready for the first node you add."
+/>
+
 The import is **one undoable step**. If the definition changes while the import
 runs, the result is not applied over your edits: the import fails, keeps the
 downloaded project in `Saved/TerrainForge/gis-imports/`, and names the file.

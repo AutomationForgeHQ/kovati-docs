@@ -82,6 +82,26 @@ TerrainForge is one plugin with six editor modules:
   a build that turns it into a 1 m grid with paint layers and water. See
   [levels](/docs/automation-forge/terrainforge/levels).
 
+<Shot
+  src="/shots/terrainforge/editor-overview.jpg"
+  width={1920}
+  height={1089}
+  alt="The TerrainForge editor with a Terrain Definition called TD_Alpine open. The toolbar reads Build terrain, World settings, Cancel, Start from preset, Open project, Save project, Import raster, Start Workbench and Refresh nodes. On the left, the node Library lists categories with counts: Generate (Authored landforms, Constant height, Fractal noise, Imported heightfield, Linear gradient), Landforms (Canyon, Drawn range, Dune field, Impact crater, Island, Lava flows, Mountain, Mountain range, Plateau, Strata, Volcano) and Layer. In the middle, the Terrain viewer shows a 4 km mountain range with snow on the ridges, green valleys and two blue lakes, captioned 'Field 4033 × 4033 · display mesh 513 × 513 · 4.03 km square, true scale'. Below it, the Flow graph runs left to right from Main range, South-east massif and Rolling hills through Ranges, Glaciers, Rain erosion, Crystalline rock, Channel erosion, Valley floors, Scree and Fine detail to Terrain output, which feeds Snow, Rock and Occlusion. On the right, the Build monitor shows the last take build SUCCEEDED and a list of past builds: 2 min 48 s, a FAILED one at 10.7 s, 59.3 s and 1 min 01 s, the last two with 3 nodes on the GPU."
+  caption="One window holds the whole loop: pick a node on the left, wire it in the graph, see it in the viewer, and watch the build on the right. The past builds list keeps the failed take beside the good ones, so a regression is a comparison rather than a memory."
+/>
+
+The terrains below are each a graph in this editor, built and shown in its
+viewer. The dunes come from the *Wind-worn desert* preset; the others are
+showcase definitions built from the same nodes.
+
+<Shot
+  src="/shots/terrainforge/terrain-gallery.jpg"
+  width={1918}
+  height={680}
+  alt="Six terrains in the TerrainForge viewer, in two rows of three. Top row: a volcanic island with a cratered cone, green lower slopes and a shallow grey sea shelf; a valley between steep grey ridges with two blue lakes on its green floor; a round crater lake in rolling green country with smaller lakes and streams around it. Bottom row: flat orange desert with four cliff-sided mesas and dry channels; a river winding through a canyon whose walls show horizontal rock layers; a field of parallel sand dunes running around a dark rock outcrop."
+  caption="Volcano, a valley between drawn ranges, crater lake, mesas, a layered river canyon and wind-built dunes. The canyon's stepped walls are the Stratified rock node and the dune crests the Dune field and Wind erosion nodes, shaped in the height field rather than painted on; the colours come from each graph's own palette and colour nodes."
+/>
+
 ## What it deliberately does not do
 
 - **Overwrite a map.** Every landscape import creates a new map at an unused
