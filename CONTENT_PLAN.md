@@ -20,6 +20,7 @@ released and used to finish real work in Colony Origins:
 | AutomationForge | Deep | it is the spine — concepts, pipelines, hub, CLI, keys |
 | MontageForge | Overview | one page |
 | SurfaceForge | Overview | one page |
+| TerrainForge | Deep (in preview) | index, getting started, nodes (generated), GIS, levels, agents, troubleshooting |
 | Tools (MeshWeightRemap, NP_ add-ons) | Overview | one page each |
 
 Everything else gets an overview and a feature list, and its page says so.

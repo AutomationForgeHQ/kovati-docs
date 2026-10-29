@@ -1,0 +1,207 @@
+---
+title: TerrainForge
+description: Build terrain from a node graph or from a real place, preview it live, and import it as a World Partition landscape with rivers, lakes and paint layers.
+status: shipped
+plugins: [TerrainForge, TerrainForgeToolset]
+icon: Mountain
+---
+
+Describe a terrain as a graph of nodes, or start from a real square of the
+Earth, and get a **World Partition landscape** in a new map: heightmap, paint
+layers, lakes and rivers as engine water bodies, and the masks a biome or PCG
+setup needs.
+
+Everything is computed by a native engine **inside the Unreal editor**. Nodes
+that have a GPU kernel run on the graphics card when one is available. No
+other program starts, nothing is sent to a service, and no third-party terrain
+tool or licence is needed.
+
+<SetMembers set="terrainforge" />
+
+<Callout type="info">
+  **In preview, not released yet.** Every page in this section is written
+  against the plugin source as it will ship. The version chips at the top of
+  each page appear with the first release.
+</Callout>
+
+## Two plugins
+
+| Plugin | Licence | What it is |
+|---|---|---|
+| **TerrainForge** | Paid. Free while it is in preview. | The whole product: the node engine, the definition editor, GPU kernels, the map, real-world data and the landscape importer. |
+| **TerrainForgeToolset** | Open source, Apache-2.0 | The same operations as typed MCP tools, plus agent skills. It adds no capability of its own. See [agents](/docs/automation-forge/terrainforge/agents). |
+
+What TerrainForge produces for you (heightmaps, masks, landscapes, levels) is
+yours to use and ship. The free preview licence lasts while TerrainForge is
+free. When the preview ends, using it needs a bought licence. Everything you
+made while it was free stays yours to use; work made after that without a
+licence is not licensed.
+
+A toolset stays open even when the plugin it drives is paid. The
+[distribution page](/docs/automation-forge/distribution#a-toolset-beside-a-paid-plugin-is-still-open)
+says why.
+
+TerrainForge is one plugin with six editor modules:
+
+| Module | Does |
+|---|---|
+| `TerrainForgeCore` | The engine: fields, the node library, the scheduler, coarse-to-fine builds. Plain C++. |
+| `TerrainForgeNative` | Runs previews and builds off the game thread. |
+| `TerrainForge` | The Terrain Definition asset, its editor, takes, export and landscape import. |
+| `TerrainForgeShaders` | GPU compute kernels. Without a usable GPU, every kernel runs on the CPU. |
+| `TerrainForgeMap` | The map: place search, relief, source coverage, the square you import. |
+| `TerrainForgeGIS` | Real-world data: discovery, site check, import and level build. |
+
+## What you get
+
+- **A Terrain Definition asset.** Its graph and world settings are the recipe.
+  It is a normal asset: saved, diffed, undone.
+- **An editor for it**, with tabs for the node library, the flow graph, the
+  node inspector, a 3D terrain viewer, world and biome settings, GIS import,
+  export, and a build monitor.
+- **A catalog of nodes**: generators, placed landforms, filters, erosion and
+  glaciers, geology, rivers, lakes, coast, masks and colour. Each one is
+  documented in the [node reference](/docs/automation-forge/terrainforge/nodes),
+  which is generated from the source.
+- **Presets.** Sixteen classic graphs (ridges, canyons, islands, dunes, crater
+  lakes, branching rivers) and two eroded alpine ones: *Alpine valleys
+  (eroded)* at 4 km and 4033 samples, and an 8 km layout at 8129.
+- **Takes.** Every build writes a new folder of files and never overwrites an
+  old one.
+- **A landscape importer** that makes a new World Partition map from a take.
+- **Real-world terrain.** Elevation from national and global services, land
+  cover and OpenStreetMap masks, for any square from 500 m to 50 km. See
+  [GIS](/docs/automation-forge/terrainforge/gis).
+- **Level projects.** A check of whether a real place can become a level, and
+  a build that turns it into a 1 m grid with paint layers and water. See
+  [levels](/docs/automation-forge/terrainforge/levels).
+
+## What it deliberately does not do
+
+- **Overwrite a map.** Every landscape import creates a new map at an unused
+  path. The importer refuses an existing path, an open map with unsaved
+  changes, and a running Play In Editor session.
+- **Erode real elevation on import.** Imported elevation arrives as a source
+  node. Whatever runs after it is up to your graph.
+- **Carve terrain from OpenStreetMap by itself.** OSM features become masks
+  and vectors. They shape nothing unless your graph uses them.
+- **Survive the editor closing.** A build runs inside the editor process. If
+  the editor closes, the build stops and cannot be reconnected; build again.
+- **Ship in your game.** Both plugins are editor-only. The landscape, the
+  water bodies and the textures they create are ordinary Unreal content.
+- **Give you a production material.** The landscape material the importer
+  creates paints each layer a flat colour, for inspection. Water uses the
+  engine's own defaults.
+- **Match another tool's feature list.** TerrainForge is not a clone of a
+  standalone terrain application, and does not claim parity with one.
+
+## Takes
+
+A build writes a **take** to
+`Forge/Library/TerrainForge/<definition>/<job id>/` in the project. A take is
+never overwritten. It holds:
+
+| File | What it is |
+|---|---|
+| `height.png`, `height.r16` | The heightmap, 16-bit. Row 0 is north, column 0 west. |
+| `<Layer>.png` | One 8-bit weight map per paint layer. At every pixel they sum to exactly 255. |
+| `biome_<rule>.png` | Normalised coverage of each biome rule. These add up. |
+| `pcg_<rule>.png` | Independent suitability of each rule, for PCG. These overlap. |
+| `data_*.png` | Slope, aspect, flow, wetness, deposition, distance to water, snow, water, moisture. Masks, not calibrated measurements. |
+| `graph_<name>.png` | Any node output you asked for as a named 16-bit map. |
+| `water.json`, `water_surface.obj`, `water_bottom.obj` | Lakes and rivers as outlines and meshes. |
+| `preview.png`, `validation.json`, `manifest.json` | A hillshade, the checks the build ran, and every file with its hash. |
+
+Heights decode as `min + code / 65536 × (max − min)`, with `min` and `max`
+from the world settings. **A build fails rather than clip** a height outside
+that range, so leave room in it.
+
+Waterfalls in `water.json` are candidate locations, not simulated falls.
+
+## GPU compute
+
+The **Compute** setting decides where nodes with a GPU kernel run:
+
+| Policy | Behaviour |
+|---|---|
+| **Auto** (default) | The GPU where a node has a kernel, the device is available and the grid is large enough to gain. The CPU otherwise. |
+| **CPU Only** | The CPU everywhere. A node set to `gpu` runs on the CPU with a warning. |
+| **Prefer GPU** | The GPU wherever a kernel exists, at every size. |
+| **Reference** | The CPU everywhere, in each kernel's most precise mode. Slower. |
+
+GPU kernels exist for Erode (with Geology connected too), Scree in parallel
+mode, Hydraulic's parallel droplets, Weathering's droplet stages, Gaussian blur
+and flow accumulation. **A GPU kernel that cannot run falls back to the CPU
+by itself**, and the build monitor says which device ran each node. A node's
+own `compute` parameter can still ask for the CPU.
+
+Each GPU kernel is tested against its CPU version, so a graph keeps its look
+when the device changes. A pass whose inputs have not changed is reused from
+the cache whichever device made it.
+
+One measurement, on one high-end laptop GPU: a full 4033 take of the alpine
+preset took about 79 s with Auto and 233 s with CPU Only. Other cards differ.
+
+## Requirements
+
+- **Windows, 64-bit, and Unreal Engine 5.8.** Both plugins are editor-only.
+- The engine's **Water** and **Procedural Mesh Component** plugins. TerrainForge
+  enables them.
+- **A GPU is optional.** GPU compute uses a DirectX 12 card (Shader Model 5
+  or later; some paths use Shader Model 6). Without one, everything runs on
+  the CPU and the graph keeps its look.
+- **Memory to match the grid.** The World & biomes tab shows an estimate of a
+  build's peak memory before you start it; a 16321 build needs about 16 GB.
+  A 4033 GIS import or level build needs about 1.2 GB free.
+- **Internet access only for the map and real-world data.** Nothing else in
+  TerrainForge opens a connection. See
+  [internet access](/docs/automation-forge/terrainforge/gis#internet-access).
+
+## Settings
+
+Under **Editor Preferences → Plugins**, all per user:
+
+| Page | Holds |
+|---|---|
+| **TerrainForge Native Engine** | Cache budget (8 GiB), progressive preview (a 257 × 257 preview first), drainage water in previews, Compute, GPU memory budget, concurrent nodes, working memory budget per build, and spilling waiting results to disk. |
+| **TerrainForge** | Job timeout: the longest a build may run (an hour by default) before it is stopped and reported as failed. |
+| **TerrainForge GIS** | Overpass servers, extra profile folders, the elevation tile cache limit, and **Clear GIS caches**. |
+| **TerrainForge Map** | Default basemap, relief overlay, keys for keyed basemaps and place search, and the tile cache. |
+
+## Known limits
+
+<Callout type="warn">
+  The limits this preview ships with, as its own release notes state them:
+
+  - **Builds do not survive an editor restart.** Build again.
+  - **Seam normals after a headless import** can differ on steep slopes until
+    the editor's next edit-layer merge. The engine blends them at runtime.
+  - **Water saves are slow**: each water body takes 3 to 70 seconds to save
+    during an import.
+  - **The first landscape material is plain**: flat layer colours, and the
+    engine's default water materials.
+  - **Biome edge streaks.** With the default moisture setting, Forest, Meadow
+    and Soil can streak on smooth slopes near the map edges. The biome setting
+    `moisture_wetness: mfd` removes them; the alpine presets use it.
+  - **A busy OpenStreetMap server.** The public Overpass server is shared;
+    imports wait, retry and say so. You can add your own server.
+  - **UK and Netherlands datum.** Elevation there is placed to about 2 m and
+    1 m, because the national datum grids are not applied.
+  - **It is a preview.** File formats, settings and saved data may change
+    between versions. Keep backups.
+</Callout>
+
+## Where to go next
+
+<Cards>
+  <Card title="Getting started" href="/docs/automation-forge/terrainforge/getting-started" description="Install, start from a preset, preview, build, import a landscape." />
+  <Card title="Node reference" href="/docs/automation-forge/terrainforge/nodes" description="Every node, its ports and every parameter, generated from the source." />
+  <Card title="Real-world terrain" href="/docs/automation-forge/terrainforge/gis" description="The map, Discover, elevation sources, land cover, OpenStreetMap and licences." />
+  <Card title="Level projects" href="/docs/automation-forge/terrainforge/levels" description="Check a real place against a profile, then build a 1 m level from it." />
+  <Card title="Agents" href="/docs/automation-forge/terrainforge/agents" description="The MCP tools and skills, with example requests." />
+  <Card title="Troubleshooting" href="/docs/automation-forge/terrainforge/troubleshooting" description="The failure messages, quoted, and what each one means." />
+</Cards>
+
+## Release notes
+
+<ReleaseNotes set="terrainforge" />

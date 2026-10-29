@@ -1,0 +1,139 @@
+---
+title: Agents
+description: The TerrainForgeToolset MCP tools and agent skills — what an agent can do with TerrainForge, what it cannot, and requests that work.
+status: shipped
+plugins: [TerrainForgeToolset]
+icon: Bot
+---
+
+**TerrainForgeToolset** exposes TerrainForge to an agent through Unreal
+Engine's MCP toolset registry, as `TerrainForgeToolset.TerrainForgeToolset`.
+It is open source (Apache-2.0) and adds nothing of its own: every tool calls
+the same editor subsystems the TerrainForge editor's buttons call, with the
+same checks and the same refusals.
+
+Enable Unreal's **Model Context Protocol** plugin to connect a client.
+
+Every recipe, graph and result is a typed, reflected struct. Read a tool's
+live schema before building a call; the installed build is the authority.
+
+## The tools
+
+| Group | Tools |
+|---|---|
+| **Definitions** | `ListDefinitions`, `CreateDefinition`, `SaveDefinition`, `OpenDefinition` |
+| **Presets** | `ListPresets`, `CreateDefinitionFromPreset`, `ApplyPreset` |
+| **Recipe** | `GetRecipe`, `SetRecipe`, `ValidateRecipe` |
+| **Graph** | `GetGraph`, `ListNodeTypes`, `RefreshNodeCatalog`, `ValidateGraph`, `ReplaceGraph`, `AddNode`, `SetNode`, `RemoveNode`, `ConnectNodes`, `DisconnectNodes`, `SetGraphOutput`, `PreviewNode` |
+| **Sources** | `ListSources`, `ImportRaster`, `ImportProject`, `SaveProject` |
+| **Generation** | `GenerateTerrain`, `GetStatus`, `CancelGeneration`, `RecoverGeneration`, `ListTakes` |
+| **Landscape** | `ImportNewLevel` |
+| **GIS** | `DiscoverGIS`, `ImportGIS`, `GetGISStatus`, `CancelGIS`, `AssessGIS`, `CreateLevelProject`, `ListGISProfiles` |
+| **Export** | `ListArtifacts`, `GetExportSettings`, `SetExportSettings`, `ValidateExport`, `ExportAssets` |
+
+<SetMembers set="terrainforge" />
+
+### Long operations return an async result
+
+`GenerateTerrain`, `ImportNewLevel`, `PreviewNode`, `RefreshNodeCatalog`,
+`ImportRaster`, `ImportProject`, `DiscoverGIS`, `ImportGIS`, `AssessGIS` and
+`CreateLevelProject` return a typed asynchronous result. Each waits a bounded
+time for its answer: about three minutes for Discover and the site check, 25
+minutes for a GIS import or level build, and about four hours for a build
+("Generation wait expired. Call Get Status."). When a graph or GIS wait runs
+out:
+
+> Operation wait expired. Inspect terrain/GIS status before retrying; an
+> accepted job may still finish.
+
+That is not a failure. `GetStatus` and `GetGISStatus` read the job, which
+keeps running in the editor.
+
+### Graph edits are revision-checked
+
+`GetGraph` returns the graph **and its revision**. Every edit
+(`ReplaceGraph`, `AddNode`, `SetNode`, `RemoveNode`, `ConnectNodes`,
+`DisconnectNodes`, `SetGraphOutput`, `ApplyPreset`, `SetExportSettings`) takes
+that revision and is refused if the definition changed since. A person editing
+the same graph in the editor is never overwritten; the agent rereads and tries
+again.
+
+### Profiles
+
+`AssessGIS` and `CreateLevelProject` take a profile id, `game_level` by
+default. `ListGISProfiles` lists the ids, their labels and requirement ids,
+and every profile file that failed to load with its error. See
+[level projects](/docs/automation-forge/terrainforge/levels#profiles).
+
+## What an agent cannot do
+
+- **Delete anything.** There is no tool that deletes a definition, a take, a
+  map or a source. *"No tool deletes vault data."*
+- **Overwrite a map.** `ImportNewLevel` makes a new World Partition map at an
+  unused path, and refuses an open map with unsaved changes or a running Play
+  In Editor session.
+- **Touch a credential.** The toolset has no credential tools. GIS needs none.
+
+## Skills
+
+The toolset ships eight agent skills. Each says when to load it.
+
+| Skill | Load when |
+|---|---|
+| Authoring | Translating a terrain description into an authored layout |
+| Graph | Authoring the node graph alongside people in the editor |
+| Generation | Generating or resuming passes |
+| Water | Inspecting rivers, lake junctions or water artifacts |
+| Import | Importing a take into a new level |
+| Export | Binding outputs to Landscape layers or PCG |
+| GIS | Georeferenced elevation, OpenStreetMap and mask imports |
+| Troubleshooting | Failed jobs, stale passes or import problems |
+
+They carry the rules a person learns the hard way: coordinates are metres
+from the centre with X east and Y south; height decodes as
+`min + code / 65536 × (max − min)`, not division by 65535; biome masks add up
+while PCG masks overlap; *"unmapped is different from absent"*; a GIS merge
+needs matching extents and infers no alignment. They also tell an agent to
+inspect a take's preview before importing it; nothing enforces that, so say
+so in the request if you want to see it first.
+
+## Example requests
+
+Requests that map cleanly onto the tools:
+
+> Create a terrain definition at /Game/Terrain/TD_Alps from the alpine-eroded
+> preset, build it at 2017, and show me the preview before anything else.
+
+`CreateDefinitionFromPreset`, then `SetRecipe` for the resolution,
+`GenerateTerrain` through `Maps`, then `GetStatus` for the preview file. It
+stops there.
+
+> Can the square around 46.49, 9.84 become a level? Tell me what would be real
+> and what would be generated.
+
+`AssessGIS` at 4033 with `game_level`, then a summary of the verdict, each
+requirement's status and source, and the fills.
+
+> That looks fine. Build the level project into TD_Engadin, then build a take.
+
+`CreateLevelProject` with the same square and profile, `GetGISStatus` until
+it ends, then `GenerateTerrain`.
+
+> Add OpenStreetMap paths and lakes for the same square to TD_Valley without
+> replacing its graph.
+
+`DiscoverGIS` for the dataset ids, then `ImportGIS` with
+`bReplaceGraph=false`. It is refused if TD_Valley's size does not match the
+square, and the refusal says so.
+
+> Add an Erode node after the mountain range, with Geology feeding its
+> resistance, and preview its flow output at 513.
+
+`GetGraph`, `AddNode` twice, `ConnectNodes`, then `PreviewNode` on output
+`flow`. Every edit carries the revision from `GetGraph`.
+
+> Import the current take of TD_Alps into a new level at
+> /Game/Maps/L_AlpsTest with Nanite.
+
+`ImportNewLevel`. At 8129 Nanite comes off with a warning. A 16321 take is
+refused in the editor; it imports through the headless commandlet.
