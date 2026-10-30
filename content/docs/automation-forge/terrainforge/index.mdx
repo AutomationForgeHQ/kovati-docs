@@ -82,6 +82,26 @@ TerrainForge is one plugin with six editor modules:
   a build that turns it into a 1 m grid with paint layers and water. See
   [levels](/docs/automation-forge/terrainforge/levels).
 
+<Shot
+  src="/shots/terrainforge/editor-overview.jpg"
+  width={1920}
+  height={1125}
+  alt="The TerrainForge editor with a Terrain Definition called TD_Alpine open. The toolbar reads Build terrain, World settings, Cancel, Start from preset, Open project, Save project, Import raster and Refresh nodes. On the left, the node Library lists categories with counts: Generate (Authored landforms, Constant height, Fractal noise, Imported heightfield, Linear gradient), Landforms (Canyon, Drawn range, Dune field, Impact crater, Island, Lava flows, Mountain, Mountain range, Plateau, Strata, Volcano), Layer and Shape. In the middle, the Terrain viewer shows the last take of a 4 km mountain range, with snow and grey rock on the ridges, green valleys and blue lakes, captioned 'Field 4033 × 4033 · display mesh 513 × 513 · 4.03 km square, true scale'. Below it, the Flow graph runs left to right from Main range, South-east massif and Rolling hills through Ranges, Glaciers, Rain erosion, Crystalline rock, Channel erosion, Valley floors, Scree and Fine detail to Terrain output, which feeds Snow, Rock and Occlusion. On the right, the World & biomes tab shows the world every build uses: map size 4032 m, output and simulation grid 4033 × 4033 with an estimate of about 3.3 GB build memory, heights 0 to 3000 m, seed 44, map edges open on all sides; water by terrain drainage with river and lake thresholds and a snow line at 1600 m; the named maps snow, rock and occlusion; and the start of the Real location (1 m level) section."
+  caption="One window holds the whole loop: pick a node on the left, wire it in the graph, see it in the viewer, and set the world on the right. The memory estimate under Output grid is worth reading before a 4033 build: it is a planning figure, and the build monitor reports what was really used."
+/>
+
+The terrains below are each a graph in this editor, built and shown in its
+viewer. The dunes come from the *Wind-worn desert* preset; the others are
+showcase definitions built from the same nodes.
+
+<Shot
+  src="/shots/terrainforge/terrain-gallery.jpg"
+  width={1918}
+  height={680}
+  alt="Six terrains in the TerrainForge viewer, in two rows of three. Top row: a volcanic island with a cratered cone, green lower slopes and a shallow grey sea shelf; a valley between steep grey ridges with two blue lakes on its green floor; a round crater lake in rolling green country with smaller lakes and streams around it. Bottom row: flat orange desert with four cliff-sided mesas and dry channels; a river winding through a canyon whose walls show horizontal rock layers; a field of parallel sand dunes running around a dark rock outcrop."
+  caption="Volcano, a valley between drawn ranges, crater lake, mesas, a layered river canyon and wind-built dunes. The canyon's stepped walls are the Stratified rock node and the dune crests the Dune field and Wind erosion nodes, shaped in the height field rather than painted on; the colours come from each graph's own palette and colour nodes."
+/>
+
 ## What it deliberately does not do
 
 - **Overwrite a map.** Every landscape import creates a new map at an unused
