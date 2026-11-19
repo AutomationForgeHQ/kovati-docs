@@ -1,6 +1,6 @@
 ---
 title: MeshForgeCloud
-description: Every released version of MeshForgeCloud, newest first. Latest 0.3.0.
+description: Every released version of MeshForgeCloud, newest first. Latest 0.4.0.
 plugins: [MeshForgeCloud]
 icon: ScrollText
 ---
@@ -11,9 +11,49 @@ icon: ScrollText
 |---|---|
 | **Set** | MeshForge |
 | **Role** | provider |
-| **Latest** | `0.3.0` — 21 September 2026 |
-| **Versions here** | 4 |
+| **Latest** | `0.4.0` — 19 November 2026 |
+| **Versions here** | 5 |
 | **Depends on** | `MeshForge` |
+
+## 0.4.x
+
+### 0.4.0
+
+*19 November 2026* · [Download (484 KB)](https://github.com/AutomationForgeHQ/releases/releases/download/meshforgecloud-v0.4.0/MeshForgeCloud-0.4.0-UE5.8-Win64.zip) · [Release on GitHub](https://github.com/AutomationForgeHQ/releases/releases/tag/meshforgecloud-v0.4.0)
+
+#### Added
+- **Aholo Lux3D, a third hosted provider.** Mesh generation on `G1` and `G1-Turbo` - from one
+  picture, from up to 32 views (`imgs`), or from words with a `style` - with `faceCount`,
+  `enablePbr`, `aiPredictSize` and `customSize` under the vendor's own names. G1-Turbo is listed at
+  1 credit (about 1.5 cents), the cheapest mesh in the plugin by far. Its key goes on the Keys page
+  beside Meshy's and Tripo's.
+- **Two Lux3D picture pipelines**: `multimodal-to-image` for a reference picture from words, a
+  picture or both, and `image-to-four-view`, which turns one picture into four views of the same
+  object for multi-view reconstruction.
+- **Two Lux3D post steps that work on any mesh**, a Meshy or Tripo take or one modelled in the
+  project: `mesh-retopology` (a face budget, quad edge flow, and a bake of base colour, metallic and
+  roughness) and `material-transfer` (repaint from a picture).
+- **Tripo Texture v3.5**, on both Tripo steps. The generators gain **texture_version**, which pins
+  the texture model independently of the model that builds the shape; the retexture step gains the
+  same choice as **model**, where it had v3.0 hard-coded. Left alone both are unsent and the vendor
+  derives them, so an existing definition keeps producing exactly what it produced.
+- **`delight`** - take the reference picture's own lighting out before painting from it, on by the
+  vendor's default. Read only by v3.5, so it is greyed out and unsent on the older texture models
+  rather than left looking applied.
+- **`texture_quality: fast`** - the fastest tier, same texture size and **the same credits** as
+  standard; what it buys is time. It exists only on v3.5, and asking for it elsewhere is refused
+  here - by the step and again by the provider - because Tripo refuses it too rather than painting
+  at standard and charging for it. The retexture step's cost line now names the tier and the texture
+  model it will send.
+
+#### Compatibility
+- Needs MeshForge 0.3.2 for `material-transfer` to paint from the definition's main picture. A picture
+  chosen in the step works either way.
+
+#### Known issues
+- Lux3D has no seed, and its generation, retopology bake and material transfer return no normal map.
+- Pictures and meshes are uploaded to Aholo, whose terms allow model training on uploads and generated
+  outputs. Read its terms before sending work you cannot share; the README summarizes them.
 
 ## 0.3.x
 
