@@ -12,8 +12,54 @@ icon: ScrollText
 | **Set** | SkinForge |
 | **Role** | toolset |
 | **Latest** | unreleased |
-| **Versions here** | 1 |
+| **Versions here** | 4 |
 | **Depends on** | `SkinForge` |
+
+## 0.3.x
+
+### 0.3.1
+
+*1 January 1970*
+
+#### Added
+- `IsSkinSetRenderReady` says whether a version is ready to photograph: its baked materials'
+  shaders are compiled, its textures built and its glow maps resident. It lists what is still
+  pending. A set's first glowing bake compiles a copy of the skin material in the background, so
+  poll this in separate calls after Apply and before a capture.
+
+### 0.3.0
+
+*1 January 1970*
+
+#### Added
+- `EditSkinLayer` sets a mark's own settings. `"Controls"` takes values by control name, with a
+  choice given by its option name. `"Slots"` takes an ink per slot, as sRGB `[r,g,b]`, `"#RRGGBB"`
+  or linear `&#123;R,G,B}`; `null` resets it. `"Preset"` takes a preset's name. The result adds
+  `ResolvedControls` and `ResolvedSlots`.
+- `ArmSkinDecal` picks a mark in the panel's library, as a click on its card does, and can set the
+  stamp mode: `"once"` or `"keep"`.
+- `DescribeSkinMark` gives a mark's stages, ink slots, controls (and what they drive) and presets.
+- `ImportSkinMarks` makes a folder of mark images and its `starter_decals.json` into mark assets
+  under `/Game/_Generated/`: your own library, written in the starter format.
+- `ClickSkinForgeViewport` takes `bShift` (stamp and keep the mark picked) and `bAlt` (stamp over a
+  layer). Its result ends with the panel's state.
+
+#### Changed
+- `ApplySkinVersion` and `DescribeSkinApply` reach the material instances that a placed actor's
+  construction script makes (a MetaHuman in a level). The apply report says the change is
+  in memory only.
+
+## 0.2.x
+
+### 0.2.0
+
+*1 January 1970*
+
+#### Added
+- `EditSkinLayer`: change some properties of one layer of a set by name (blend mode, ink depth,
+  age, seed, strengths, decal), as the panel's layer details do. A misspelt name is an error.
+- `CaptureSkinPreview` takes `LightFrom`, `LightBrightness` and `SkyBrightness`, for grazing-light
+  checks.
 
 ## 0.1.x
 

@@ -12,8 +12,21 @@ icon: ScrollText
 | **Set** | MeshForge |
 | **Role** | post |
 | **Latest** | `0.2.1` — 4 October 2026 |
-| **Versions here** | 4 |
+| **Versions here** | 5 |
 | **Depends on** | `MeshForge` |
+
+## 0.3.x
+
+### 0.3.0
+
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
+
+#### Added
+- **MeshForge Garment for MetaHuman comes with this plugin.** It turns one wrapped garment into a parametric outfit that fits any body made with the MetaHuman sliders.
+- **Garment Outfit:** an ordered list of garments on one body, fitted as fixed layers with no simulation. Each garment is pushed off the body and off everything beneath it, a tucked garment is pressed under the next one first, and each comes out as its own skeletal mesh with repaired weights.
+- **Test tab** in the Garment Studio: see each stage of the wrap and play the result on a built-in skin test or any animation of the skeleton, with the transferred, welded or repaired weights. Nothing is saved.
+- **Clearance Solver** on the fit step, off by default: one soft push per vertex, then relax passes, so nothing is left inside the body with less crease damage.
+- Two experimental options on the wardrobe skinning step, both off by default: **Weld For Weights** solves across UV seams, so an AI-made garment is no longer thousands of pieces, and **Repair Steep Weights** re-solves vertices whose weights change too fast along an edge.
 
 ## 0.2.x
 

@@ -12,10 +12,23 @@ icon: ScrollText
 | **Set** | MotionForge |
 | **Role** | provider |
 | **Latest** | `0.5.1` — 4 October 2026 |
-| **Versions here** | 9 |
+| **Versions here** | 10 |
 | **Depends on** | `MotionForge` |
 
 ## 0.5.x
+
+### 0.5.2
+
+*1 January 1970*
+
+#### Changed
+- The model stays loaded between jobs. A fresh prompt took 30 to 36 seconds on an RTX 5080 laptop and now takes 3.0 to 3.6 seconds in the runner, including the first job after a start. The take is identical to one from a fresh process with the same seed. If the resident worker cannot start, the job runs the old way.
+
+#### Fixed
+- The demo no longer loads a second 16 GB text encoder when it starts before the encoder service is ready. The container now uses about 17 GB instead of up to 29 GB.
+
+#### Compatibility
+- The runner changed, so existing images read Drifted and need a rebuild.
 
 ### 0.5.1
 

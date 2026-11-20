@@ -12,11 +12,24 @@ icon: ScrollText
 | **Set** | SpeechForge |
 | **Role** | toolset |
 | **Latest** | `0.2.3` — 4 October 2026 |
-| **Versions here** | 5 |
+| **Versions here** | 6 |
 | **Depends on** | `SpeechForge` |
 | **Source** | [github.com/AutomationForgeHQ/SpeechForgeToolset](https://github.com/AutomationForgeHQ/SpeechForgeToolset) |
 
 ## 0.2.x
+
+### 0.2.4
+
+*1 January 1970*
+
+#### Added
+- `ShowSpeechLibraryPage`: an agent tool that opens the Speech Library on a bank's page of your choice, with lines selected.
+
+#### Fixed
+- The editor no longer logs six "is not AICallable and will not be added as a Tool" errors at startup. Internal callbacks (`ListSpeechTakeRows`, `GetSpeechLineSoundPath` and the four `...ByPath` take helpers) are marked as not for agents.
+
+#### Compatibility
+- Needs SpeechForge 0.2.4.
 
 ### 0.2.3
 

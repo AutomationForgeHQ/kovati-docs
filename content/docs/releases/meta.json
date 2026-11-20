@@ -36,6 +36,8 @@
     "meshforge",
     "meshforgecloud",
     "meshforgegarment",
+    "meshforgegarmentmetahuman",
+    "meshforgegarmentmetahumantoolset",
     "meshforgegarmenttoolset",
     "meshforgetoolset",
     "meshforgetrellis",

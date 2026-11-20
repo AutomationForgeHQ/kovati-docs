@@ -12,10 +12,26 @@ icon: ScrollText
 | **Set** | SpeechForge |
 | **Role** | core |
 | **Latest** | `0.2.3` — 4 October 2026 |
-| **Versions here** | 6 |
+| **Versions here** | 7 |
 | **Source** | [github.com/AutomationForgeHQ/SpeechForge](https://github.com/AutomationForgeHQ/SpeechForge) |
 
 ## 0.2.x
+
+### 0.2.4
+
+*1 January 1970*
+
+#### Added
+- The Speech Library can be opened on any page (Write, Cast, Produce and the rest) with chosen lines already selected, so a script or an agent can take you straight to where the work is.
+- **Send Conversation Context**, an option under Project Settings ▸ Automation Forge ▸ SpeechForge ▸ Conversation Context. It is off by default, and off behaves exactly as before (one previous line and its request id). On, each line is sent with lines before and after it from every speaker in conversation order, and is linked to the same speaker's earlier takes. Three numbers set how much: lines before (3), lines after (2) and linked takes (3; zero links none). It fixes a voice drifting in pitch from line to line, and short lines that sounded cut from another recording. It only applies on a model that takes stitching context, and it is not part of a line's content hash, so switching it marks nothing stale.
+
+#### Fixed
+- Localising a bank now translates each line with the scene around it: up to 12 lines at a time, with the cast and the lines before and after as context, and with the source language stated (the bank's, else the project's authoring language). Short lines on their own were mistranslated before, for example "Go on. Breathe it in." came back as "assimilate it" in Spanish, and "Then we plant the first one for her." lost the planting.
+- Character names are protected and come back untranslated; titles such as "Commander" still translate.
+- Nothing is written to the bank unless every translation request succeeds.
+
+#### Known issues
+- With Send Conversation Context on, the lines after a line are the ones that name it as their predecessor; where a dialogue branches, the first branch in authoring order is used.
 
 ### 0.2.3
 

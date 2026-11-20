@@ -12,7 +12,387 @@ icon: ScrollText
 | **Set** | SkinForge |
 | **Role** | core |
 | **Latest** | unreleased |
-| **Versions here** | 1 |
+| **Versions here** | 8 |
+
+## 0.3.x
+
+### 0.3.5
+
+*1 January 1970*
+
+#### Added
+- **Glowing marks come in a colour.** LED, UV circuit and the lit barcode now have a Colour choice:
+  cyan-teal (the default), magenta or amber. The glow spills a few millimetres onto the skin round
+  it, and the part under the skin is darker, so the mark still reads when the light is off. The
+  LED cores are at full brightness.
+- **`SkinForge::RenderReady(Set, Version)`**, for scripts. It says whether a version's baked
+  materials are compiled, its textures built and its glow maps resident, and lists what is still
+  pending. Poll it before taking a picture.
+
+#### Changed
+- **Scars and wounds remade from clinical photographs** in the starter library:
+  - **Cut, claw and surgical scars:** the line changes width along its length, is raised and
+    puckered where it has healed, and the surgical scar shows its suture-track dots. The healed
+    tissue reads on medium and dark skin, not only pale skin.
+  - **Bullet and shrapnel scars** have a visible crater and pucker, with the skin pulled in round
+    them and deeper height, so they read at a normal viewing distance.
+  - **Graze** is less red and less busy: a wet raw patch, then a scab.
+  - **Stab wound** is bigger and stronger.
+  - **Bruise** is as strong as the black eye, with soft swelling. On Day 4 its edge turns
+    yellow-green round a purple core.
+  - **Fresh cigarette burns and burn blisters** have uneven raw centres that look wet and dark, not
+    rings that glow.
+  - **Staples** are visible steel: grey-silver, shiny and raised, about 6 mm across.
+- **Small marks have twice the texture resolution.** Jacks, acne, bullet and shrapnel scars,
+  cigarette burns and the small tattoos stay crisp up close.
+- **A fresh tattoo is less glossy.** Its own Fresh roughness offset is now -0.05 (was -0.15).
+- **Face paint and skin detail:**
+  - **The Cracked look of the paints cracks and flakes.** Camo, finger stripes, mud, soot, blood smear and the war band dry into a network of fine cracks with flakes gone. Before, it barely changed, or showed smooth wavy lines.
+  - **Camo** is matte olive, brown and black greasepaint with the pores showing through, and thin, uneven edges with no straight side.
+  - **Finger stripes** are dragged and streaky, with dry gaps, in a darker red ochre.
+  - **Mud** is a lighter grey-tan, so it shows on dark skin.
+  - **Sweat** has beads, droplets and run trails that change only the shine and add a little relief. The orange stain on "Dripping" is gone.
+  - **Freckles** have a Sun control from a winter dusting to dense, dark summer freckles.
+  - **Sunburn** has a Strength control, from a blush to a deep red burn with a slight sheen and thin peeling.
+- **Healed scars read on any skin.** The "Healed pale" look of the cut, claw, surgical and shrapnel scars is
+  clearly paler than dark skin and a touch paler on fair skin. The healed tissue is smoother and slightly
+  glossier, and stands a little proud or sunken. The fresh stages are unchanged.
+- **The healing surgical scar** varies in width and has suture tracks across it and a broken-up tone.
+- **The black eye on Day 4** keeps its purple in the lid crease and under the lashes, round it a mottled
+  yellow-green that breaks up into the skin, with soft, irregular edges.
+- **Summer freckles** are denser and darker across the nose and cheekbones.
+- **The glowing barcode lights every bar evenly**, in all three colours. Before, thin bars glowed less, so
+  part of the code looked dimmer.
+
+#### Fixed
+- **A fresh tattoo's broad dark fills no longer glare like chrome.** The ointment film thins out to
+  a quarter where the ink is dense, so a black fill reads as wet ink. It stays full on the red halo
+  and on the skin between lines.
+- **Glow now shows on a MetaHuman in every session.** 0.3.4's glow could vanish for two reasons:
+  - **Its maps never streamed in after the editor restarted.** A glow map is named only by a
+    material instance's override, so it had no streaming data: the editor kept its smallest mip
+    and the glow averaged away. Glow maps are now always resident, about 11 MB for a 4K map.
+    Re-bake older glow versions.
+  - **The colour washed to pale pink or white.** A MetaHuman's skin is drawn through Unreal's
+    subsurface pass, which took the glow with it and lost its colour, so cyan and amber looked the
+    same. The glow copy now shades glowing texels as Default Lit, so the glow skips that pass under
+    any `r.SSS.Checkerboard` setting, and darkens the skin under the glow by the glow's strength, as
+    over an implant. Cyan, magenta and amber keep their colour. A skin with a fixed subsurface
+    model divides the glow by its colour instead, which is right with checkerboard SSS on.
+  - **The material copy compiled in the background.** A set's first glowing bake makes a copy of
+    the skin material, and until its shaders finish the editor draws the skin without the glow.
+    The bake still returns at once. Its notes now say which materials glow, from which copy and at
+    what intensity, and whether shaders are still compiling. An editor notification stays up until
+    they are done.
+
+### 0.3.4
+
+*1 January 1970*
+
+#### Added
+- **Glowing marks glow on a MetaHuman.** LED, UV ink and the lit barcode now light up on a baked
+  MetaHuman. Before, its skin material had no emissive input, so the glow was dropped.
+  - When a set has a glowing layer and the skin has no emissive texture, the bake writes a glow map
+    beside the skin's colour map.
+  - It also makes a copy of the skin's parent material, with an emissive input added
+    ("SkinForge Emissive" and "SkinForge Emissive Intensity").
+  - Copies of the material instances between that copy and the slot are made too, with their
+    settings kept. All of these copies go in the set's `Glow` folder and are reused by later bakes.
+  - The baked instance derives from those copies. The MetaHuman's own materials are never changed.
+  - Sets without a glowing layer bake as before.
+- **Glow Intensity**, on a skin set (under Bake, default 30, which reads as a lit mark under a low-key
+  studio light; daylight scenes need more). It sets how bright that glow is. You can
+  change it later on the baked instance.
+- **Apply remakes a glowing face's per-actor instances.** A MetaHuman Blueprint makes per-actor
+  material instances for its face, and these cannot take the glow as they are. Apply now remakes
+  them from the glow version, keeping their own values, and Revert makes them again from what they
+  came from.
+
+#### Changed
+- **The fresh ointment sheen stays off hardware.** On marks laid over the skin (chrome, titanium,
+  plates), a fresh_ring shines only on the skin round the piece. The metal keeps its own roughness.
+- **The "Just fitted" presets of the hard-surface marks** (Neural jack, Data jack, Port array,
+  Chrome ring) now redden and swell the skin round the implant. Their Irritation control drives
+  fresh_ring.
+
+#### Fixed
+- **A Fresh session tattoo no longer looks wrapped in cling film.** The 0.3.3 ointment sheen lowered
+  roughness by 0.22 over the whole piece, so under an ordinary key light it showed as a white specular
+  patch that hid the red halo and made red fills read almost white. It now lowers roughness by 0.07.
+  A mark's own Fresh roughness offset still adds on top inside the ink. Albedo is not changed.
+
+### 0.3.3
+
+*1 January 1970*
+
+#### Added
+- **Upscale Base Color**, on a skin set (Off, 4K or 8K, under Bake). Base colour maps smaller than
+  that size are enlarged before the marks are drawn into them, so fine-line ink stays crisp on a body
+  that a Cinematic MetaHuman bakes at 4K. It is off by default. An 8K map takes about 256 MB of memory
+  while baking (twice that with Keep Skin Detail), and four times a 4K map's GPU memory and disk.
+
+#### Fixed
+- **A Fresh session tattoo now looks freshly done.** Before, it barely differed from a healed one.
+  - The inflamed halo is wider (2.5 mm) and stronger, and it is full even round a single fine line.
+  - The halo is a shift of the skin's own colour, so it is red on fair skin and a warm flush on dark
+    skin, and it never turns black ink maroon.
+  - The lines stand slightly proud, and the halo is a little swollen.
+  - A glossy ointment film covers the piece and its halo, not only the ink's own coverage.
+  - The starter tattoos' presets need no change.
+- **Applying over another skin set's version replaces it.** An actor wearing a version from a
+  different set holds none of this set's originals, so Apply left that version on. A material that
+  SkinForge baked from one of this set's originals is now replaced like this set's own versions,
+  and Revert puts the original back. The result names what it replaced.
+- **A glowing mark on a material with no emissive input is reported.** A MetaHuman's baked skin
+  material has no emissive texture, so a glow cannot be baked into it. The bake now says so, where it
+  used to leave the glow out silently. Its colour, relief and shine still bake. To make it glow, give
+  the skin material an emissive input, or place a separate emissive mesh over the mark.
+
+### 0.3.2
+
+*1 January 1970*
+
+#### Added
+- **Normal Replace for hard-surface marks** (`normal_replace` in the starter format, 0 to 1, also a
+  control target). It flattens the skin's own normal under the mark before the mark's own normal is
+  laid on, so a jack, plate or implant shows only its machined forms. *Pore Smoothing* only blurs
+  the skin's normal (by about 2 mm on an 8K face) and keeps anything coarser, so it is still the
+  setting for scar tissue.
+- **Library chips from packs.** When marks carry a `pack:&lt;name>` tag, the library builds its chips
+  from those packs; a mark without one goes under its category. Marks tagged `hidden` stay out of
+  the library, and tools still reach them. Importing marks refreshes an open panel.
+
+#### Changed
+- **The starter library is now five packs of 60 marks.** Each pack is a library chip and a
+  `pack:` tag. Run *Add Starter Decals* once to get the new cards. Marks already placed in a
+  project keep working.
+  - **Ink (17 tattoos).**
+    - New: koi and waves, tiger and peonies, snake and dagger, traditional rose, skull and
+      roses, hand-lettered script, dotwork mandala, fine-line geometric, stick and poke,
+      circuit traces, knuckle symbols.
+    - Kept: the Japanese dragon, traditional dragon head, butterflies, blackwork sleeve,
+      black-and-grey portrait and swallow.
+    - Every tattoo has colour slots, Healed and Faded stages, *Wear*, *Fresh* and presets.
+  - **Scars & Wounds (19).**
+    - Wounds: stitches (fresh, healing, out), a laceration (fresh, clotted, crusted), a graze,
+      surgical staples, butterfly strips, a stitched gash, a stab wound, a bullet wound.
+    - Scars: keloid, bullet scar, shrapnel, acne pitting, plus the cut, claw and surgical
+      scars.
+    - Burns: burn blisters, cigarette burns.
+    - Bruises: a black eye by day, and the bruise.
+    - The wounds are built from clinical reference images as shifts of the skin's own colour,
+      so they suit every skin. Blood, thread, crust and tape are real materials, with raised
+      stitches and scabs and sunken wound beds.
+    - Wounds have *Wet* and *Depth*. Healing scars have *Pigment*: pale, pink or dark.
+  - **Cyber (9).**
+    - New: a neural jack and a data jack with machined bezels and sockets and no skin pores
+      on the metal, a port array, a chrome ring, augment seam lines, a subdermal plate, and a
+      UV circuit in glowing ink.
+    - Kept: the subdermal LED and the glowing barcode.
+    - The skin round an implant is irritated or healed, set by *Irritation*.
+  - **Paint & Grime (8):** a war band with real drips, finger stripes, dots and dashes, kohl,
+    a blood smear, mud and dirt, soot and camo. Each has recolourable slots and a *Wear*
+    setting that cracks and flakes it.
+  - **Skin Detail (7):** forearm, hand and temple veins, freckles, moles, a sweat sheen and a
+    sunburn flush.
+  - The new designs were made with OpenAI image generation; Kovati owns the output.
+    `SOURCES.json` lists every source image with its prompt.
+  - The calibration pattern is tagged `hidden`, so the library leaves it out.
+
+#### Fixed
+- **Fresh tattoos keep black ink black.** The fresh ring's redness and swelling now sit in the skin
+  round the lines, not under them, where they turned black ink maroon.
+
+### 0.3.1
+
+*1 January 1970*
+
+#### Added
+- **`ink_blowout`, a new control target:** a faint, blue-shifted haze 1 to 3 mm round a tattoo's line
+  work, as when ink spread too deep. It brings back the blown-out look of the v3 tattoos as a
+  setting on any ink mark. The details are in `DECAL_FORMAT_v4.md`, section 7.
+
+#### Changed
+- **A smaller, curated starter library of 20 marks.** The best of the earlier marks are kept, with new
+  tattoo designs and face paint. Run *Add Starter Decals* once to get the new cards.
+  - **Tattoos:**
+    - a colour Japanese dragon back piece, 38 x 57 cm at 4K;
+    - an American traditional dragon head;
+    - fine-line butterflies;
+    - a blackwork geometric forearm sleeve;
+    - a black-and-grey portrait;
+    - the swallow.
+  - Every tattoo has ink-colour slots, Healed and Faded stages, *Wear*, *Fresh* and four presets.
+  - The first five were designed with OpenAI image generation; Kovati owns the output. They were
+    converted to ink slots with crisp line work at full size.
+  - **Face paint, a new Paint category:** a war band across the eyes, cheek stripes and an ash
+    stripe. They are matte, keep the skin's pores, and have a *Wear* setting that dries them,
+    cracks them and flakes them off.
+  - **Kept:** the cut, claw, surgical and burn scars, the bruise and the puncture; the neural jack,
+    data jack, subdermal LED and glowing barcode.
+  - **Removed:** the other starter marks. Marks already placed in a project keep working.
+
+#### Fixed
+- **Apply now covers a MetaHuman's body in a level.** On a Cinematic MetaHuman, the Body component
+  draws its mesh's own material, with no override. Apply now sets an override with the version's
+  material on any component slot that draws one of the set's originals, and Revert puts the
+  original back.
+- **The per-actor face textures survive that change.** Setting the Body override reruns the
+  Blueprint's construction script, which rebuilt the face instances and dropped the textures set a
+  moment before. Apply now changes references first and the per-actor instances last.
+- **A target's state reads right with several versions.** An instance that only an older version
+  replaces no longer makes the target read "Mixed" under a newer one.
+- **A skeletal mesh asset is no longer "Unused".** In Unreal 5.8 a skeletal mesh's material list is
+  a transient property, so Apply skipped it. It now reads and writes the mesh's slots directly.
+- **Big wrapped marks stay on the skin they face.**
+  - Wrapped layers now respect *Min Facing* and a depth (the larger of the layer's Depth and half
+    the mark's larger side), as planar layers always did.
+  - A back piece no longer carries over the shoulders onto the jaw and arms, or round the neck to
+    the throat.
+  - The wrap keeps only the part of its patch joined to the skin under its centre, so the inside of
+    the lips can no longer catch stretched ink from a back piece.
+  - Checked with Tattoo_DragonBack at 45 and 55 cm on a Cinematic MetaHuman: the face, throat and
+    jaw are clean, and the ink stops at the sides of the neck with a soft edge.
+- **A back piece no longer reaches the teeth.** At a level of detail that only the face mesh has, a
+  layer's centre is far from every surface, and every slot was then allowed. Now the nearest skin
+  is used.
+
+#### Known issues
+- A wrapped band round a limb reaches about 80° each side of its centre. A full ring needs two
+  layers, or a lower *Min Facing*.
+
+### 0.3.0
+
+*1 January 1970*
+
+#### Added
+- **Starter library v4: 43 marks**, by the art agent. Each mark is one card, with its stages,
+  inks, controls and presets.
+  - **Scars:** Cut, Surgical, Claw, Burn, Bullet, Keloid, Acne and Shrapnel heal along their
+    stages. Each has a Pigment choice (pale, pink or dark tissue) and a Depth slider.
+  - **Wounds:** Laceration, Stitches, Graze and Puncture have Wet and Depth. A bruise covers day 1,
+    day 4 and day 10.
+  - **Tattoos:** every tattoo is an ink-slot mark, with its inks in the order Colour, Accent, Shade
+    and Line. Each has Healed and Faded stages, Wear and Fresh controls, and presets.
+  - **New tattoo designs:** fine-line script, dagger, dotwork, barcode, a rose, a Celtic band, a
+    swallow, a clipper ship for the chest, and a 45 cm irezumi dragon back piece (up to 55 cm).
+  - **Cyber:** neural and data jacks heal from Irritated to Healed. A skin plate, a glowing barcode
+    and a shoulder hardpoint are new, and the subdermal LED glows.
+  - **Licences:** every image is our own work, made procedurally, and is listed in `SOURCES.json`.
+    One item is flagged for a licence check before sale: lettering rendered from a system font.
+- **Changed marks:**
+  - The v3 per-stage and per-variant decals are merged into these marks: the cut stages,
+    `_Old`, `_Faded` and `_Blowout`.
+  - `Scar_Slash_Fresh` becomes Wound_Laceration.
+  - The tribal blade band is replaced by the Celtic band, because cultural marks are not copied.
+  - Scar_Sunken is dropped.
+  - Their old assets keep working where they are used, but they are no longer updated.
+- **Marks with stages, inks and controls (format v4).** A mark can hold several looks along the
+  layer's *Age*: a cut that goes from fresh to scabbed, healing and old. The bake blends the two
+  stages around the Age, image by image. When their blends differ, it lays each one on and
+  cross-fades the results.
+- **Ink slots.** A tattoo can be drawn once as an ID image, with one part of the design per
+  channel. Each layer then picks the ink for each part, so the same design can be black and grey,
+  a red and blue traditional piece, or a faded green one.
+- **Controls made of data.** A mark names its own sliders, switches and choices, such as Wear,
+  Fresh, Pigment or Depth. Each drives a fixed list of things the bake knows: ink depth, density,
+  blue-green drift, broken lines, a fresh red ring, the scar's lightness and colour, shine, relief,
+  pore smoothing and glow. **Presets** set them all at once.
+- **The library has chips.** They are built from the marks' categories, so a new category needs no
+  code change. The library also has a search box (names, tags and places on the body),
+  **Favourites** (star a card) and **Recent** (the last eight stamped). The chip you last used and
+  your stars are remembered per person.
+- **Stamp once or keep stamping.** A switch in the library sets it, and it is remembered per
+  person. *Stamp once* (the default) puts the mark down after one stamp and selects the new layer.
+  **Shift + click** always stamps and keeps the mark picked. A click on a layer now selects it, even
+  with a mark picked, and **Alt + click** stamps over a layer on purpose. A line under the viewport
+  says what a click does now.
+- **The layer's Look:** only the mark's own settings are shown: size (up to the mark's own
+  ceiling), turn, opacity, Mirror, Age when the mark has stages, presets, its controls and one
+  swatch per ink. Every channel setting is still there, under **Advanced**.
+- **The live preview matches the bake.** The Projection view now runs the bake's own compositor
+  over copies of the skin's textures (at up to 2048 px) and shows them in the skin's own
+  materials. Ink, Tone, stages, inks and controls are all visible as you move a slider, without
+  baking. Virtual-textured MetaHuman maps work too.
+- **Mirror** per layer, for the other side of the body. A mark that contains letters
+  (`mirror_text: false`) never flips.
+- **Apply reaches a MetaHuman placed in a level.** Its face materials are dynamic instances that
+  its construction script makes. Apply now sets the version's baked textures on those instances,
+  and Revert puts their own textures back. This lasts only until the construction script runs
+  again (moving the actor, compiling its Blueprint or reloading the level), and it is never saved.
+  The result says so. To keep a version on a character, apply it to its Blueprint or its assets.
+
+#### Changed
+- **The hardcoded Age effect is gone.** Age now moves a layer through its mark's stages, and a mark
+  that should fade or spread does so through its own controls. A mark with one stage ignores Age.
+  This also ends the pale box that Age drew over the whole stamp area of a Tone mark.
+- Controls' tone changes are always masked, so no setting can tint the projector square.
+
+#### Fixed
+- **Text came out mirrored** on some wrapped stamps, such as on the left temple. The wrap built
+  its frame from a left-handed basis, and the quaternion made from that basis flipped an axis on
+  some orientations. The frame is now a true rotation, and a guard turns any mirrored patch back.
+- **Face stamps no longer reach the teeth, eyes or lashes.** A layer reaches only the skin its
+  centre is on, plus the surfaces joined to that skin at a seam, such as a MetaHuman's face and
+  body at the neck. This works at every LOD.
+
+#### Compatibility
+- Decals and sets from 0.2 load as they are. A decal is a mark with one stage, and a v3 ink decal
+  has one ink, "Ink", which is the layer's Tint. The starter manifest takes `"version": 4` and
+  still reads versions 3 and 2.
+- Layers that used Age on a one-stage decal now bake without the old ageing.
+
+#### Known issues
+- A per-actor apply does not survive the construction script. A component that re-applies after
+  construction would make it last; it is not built yet.
+- The preview builds its texture copies through the engine's texture build, so each slider stop
+  adds a small entry to the local derived-data cache.
+
+## 0.2.x
+
+### 0.2.0
+
+*1 January 1970*
+
+#### Added
+- **Blend modes for colour, per decal, with a per-layer override.** *Over* is as before.
+  *Ink* multiplies the ink into the skin, so its tone and pores carry on through a tattoo on
+  any skin colour. The ink is softened and slightly desaturated by its *Ink Depth* (mm under
+  the skin). *Tone* shifts the skin's own colour (lighter, redder, paler, less saturated)
+  instead of painting one. A scar made once reads right on fair and on dark skin. A Tone decal
+  can carry a `_Tone` image of the shift, or take it from its painted colour against the skin
+  it was painted on.
+- **Keep Skin Detail** for Over: puts the skin's pore-scale light and dark back over paint.
+- **Relative channels:** each one-value channel (roughness, specular, metallic, AO, fuzz,
+  scatter) can be *Absolute* (as before), an *Offset* of the skin's value or a *Scale* of it.
+  So a scar is shinier than the skin around it without flattening that skin's own variation.
+- **Fuzz and Scatter channels.** New MetaHuman sets write fuzz into SRMF alpha and scatter into
+  `Scatter Baked`, so scar tissue and metal can lose their peach fuzz and scatter less.
+- **Pore Smoothing:** takes the skin's own pores out of the normal map under a scar and keeps
+  the larger forms.
+- **Age and Seed per layer.** Age spreads, fades and blue-greens ink, and turns red scars pale.
+  Seed warps a stamp slightly, so two copies of one decal differ.
+- The starter manifest (`starter_decals.json`) takes the new keys: `blend`, `ink_depth_mm`,
+  `keep_detail`, `tone_saturation`, `tone_reference`, `pore_smooth`, `&lt;channel>_offset`,
+  `&lt;channel>_scale`, `&lt;channel>_mode`, `fuzz` and `scatter`. Images can be named `_Tone`,
+  `_Fuzz` and `_Scatter`.
+- Offscreen captures take a light direction and brightness, for grazing-light checks of relief
+  and scar shine.
+- **Starter decal library v3: 42 decals, up from 22, all generated by us.** Scars come in healing
+  stages (cut fresh, scabbed, healing, old; surgical fresh, healing, old) plus claw, burn,
+  keloid, sunken, acne and bullet scars. Bruises come in three stages by day. Tattoos come
+  fresh, healed, faded and blown out, with five new designs. Ports and plates have a groove,
+  lip and seam ring in the skin around them. Scars and bruises use Tone, tattoos use Ink, and
+  metal uses Over. Every existing decal name is kept.
+
+#### Compatibility
+- Decals and sets made before this version bake exactly as before. New fields default to
+  Over and Absolute, with no fuzz or scatter. Existing sets keep the target maps they were saved
+  with; reset a set's Target Maps to get fuzz and scatter.
+
+#### Known issues
+- The live Projection preview still shows every decal as Over. Ink, Tone, the relative
+  channels, Age and Seed show only in the bake.
 
 ## 0.1.x
 
