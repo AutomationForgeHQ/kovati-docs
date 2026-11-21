@@ -1,6 +1,6 @@
 ---
 title: SkinForge
-description: SkinForge has not been released yet.
+description: Every released version of SkinForge, newest first. Latest 0.4.0.
 plugins: [SkinForge]
 icon: ScrollText
 ---
@@ -11,14 +11,61 @@ icon: ScrollText
 |---|---|
 | **Set** | SkinForge |
 | **Role** | core |
-| **Latest** | unreleased |
-| **Versions here** | 8 |
+| **Latest** | `0.4.0` — 20 November 2026 |
+| **Versions here** | 9 |
+
+## 0.4.x
+
+### 0.4.0
+
+*20 November 2026* · Installed through [the account app](https://app.kovati.dev)
+
+**The first release.** SkinForge stamps scars, tattoos, wounds, implants, face paint and skin
+detail onto a character as layers, previews them live on its own materials, then bakes them into
+new copies of its textures and new material instances. The originals are never edited. Every bake
+is a named version, and Apply and Revert switch a character, its Blueprints and its placed actors
+between versions. A starter library of 60 marks in five packs comes with it.
+
+SkinForge is a paid product with a free Lite tier, in one download.
+
+#### Added
+- **Lite and Full.** Without a licence SkinForge runs as Lite, free: every baked map is at most
+  2K (2048 on its longer side), a glow map too, and Upscale Base Color is shown greyed and marked
+  "Full". With a licence that includes SkinForge it runs as Full: maps are baked at their source
+  size, and Upscale Base Color enlarges base colour to 4K or 8K. Nothing else differs, and nothing
+  is watermarked. The panel shows the tier under the Bake button, and a Lite bake says it once in
+  its notes, which the Bake Skin Set and Stamp Skin Patch tools return.
+- **How the tier is decided.** SkinForge reads the signed licence the Kovati Hub keeps on this
+  computer. Sign in to the Hub with an account that owns SkinForge and it runs as Full; signed out,
+  or without SkinForge in the licence, it runs as Lite. The licence keeps working offline for 30
+  days after the Hub last refreshed it. Full is bought at
+  [kovati.dev](https://kovati.dev/plugins/skinforge/). `SkinForge.Tier.ForceLite 1` runs a
+  licensed copy as Lite, for testing.
+- Everything the development history below describes, as its latest section leaves it.
+
+#### Compatibility
+- **Unreal Engine 5.8, Windows (Win64), editor only.** Installed through the Kovati Hub.
+- **SkinForgeToolset 0.3.1**, the free, open-source agent toolset, pairs with this version.
+- Works on skeletal meshes, assembled MetaHumans included: their baked textures and materials.
+  Marks are not written into an editable MetaHuman Character, so they are not part of a
+  re-assembly in MetaHuman Creator.
+
+#### Known issues
+- **An apply to a MetaHuman placed in a level lasts until its construction script runs again**
+  (moving the actor, compiling its Blueprint, reloading the level), and it is never saved. The
+  apply report says so. To keep a version on a character, apply it to its Blueprint or its assets.
+- **A wrapped band round a limb reaches about 80° each side of its centre.** A full ring needs two
+  layers, or a lower *Min Facing*.
+- **A set's first glowing bake compiles a copy of the skin material in the background.** Until it
+  finishes, the editor draws the skin without the glow; a notification stays up until it is done.
+- **Experimental.** File formats, settings and saved data may change between versions. Keep
+  backups.
 
 ## 0.3.x
 
 ### 0.3.5
 
-*1 January 1970*
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
 
 #### Added
 - **Glowing marks come in a colour.** LED, UV circuit and the lit barcode now have a Colour choice:
@@ -87,7 +134,7 @@ icon: ScrollText
 
 ### 0.3.4
 
-*1 January 1970*
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
 
 #### Added
 - **Glowing marks glow on a MetaHuman.** LED, UV ink and the lit barcode now light up on a baked
@@ -123,7 +170,7 @@ icon: ScrollText
 
 ### 0.3.3
 
-*1 January 1970*
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
 
 #### Added
 - **Upscale Base Color**, on a skin set (Off, 4K or 8K, under Bake). Base colour maps smaller than
@@ -150,7 +197,7 @@ icon: ScrollText
 
 ### 0.3.2
 
-*1 January 1970*
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
 
 #### Added
 - **Normal Replace for hard-surface marks** (`normal_replace` in the starter format, 0 to 1, also a
@@ -205,12 +252,12 @@ icon: ScrollText
 
 ### 0.3.1
 
-*1 January 1970*
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
 
 #### Added
 - **`ink_blowout`, a new control target:** a faint, blue-shifted haze 1 to 3 mm round a tattoo's line
   work, as when ink spread too deep. It brings back the blown-out look of the v3 tattoos as a
-  setting on any ink mark. The details are in `DECAL_FORMAT_v4.md`, section 7.
+  setting on any ink mark.
 
 #### Changed
 - **A smaller, curated starter library of 20 marks.** The best of the earlier marks are kept, with new
@@ -263,7 +310,7 @@ icon: ScrollText
 
 ### 0.3.0
 
-*1 January 1970*
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
 
 #### Added
 - **Starter library v4: 43 marks**, by the art agent. Each mark is one card, with its stages,
@@ -352,7 +399,7 @@ icon: ScrollText
 
 ### 0.2.0
 
-*1 January 1970*
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
 
 #### Added
 - **Blend modes for colour, per decal, with a per-layer override.** *Over* is as before.
@@ -398,7 +445,7 @@ icon: ScrollText
 
 ### 0.1.0
 
-*1 January 1970*
+*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
 
 #### Added
 - First version. Stamp scars, tattoos, ports and other marks onto any mesh as layers, preview

@@ -1,6 +1,6 @@
 ---
 title: TerrainForge
-description: Every released version of TerrainForge, newest first. Latest 0.1.0.
+description: Every released version of TerrainForge, newest first. Latest 0.2.0.
 plugins: [TerrainForge]
 icon: ScrollText
 ---
@@ -11,23 +11,61 @@ icon: ScrollText
 |---|---|
 | **Set** | TerrainForge |
 | **Role** | core |
-| **Latest** | `0.1.0` — 29 October 2026 |
+| **Latest** | `0.2.0` — 20 November 2026 |
 | **Versions here** | 2 |
 
-## 0.1.x
+## 0.2.x
 
-### 0.1.1
+### 0.2.0
 
-*1 January 1970* · Installed through [the account app](https://app.kovati.dev)
+*20 November 2026* · Installed through [the account app](https://app.kovati.dev)
+
+**TerrainForge Lite and Full.** One plugin, two tiers, in the same download. Without a licence it runs as Lite, free;
+with a licence that includes TerrainForge it runs as Full, with no limits. This release ends the free preview: a copy
+that was taken free during the preview runs as Lite from this version on. Full is bought at
+[kovati.dev](https://kovati.dev/plugins/terrainforge/).
 
 #### Added
-- **RainShadow node.** It follows the air along a prevailing wind: slopes the wind climbs get more rain, the lee of a range gets less, and the air recovers with distance.
-- **Natural outline** for Volcano, Crater, Plateau and Mountain: uneven bays in place of the same repeating petals and radial streaks.
-- **Optional Erode and Hydraulic controls:** a drop budget per detail level, detail under cover, drop steering (CPU only) and a Hydraulic batch limit. All are off by default and leave results as they were.
+- **Lite.** Builds, landscape imports and asset exports of at most 1009 x 1009 samples over at most 2 km x 2 km, and
+  every node, erosion included, on the CPU. Nothing else is limited and nothing is watermarked. A recipe over the
+  limits is refused with one sentence that says why; it is never scaled down behind your back. Levels already in a
+  project are not touched, but a take larger than 1009 cannot be imported again in Lite.
+- **How the tier is decided.** TerrainForge reads the signed licence the Kovati Hub keeps on this computer. Signed in
+  with a licence that includes TerrainForge, it runs as Full; signed out, or with a licence that does not include it,
+  it runs as Lite, and the **World & biomes** panel says which tier is running and why. The licence keeps working
+  offline for 30 days after the Hub last refreshed it. `TerrainForge.Tier.ForceLite 1` runs a licensed copy as Lite,
+  for testing.
+- **1 m levels at 1009 samples (1008 m)**, next to 2017 and 4033, so Lite can make a real-world level too.
+- **RainShadow node.** It follows the air along a prevailing wind: slopes the wind climbs get more rain, the lee of a
+  range gets less, and the air recovers with distance.
+- **Natural outline** for Volcano, Crater, Plateau and Mountain: uneven bays in place of the same repeating petals and
+  radial streaks.
+- **Optional Erode and Hydraulic controls:** a drop budget per detail level, detail under cover, drop steering (CPU
+  only) and a Hydraulic batch limit. All are off by default and leave results as they were.
 
 #### Changed
+- **In Lite**, previews above 1009 run at 1009, the classic presets (8 km) open as the same terrain scaled to 2 km, the
+  4K and 8K presets are marked Full, and new definitions start at 1009 over 2 km. The 2K and 4K quality choices,
+  larger grids and sizes over 2 km stay visible, locked, with "Full" beside them. The map picker offers squares up to
+  2 km at grid 257 or 513.
 - **Erode is about 23 % faster on the CPU**, with identical results.
-- **The alpine, island, canyon and lake presets were rebuilt** after scoring them against real terrain. A terrain regenerated from one of these presets will look different.
+- **The alpine, island, canyon and lake presets were rebuilt** after scoring them against real terrain. A terrain
+  regenerated from one of these presets will look different.
+
+#### Fixed
+- **Agents get the reason.** Generate Terrain and Import New Level return why a build or an import could not start (a
+  Lite limit, a graph error, an unsaved map, ...) in place of a general sentence, and Get Status's error says why the
+  last build was refused. Export Assets says its reason once. The Export panel shows why an import was refused.
+- **Create Definition From Preset creates nothing** when the preset cannot be opened in this tier.
+
+#### Compatibility
+- **TerrainForgeToolset 0.1.1** pairs with this version. If you use the toolset, update both together: 0.1.0 was
+  built against TerrainForge 0.1.0.
+
+#### Known issues
+- The known issues of 0.1.0 below still apply.
+
+## 0.1.x
 
 ### 0.1.0
 

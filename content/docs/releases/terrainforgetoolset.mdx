@@ -1,6 +1,6 @@
 ---
 title: TerrainForgeToolset
-description: Every released version of TerrainForgeToolset, newest first. Latest 0.1.0.
+description: Every released version of TerrainForgeToolset, newest first. Latest 0.1.1.
 plugins: [TerrainForgeToolset]
 icon: ScrollText
 ---
@@ -11,12 +11,32 @@ icon: ScrollText
 |---|---|
 | **Set** | TerrainForge |
 | **Role** | toolset |
-| **Latest** | `0.1.0` — 29 October 2026 |
-| **Versions here** | 1 |
+| **Latest** | `0.1.1` — 20 November 2026 |
+| **Versions here** | 2 |
 | **Depends on** | `TerrainForge` |
 | **Source** | [github.com/AutomationForgeHQ/TerrainForgeToolset](https://github.com/AutomationForgeHQ/TerrainForgeToolset) |
 
 ## 0.1.x
+
+### 0.1.1
+
+*20 November 2026* · [Download (203 KB)](https://github.com/AutomationForgeHQ/releases/releases/download/terrainforgetoolset-v0.1.1/TerrainForgeToolset-0.1.1-UE5.8-Win64.zip) · [Release on GitHub](https://github.com/AutomationForgeHQ/releases/releases/tag/terrainforgetoolset-v0.1.1)
+
+Released with TerrainForge 0.2.0, which adds the Lite and Full tiers. The toolset itself has no tiers and stays free
+and open source: in Lite, TerrainForge refuses what is over the limits, and the tools now pass on its reason.
+
+#### Fixed
+- **Generate Terrain and Import New Level return the reason** a build or an import could not start (a TerrainForge
+  Lite limit, a graph error, an unsaved map, ...), as TerrainForge reports it, in place of a general sentence.
+- **Export Assets says its reason once**, not twice.
+- **Create Definition From Preset creates no asset** when TerrainForge cannot open the preset.
+
+#### Changed
+- **The agent skills say what Lite allows**, so an agent plans a terrain that the running tier can build.
+
+#### Compatibility
+- **Needs TerrainForge 0.2.0 or later.** It calls TerrainForge's preset check and reads the import result's error,
+  which 0.1.0 does not have.
 
 ### 0.1.0
 
